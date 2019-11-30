@@ -1,0 +1,1 @@
+tools\edlink-n8 E:\projects\EDN8-PRO\N8-OS\nesos.nes
