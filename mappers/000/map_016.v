@@ -126,6 +126,135 @@ module map_016
 	
 	end
 	
-
+	/*
+	reg eep_dir, eep_di, eep_scl;
+	always @(negedge m2)
+	begin
+		if((cpu_addr[15:0] & 16'h800F) == 16'h800D){eep_dir, eep_di, eep_scl} <= cpu_dat[7:5];
+	end
+	
+	wire [7:0]eep_cpu_dat = {eep_dir, (eep_dir ? eep_do : eep_di), eep_scl, 5'd0};
+	wire eep_do, eep_mem_oe, eep_mem_we;
+	wire [7:0]eep_mem_do;
+	wire [7:0]eep_mem_di = prg_dat[7:0];
+	
+	eep eep_inst(
+		.do(eep_do),
+		.di(eep_di),
+		.scl(eep_scl),
+		.mem_do(eep_mem_do),
+		.mem_di(eep_mem_di),
+		.mem_oe(eep_mem_oe), 
+		.mem_we(eep_mem_we),
+		.rst(map_rst)
+	);*/
 	
 endmodule
+
+
+/*
+module eep
+(do, di, scl, mem_do, mem_di, mem_oe, mem_we, rst);
+
+	input di, scl, rst;
+	output reg [7:0]mem_do;
+	input [7:0]mem_di;
+	output do, mem_oe, mem_we;
+	
+	reg [1:0]ss;
+	reg [7:0]addr;
+	reg [2:0]bit;
+	reg [3:0]state;
+	reg [7:0]dbf;
+	reg ack;
+	reg addr_inc;
+	
+	assign do = ack;
+	assign mem_we = state == 6;
+	assign mem_oe = state == 8 & scl == 0;
+	
+	wire start = ss[0] != ss[1];
+
+	
+	always @(negedge di, posedge rst)//start
+	if(rst)ss[0] <= 0;
+		else
+	begin
+		if(scl)ss[0] <= !ss[1];
+	end
+	
+	always @(posedge di, posedge rst)//stop
+	if(rst)ss[1] <= 0;
+		else
+	begin
+		if(scl)ss[1] <= ss[0];
+	end
+	
+	always @(posedge scl, negedge start, posedge rst)
+	if(rst | !start)
+	begin
+		if(rst)addr[7:0] <= 8'h00;
+		state <= 0;
+		bit <= 0;
+		state <= 0;
+		ack <= 1;
+	end
+		else
+	case(state)
+		0:begin
+			if(di)state <= state + 1;
+		end
+		
+		1:begin//rx control byte
+			dbf[7:0] <= {dbf[6:0], di};
+			bit <= bit + 1;
+			if(bit == 7)state <= state + 1;
+			if(bit == 7 & dbf[6:3] == 4'b1010)ack <= 0;
+		end
+		2:begin//ack
+			if(ack == 1)state <= 15;
+			if(ack == 0 & dbf[0] == 1)state <= 8;
+			if(ack == 0 & dbf[0] == 0)state <= 3;
+			ack <= 1; 
+		end
+		
+		3:begin//rx address
+			bit <= bit + 1;
+			addr[7:0] <= {addr[6:0], di};
+			if(bit == 7)ack <= 0;
+			if(bit == 7)state <= state + 1;
+		end
+		4:begin//ack
+			state <= state + 1;
+			ack <= 1;
+		end
+		
+		5:begin//rx byte
+			bit <= bit + 1;
+			mem_do[7-bit] <= di;
+			if(bit == 7)ack <= 0;
+			if(bit == 7)state <= state + 1;
+		end
+		6:begin//ack
+			addr[3:0] <= addr[3:0] + 1;
+			state <= state - 1;
+			ack <= 1;
+		end
+		
+		8:begin//read
+			bit <= bit + 1;
+			if(bit == 7)state <= state + 1;
+		end
+		9:begin//ack
+			addr[7:0] <= addr[7:0] + 1;
+			state <= di == 0 ? state - 1 : 15;
+		end
+		
+		15:begin
+			ack <= 1;
+		end
+	endcase
+
+
+endmodule
+*/
