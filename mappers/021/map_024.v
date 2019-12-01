@@ -152,10 +152,8 @@ module dac_ds
 	assign	sigma[DEPTH+1:0] = delta[DEPTH+1:0] + sigma_st[DEPTH+1:0];
 
 	
-	reg clk_div;
-	always @(negedge m2)clk_div <= !clk_div;
-	
-	always @(negedge clk_div)
+
+	always @(negedge m2)
 	begin
 		vol_st[DEPTH-1:0] <= (vol[DEPTH-1:0] * master_vol) / 128;
 	end
