@@ -1,0 +1,17 @@
+000 official. most important
+001 official. weird jp games mostly
+002 pirate mappers
+003 sachen stuff and massive pirate mapper
+004 mmc-x mappers
+005 mmc5
+006 mmc3 like mappers
+007 new maper pack
+
+019 namco 163 (snd)
+021 konami vrc-x (vrc6 snd inclided)
+027 max mapper
+056 max mapper
+037 agent buda mappers
+069 Sunsoft 5 (snd)
+085 VRC7 (snd)
+031 NSF player 
