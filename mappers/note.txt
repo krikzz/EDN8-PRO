@@ -11,8 +11,8 @@
 021 konami vrc-x (vrc6 snd inclided)
 027 mapper pack by Max2304
 031 NSF player 
-056 mapper pack by Max2304
 037 mapper pack by Kaskat 
+056 mapper pack by Max2304
 069 Sunsoft 5 (snd)
 085 VRC7 (snd)
 
