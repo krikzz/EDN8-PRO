@@ -9,9 +9,13 @@
 
 019 namco 163 (snd)
 021 konami vrc-x (vrc6 snd inclided)
-027 max mapper
-056 max mapper
-037 agent buda mappers
+027 mapper pack by Max2304
+031 NSF player 
+056 mapper pack by Max2304
+037 mapper pack by Kaskat 
 069 Sunsoft 5 (snd)
 085 VRC7 (snd)
-031 NSF player 
+
+
+254 FDS mapper
+255 system mapper
