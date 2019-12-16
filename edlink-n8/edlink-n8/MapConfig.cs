@@ -119,10 +119,17 @@ namespace edlink_n8
             return (byte)(msk & 0x0F);
         }
 
-        public byte map_idx
+        public int map_idx
         {
-            get { return config[cfg_base + 0]; }
-            set { config[cfg_base + 0] = value; }
+            get
+            {
+                return config[cfg_base + 0] | ((config[cfg_base + 2] & 0xf0) << 4);
+            }
+            set
+            {
+                config[cfg_base + 0] = (byte)(value);
+                config[cfg_base + 2] |= (byte)((value & 0xf00) >> 4);
+            }
         }
 
         public int PrgSize

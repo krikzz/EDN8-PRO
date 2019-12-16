@@ -42,7 +42,8 @@ namespace edlink_n8
             {
                 throw new Exception("Game select error 0x: " + resp.ToString("X2"));
             }
-            byte map_idx = edio.rx8();
+            int map_idx = edio.rx16();
+
             if (map_idx != rom.Mapper)
             {
                 Console.WriteLine("map reloc: " + map_idx);
@@ -60,7 +61,7 @@ namespace edlink_n8
 
             if (map_path == null)
             {
-                mapLoadSDC(rom.Mapper, null);
+                mapLoadSDC(map_idx, null);
             }
             else
             {
@@ -222,7 +223,7 @@ namespace edlink_n8
         {
             string map_path = "EDN8/MAPS/";
             int map_pkg;
-            byte[] map_rout = new byte[256];
+            byte[] map_rout = new byte[4096];
 
 
             edio.fileOpen("EDN8/MAPROUT.BIN", Edio.FAT_READ);
@@ -230,7 +231,15 @@ namespace edlink_n8
             edio.fileClose();
 
             map_pkg = map_rout[map_id];
-            if (map_pkg == 0xff && map_id != 0xff) throw new Exception("Unsupported mapper: " + map_id);
+            if (map_pkg == 0xff && map_id != 0xff)
+            {
+                
+                cfg = new MapConfig();
+                cfg.map_idx = 255;
+                cfg.Ctrl = MapConfig.ctrl_unlock;
+                edio.fpgInit("EDN8/MAPS/255.RBF", cfg);
+                throw new Exception("Unsupported mapper: " + map_id);
+            }
 
             if (map_pkg < 100) map_path += "0";
             if (map_pkg < 10) map_path += "0";
@@ -240,7 +249,7 @@ namespace edlink_n8
             edio.fpgInit(map_path, cfg);
         }
 
-        static string getTestMapper(byte mapper)
+        static string getTestMapper(int mapper)
         {
             string home = "E:/projects/EDN8-PRO/mappers/";
 
@@ -258,6 +267,7 @@ namespace edlink_n8
 
                 int pack = maprout[mapper];
                 if (pack == 255 && mapper != 255) throw new Exception("Mapper is not supported");
+
 
                 if (pack < 100) map_path += "0";
                 if (pack < 10) map_path += "0";
