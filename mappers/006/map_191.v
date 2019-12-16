@@ -2,7 +2,7 @@
 `include "../base/defs.v"
 
 
-module map_119
+module map_191
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -49,7 +49,7 @@ module map_119
 	
 	
 	assign chr_addr[9:0] = ppu_addr[9:0];
-	assign chr_addr[17:10] = cfg_chr_ram ? chr[4:0] : chr_ram_ce ? {5'b10000, chr[2:0]} : chr[7:0];//ines 2.0 reuired to support 32k ram
+	assign chr_addr[17:10] = cfg_chr_ram ? chr[4:0] : chr_ram_ce ? {7'b1000000, chr[0]} : chr[7:0];//ines 2.0 reuired to support 32k ram
 	
 	wire [7:0]chr = 
 	ppu_addr[12:11] == {chr_mod, 1'b0} ? {bank_dat[0][7:1], ppu_addr[10]} :
@@ -61,7 +61,7 @@ module map_119
 	
 	wire [15:0]reg_addr = {cpu_addr[15:13], 12'd0,  cpu_addr[0]};
 	
-	wire chr_ram_ce = chr[6];
+	wire chr_ram_ce = chr[7];
 	
 	wire prg_mod = bank_sel[6];
 	wire chr_mod = bank_sel[7];

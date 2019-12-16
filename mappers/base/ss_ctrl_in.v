@@ -24,4 +24,4 @@
 	wire [3:0]ss_bank512 = ss_addr[12:9];
 	wire [2:0]ss_bank1KB = ss_addr[12:10];
 	
-	
+	//remove hardcoded ss_act from top

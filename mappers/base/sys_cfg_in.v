@@ -2,7 +2,7 @@
 	
 	
 	//mapper config
-	wire [7:0]map_idx;
+	wire [11:0]map_idx;
 	wire [9:0]prg_msk;
 	wire [9:0]chr_msk;
 	wire [7:0]srm_msk;
@@ -12,8 +12,9 @@
 	wire [7:0]ss_key_load;
 	wire [7:0]ctrl;
 	
+
 	wire [7:0]prg_msk_in;
-	wire [7:0]chr_msk_in;
+	wire [3:0]chr_msk_in;
 	assign prg_msk[7:0] = (1'b1 << prg_msk_in[3:0])-1;
 	assign srm_msk[7:0] = (1'b1 << prg_msk_in[7:4])-1;
 	assign chr_msk[7:0] = (1'b1 << chr_msk_in[3:0])-1;
@@ -24,7 +25,7 @@
 	ss_key_save[7:0], 
 	map_cfg[7:0], 
 	master_vol[7:0], 
-	chr_msk_in[7:0], 
+	{map_idx[11:8], chr_msk_in[3:0]}, 
 	prg_msk_in[7:0], 
 	map_idx[7:0]} = sys_cfg[`BW_SYS_CFG-1:0];
 	

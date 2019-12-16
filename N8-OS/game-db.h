@@ -90,6 +90,7 @@ const GameDB game_db[] = {
     {0xD1691028, SET_MAP, 154}, //Devil Man (J).nes
     {0x983D8175, SET_MAP, 157}, //Datach - Battle Rush - Build Up Robot Tournament (J)
     {0x58CFE142, SET_MAP, 4}, //Summer Carnival '92 - Recca (U).nes
+    {0x282745C5, SET_MAP, 141}, //Q Boy (Asia) (Unl)
     
     {0, 0, 0}//db end
 };

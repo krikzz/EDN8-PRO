@@ -16,7 +16,6 @@ SessionCFG *ses_cfg;
 
 u8 *maprout;
 
-
 u8 edInit(u8 sst_mode) {
 
     u8 resp;
@@ -247,9 +246,11 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
 
     cfg->prg_msk |= bi_get_rom_mask(inf->prg_size);
     cfg->prg_msk |= bi_get_srm_mask(inf->srm_size) << 4;
-    cfg->chr_msk |= bi_get_rom_mask(inf->chr_size);
+    cfg->chr_msk |= bi_get_rom_mask(inf->chr_size) & 15;
 
-    cfg->map_idx = inf->mapper;
+    cfg->chr_msk |= (inf->mapper & 0xf00) >> 4;
+    cfg->map_idx = inf->mapper & 0xff;
+
 
     cfg->ss_key_save = SS_COMBO_OFF;
     cfg->ss_key_load = SS_COMBO_OFF;
@@ -292,7 +293,7 @@ u8 edApplyOptions(MapConfig *cfg) {
     }
 
     if (opt->ss_mode) {
-        
+
         cfg->ss_key_save = registery->options.ss_key_save;
         if (opt->ss_mode == SS_MOD_QSS) {
             cfg->ss_key_load = registery->options.ss_key_load;

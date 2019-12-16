@@ -25,7 +25,7 @@ module map_hub
 	map_idx == 158 ? map_out_118 :
 	map_idx == 182 ? map_out_182 :
 	map_idx == 189 ? map_out_189 :
-	map_idx == 191 ? map_out_119 : // not working
+	map_idx == 191 ? map_out_191 : // Is there any games for this mapper?
 	map_idx == 196 ? map_out_196 :
 	map_idx == 205 ? map_out_205 :
 	map_idx == 245 ? map_out_074 :
@@ -61,6 +61,9 @@ module map_hub
 	
 	wire [`BW_MAP_OUT-1:0]map_out_189;
 	map_189 m189(map_out_189, bus, sys_cfg, ss_ctrl);
+	
+	wire [`BW_MAP_OUT-1:0]map_out_191;
+	map_191 m191(map_out_191, bus, sys_cfg, ss_ctrl);
 	
 	wire [`BW_MAP_OUT-1:0]map_out_196;
 	map_196 m196(map_out_196, bus, sys_cfg, ss_ctrl);

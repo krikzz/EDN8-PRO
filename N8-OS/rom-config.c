@@ -2,7 +2,7 @@
 
 #include "game-db.h"
 
-
+u8 mapPack20(RomInfo *inf);
 u8 app_getRomInfo(RomInfo *inf, u8 *path);
 
 u8 getRomInfo(RomInfo *inf, u8 *path) {
@@ -102,10 +102,31 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
     if (inf->mapper == 111)inf->prg_save = 1;
 
     //should be in the end
-    inf->map_pack = maprout[inf->mapper];
     inf->supported = 1;
+
+    if (inf->mapper < 256) {
+        inf->map_pack = maprout[inf->mapper];
+    } else {
+        mapPack20(inf);
+    }
+
     if (inf->map_pack == 0xff && inf->mapper != 0xff)inf->supported = 0;
 
+    return 0;
+}
+
+u8 mapPack20(RomInfo *inf) {
+
+    u8 resp;
+    inf->map_pack = 0xff;
+
+    resp = bi_cmd_file_open(PATH_MAPROUT, FA_READ);
+    if (resp)return resp;
+    resp = bi_cmd_file_set_ptr(inf->mapper);
+    resp = bi_cmd_file_read(&inf->map_pack, 1);
+    if (resp)return resp;
+    resp = bi_cmd_file_close();
+    if (resp)return resp;
 
     return 0;
 }
@@ -214,6 +235,7 @@ void romConfigNES20(RomInfo *inf, u8 *ines) {
     u8 ram_size;
 
     inf->submap = ines[8] >> 4;
+    inf->mapper |= (ines[8] & 0x0F) << 8;
 
     inf->srm_size = 0;
 
@@ -223,8 +245,12 @@ void romConfigNES20(RomInfo *inf, u8 *ines) {
     if (ram_size != 0)inf->srm_size += 64L << ram_size;
     if (inf->srm_size != 0 && inf->srm_size < 1024)inf->srm_size = 1024;
 
-    if (inf->chr_ram) {
+    if ((ines[9] & 0xF0) == 0 && ines[5] == 0) {
+        inf->chr_ram = 1;
         inf->chr_size = 64L << (ines[11] & 0x0f);
+    } else {
+        inf->chr_ram = 0;
+        inf->chr_size = (u32)(((ines[9] & 0xF0) << 4) | ines[5]) * 8192;
     }
 
     romConfigGlobl(inf);

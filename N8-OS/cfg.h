@@ -11,7 +11,7 @@
 #include "bios.h"
 
 
-#define OS_VER          0x0200
+#define OS_VER          0x0201
 
 
 #define PATH_OS         "EDN8/nesos.nes"

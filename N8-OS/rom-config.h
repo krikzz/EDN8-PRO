@@ -22,10 +22,10 @@ typedef struct {
     u32 srm_size;
     u32 crc;
     u32 dat_base;
+    u16 mapper;
     u8 chr_ram;
     u8 mir_mode;
     u8 bat_ram;
-    u8 mapper;
     u8 submap;
     u8 supported;
     u8 map_pack;
@@ -33,7 +33,6 @@ typedef struct {
     u8 usb_game;
     u8 prg_save;
     u8 nes20;
-    u8 reserved;
 } RomInfo;
 
 
