@@ -142,6 +142,11 @@ u8 romInfoFDS(RomInfo *inf, RomID *id) {
     inf->prg_size = id->size;
     inf->prg_size -= id->dat_base;
 
+    //crop garbage bytes if any exists.
+    if (inf->prg_size % SIZE_FDS_DISK != 0 && inf->prg_size % SIZE_FDS_DISK < 1024) {
+        inf->prg_size -= inf->prg_size % SIZE_FDS_DISK;
+    }
+
     inf->srm_size = 32768L;
     inf->chr_size = 8192;
     inf->chr_ram = 1;
@@ -250,7 +255,7 @@ void romConfigNES20(RomInfo *inf, u8 *ines) {
         inf->chr_size = 64L << (ines[11] & 0x0f);
     } else {
         inf->chr_ram = 0;
-        inf->chr_size = (u32)(((ines[9] & 0xF0) << 4) | ines[5]) * 8192;
+        inf->chr_size = (u32) (((ines[9] & 0xF0) << 4) | ines[5]) * 8192;
     }
 
     romConfigGlobl(inf);

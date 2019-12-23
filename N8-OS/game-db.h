@@ -31,6 +31,8 @@ const GameDB game_db[] = {
     {0x2A01F9D1, SET_MIR, MIR_VER}, //Wagyan Land (J) [!].nes
     {0xE1526228, SET_MIR, MIR_VER}, //Quest of Ki, The (J)
     {0xAE321339, SET_MIR, MIR_VER}, //Pro Yakyuu - Family Stadium '88 (J) [!]
+    {0xDCDF06DE, SET_MIR, MIR_VER}, //Pro Yakyuu - Family Stadium (Japan)
+    {0x1300A8B7, SET_MIR, MIR_VER}, //Pro Yakyuu - Family Stadium '87 (Japan)
     {0xE40B4973, SET_MIR, MIR_VER}, //Metro-Cross (J) [!].nes
     {0x9D21FE96, SET_MIR, MIR_VER}, //Lupin Sansei - Pandora no Isan (J)
     {0x22D6D5BD, SET_MIR, MIR_VER}, //Jikuu Yuuden - Debias (J)
@@ -91,6 +93,7 @@ const GameDB game_db[] = {
     {0x983D8175, SET_MAP, 157}, //Datach - Battle Rush - Build Up Robot Tournament (J)
     {0x58CFE142, SET_MAP, 4}, //Summer Carnival '92 - Recca (U).nes
     {0x282745C5, SET_MAP, 141}, //Q Boy (Asia) (Unl)
+    {0x86DBA660, SET_MAP, 0}, //3-D Block (Asia) 
     
     {0, 0, 0}//db end
 };

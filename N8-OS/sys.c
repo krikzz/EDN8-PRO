@@ -42,7 +42,7 @@ void sysInit() {
     for (i = 0; str[i] != 0; i++) {
         PPU_DATA = str[i];
     }
-    
+
     vram_bug = 1;
     ppuSetAddr(0x2000);
     i = PPU_DATA;
@@ -126,12 +126,12 @@ u8 sysJoyRead() {
     while (bi_get_ticks() - delay < 10); //antiglitch
     //sysVsync();
 
-    JOY_PORT = 0x01;
-    JOY_PORT = 0x00;
+    JOY_PORT1 = 0x01;
+    JOY_PORT1 = 0x00;
 
     for (i = 0; i < 8; i++) {
         joy <<= 1;
-        joy |= JOY_PORT & 1;
+        if ((JOY_PORT1 | JOY_PORT2) & 3)joy |= 1;
     }
 
     if (!registery->options.swap_ab) {

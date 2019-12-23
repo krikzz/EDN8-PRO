@@ -8,7 +8,8 @@
 #ifndef SYS_H
 #define	SYS_H
 
-#define JOY_PORT        *((u8 *)0x4016)
+#define JOY_PORT1        *((u8 *)0x4016)
+#define JOY_PORT2        *((u8 *)0x4017)
 #define PPU_CTRL        *((u8 *)0x2000)
 #define PPU_MASK        *((u8 *)0x2001)
 #define PPU_STAT        *((u8 *)0x2002)
