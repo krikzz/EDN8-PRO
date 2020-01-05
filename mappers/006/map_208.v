@@ -2,7 +2,7 @@
 `include "../base/defs.v"
 
 
-module map_004
+module map_208
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -27,26 +27,32 @@ module map_004
 	ss_addr[7:0] == 9   ? mmc_ctrl[0] : 
 	ss_addr[7:0] == 10  ? mmc_ctrl[1] : 
 	ss_addr[7:3] == 2   ? irq_ss_dat : //addr 16-23 for irq
+	
+	ss_addr[7:0] == 32  ? prot_val[0] :
+	ss_addr[7:0] == 33  ? prot_val[1] :
+	ss_addr[7:0] == 34  ? prot_val[2] :
+	ss_addr[7:0] == 35  ? prot_val[3] :
+	ss_addr[7:0] == 36  ? prot_idx :
+	ss_addr[7:0] == 37  ? {mir_mod, prg_bank[1:0]} :
+	
 	ss_addr[7:0] == 127 ? map_idx : 8'hff;
 	//*************************************************************
-	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;
+	assign ram_ce = 0;//{cpu_addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;
 	assign ram_we = !cpu_rw & ram_ce & !ram_we_off;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
 	assign chr_we = cfg_chr_ram & !ppu_we;
+	
+	assign map_cpu_oe = {cpu_addr[15:11], 11'd0} == 16'h5800;
+	assign map_cpu_dout[7:0] = prot_val[cpu_addr[1:0]][7:0];
 	
 	//A10-Vmir, A11-Hmir
 	assign ciram_a10 = !mir_mod ? ppu_addr[10] : ppu_addr[11];
 	assign ciram_ce = !ppu_addr[13];
 	
 	
-	assign prg_addr[12:0] = cpu_addr[12:0];
-	assign prg_addr[18:13] =
-	cpu_addr[14:13] == 0 ? (prg_mod == 0 ? bank_dat[6][5:0] : 6'b111110) :
-	cpu_addr[14:13] == 1 ? bank_dat[7][5:0] : 
-	cpu_addr[14:13] == 2 ? (prg_mod == 1 ? bank_dat[6][5:0] : 6'b111110) : 
-	6'b111111;
-	
+	assign prg_addr[14:0] = cpu_addr[14:0];
+	assign prg_addr[16:15] = prg_bank[1:0];
 	
 	assign chr_addr[9:0] = ppu_addr[9:0];
 	assign chr_addr[17:10] = cfg_chr_ram ? chr[4:0] : chr[7:0];//ines 2.0 reuired to support 32k ram
@@ -63,13 +69,18 @@ module map_004
 	
 	wire prg_mod = bank_sel[6];
 	wire chr_mod = bank_sel[7];
-	wire mir_mod = mmc_ctrl[0][0];
+	//wire mir_mod = mmc_ctrl[0][0];
 	wire ram_we_off = mmc_ctrl[1][6];
 	wire ram_ce_on = mmc_ctrl[1][7];
 	
 	reg [7:0]bank_sel;
 	reg [7:0]bank_dat[8];
 	reg [7:0]mmc_ctrl[2];
+	
+	reg [1:0]prg_bank;
+	reg mir_mod;
+	reg [7:0]prot_idx;
+	reg [7:0]prot_val[4];
 	
 	always @(negedge m2)
 	if(ss_act)
@@ -78,6 +89,13 @@ module map_004
 		if(ss_we & ss_addr[7:0] == 8)bank_sel <= cpu_dat;
 		if(ss_we & ss_addr[7:0] == 9)mmc_ctrl[0] <= cpu_dat;
 		if(ss_we & ss_addr[7:0] == 10)mmc_ctrl[1] <= cpu_dat;
+		
+		if(ss_we & ss_addr[7:0] == 32)prot_val[0] <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 33)prot_val[1] <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 34)prot_val[2] <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 35)prot_val[3] <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 36)prot_idx <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 37){mir_mod, prg_bank[1:0]} <= cpu_dat;
 	end
 		else
 	if(map_rst)
@@ -95,16 +113,34 @@ module map_004
 		bank_dat[5][7:0] <= 7;
 		bank_dat[6][7:0] <= 0;
 		bank_dat[7][7:0] <= 1;
+		
+		prg_bank[1:0] <= 2'b11;
+		mir_mod <= 0;
 	end
 		else
 	if(!cpu_rw)
-	case(reg_addr[15:0])
-		16'h8000:bank_sel[7:0] <= cpu_dat[7:0];
-		16'h8001:bank_dat[bank_sel[2:0]][7:0] <= cpu_dat[7:0];
-		16'hA000:mmc_ctrl[0][7:0] <= cpu_dat[7:0];
-		16'hA001:mmc_ctrl[1][7:0] <= cpu_dat[7:0];
-	endcase
-
+	begin
+	
+		if((cpu_addr[15:0] & 16'hD800) == 16'h4800)
+		begin
+			prg_bank[1:0] <= {cpu_dat[4], cpu_dat[0]};
+			mir_mod <= cpu_dat[5];
+		end
+	
+		if({cpu_addr[15:11], 11'd0} == 16'h5000)prot_idx[7:0] <= cpu_dat[7:0];
+		if({cpu_addr[15:11], 11'd0} == 16'h5800)prot_val[cpu_addr[1:0]][7:0] <= cpu_dat[7:0] ^ rom_dout[7:0];
+	
+		case(reg_addr[15:0])
+			16'h8000:bank_sel[7:0] <= cpu_dat[7:0];
+			16'h8001:bank_dat[bank_sel[2:0]][7:0] <= cpu_dat[7:0];
+			16'hA000:mmc_ctrl[0][7:0] <= cpu_dat[7:0];
+			16'hA001:mmc_ctrl[1][7:0] <= cpu_dat[7:0];
+		endcase
+	end
+	
+	wire [7:0]rom_dout;
+	rom rom_inst(prot_idx, rom_dout, m2);
+	
 //***************************************************************************** IRQ	
 	
 	wire [7:0]irq_ss_dat;
@@ -116,120 +152,30 @@ module map_004
 		.ss_dout(irq_ss_dat)
 	);
 
-	
+
 endmodule
 
 
 
-module irq_mmc3
-(bus, ss_ctrl, mmc3a, irq, ss_dout);
-	
-	`include "../base/bus_in.v"
-	`include "../base/ss_ctrl_in.v"
-	input mmc3a;
-	output irq;
-	output [7:0]ss_dout;
-	
-	assign ss_dout[7:0] = 
-	ss_addr[7:0] == 16 ? irq_latch : 
-	ss_addr[7:0] == 17 ? irq_on : //irq_on should be saved befor irq_pend
-	ss_addr[7:0] == 18 ? irq_ctr : 
-	ss_addr[7:0] == 19 ? irq_pend : 
-	8'hff;
-	
-	assign irq = irq_pend;
-	
-	wire ss_we_ctr = ss_act & ss_we & ss_addr[7:0] == 18 & m3;
-	wire ss_we_pnd = ss_act & ss_we & ss_addr[7:0] == 19 & m3;
-	
-	wire [15:0]reg_addr = {cpu_addr[15:13], 12'd0,  cpu_addr[0]};
-	
-	reg [7:0]irq_latch;
-	reg [7:0]irq_ctr;
-	reg irq_on, irq_pend, irq_reload_req;
+module rom 
+(addr, dout, clk);
 
+	input [7:0]addr;
+	output reg[7:0]dout;
+	input clk;
+   
+	reg [7:0]rom[256];
 	
-	always @(negedge m2)
-	if(ss_act)
+	initial
 	begin
-		if(ss_we & ss_addr[7:0] == 16)irq_latch <= cpu_dat;
-		if(ss_we & ss_addr[7:0] == 17)irq_on <= cpu_dat[0];
-	end
-		else
-	if(map_rst)irq_on <= 0;
-		else
-	if(!cpu_rw)
-	case(reg_addr[15:0])
-		16'hC000:irq_latch[7:0] <= cpu_dat[7:0];
-		//16'hC001:ctr_reload <= 1;
-		16'hE000:irq_on <= 0;
-		16'hE001:irq_on <= 1;
-	endcase
-
-	wire ctr_reload = reg_addr[15:0] == 16'hC001 & !cpu_rw & m2;
-	wire [7:0]ctr_next = irq_ctr == 0 ? irq_latch : irq_ctr - 1;
-	wire irq_trigger = mmc3a ? ctr_next == 0 & (irq_ctr != 0 | irq_reload_req) : ctr_next == 0;
-	
-	wire a12d;
-	deglitcher dg_inst(ppu_addr[12], a12d, clk);
-	
-	/*
-	always @(posedge ppu_addr[12], negedge irq_on, posedge ss_we_pnd)
-	if(ss_we_pnd)irq_pend <= cpu_dat;
-		else*/
-	always @(posedge a12d, negedge irq_on)
-	if(!irq_on)
-	begin
-		if(!ss_act)irq_pend <= 0;
-	end
-		else
-	if(a12_stb & !ss_act)
-	begin
-		if(irq_trigger)irq_pend <= 1;
+		$readmemh("rom_208.txt", rom);
 	end
 	
-	 
-
-	always @(posedge a12d, posedge ctr_reload, posedge ss_we_ctr)
-	if(ss_we_ctr)irq_ctr <= cpu_dat;
-		else
-	if(ctr_reload)
-	begin
-		irq_reload_req <= 1;
-		irq_ctr[7:0] <= 0;
-	end
-		else
-	if(a12_stb & !ss_act)
-	begin
-		irq_reload_req <= 0;
-		irq_ctr <= ctr_next;
-	end
-	
-	
-	reg [3:0]irq_a12_st;
-	wire a12_stb = irq_a12_st[3:1] == 0;
-	always @(negedge m2)
-	begin
-		irq_a12_st[3:0] <= {irq_a12_st[2:0], a12d};
-	end
-
-	
-endmodule
-
-
-module deglitcher
-(in, out, clk);
-	input in, clk;
-	output reg out;
-
-	reg [1:0]st;
-
 	always @(negedge clk)
 	begin
-		st[1:0] <= {st[0], in};
-		if(st[1:0] == 2'b11)out <= 1;
-		if(st[1:0] == 2'b00)out <= 0;
+		dout[7:0] <= rom[addr];
 	end
-	
+
 endmodule
+
 

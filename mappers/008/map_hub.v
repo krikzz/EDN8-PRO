@@ -15,11 +15,15 @@ module map_hub
 	
 	assign map_out = 
 	map_idx == 389 ? map_out_389 :
+	map_idx == 261 ? map_out_261 :
 	map_out_nom;
 	
 	
 	wire [`BW_MAP_OUT-1:0]map_out_nom;
 	map_nom mnom(map_out_nom, bus, sys_cfg, ss_ctrl);
+	
+	wire [`BW_MAP_OUT-1:0]map_out_261;
+	map_261 m261(map_out_261, bus, sys_cfg, ss_ctrl);
 	
 	wire [`BW_MAP_OUT-1:0]map_out_389;
 	map_389 m389(map_out_389, bus, sys_cfg, ss_ctrl);

@@ -226,6 +226,7 @@ set_location_assignment PIN_R4 -to boot_on
 set_location_assignment PIN_R1 -to rx
 set_location_assignment PIN_P2 -to tx
 set_global_assignment -name VERILOG_FILE map_hub.v
+set_global_assignment -name VERILOG_FILE map_261.v
 set_global_assignment -name VERILOG_FILE map_389.v
 set_global_assignment -name VERILOG_FILE ../base/top.v
 set_global_assignment -name VERILOG_FILE ../base/map_255.v

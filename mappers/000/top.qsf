@@ -229,7 +229,10 @@ set_global_assignment -name VERILOG_FILE map_002.v
 set_global_assignment -name VERILOG_FILE map_003.v
 set_global_assignment -name VERILOG_FILE map_007.v
 set_global_assignment -name VERILOG_FILE map_016.v
+set_global_assignment -name VERILOG_FILE map_018.v
 set_global_assignment -name VERILOG_FILE map_032.v
+set_global_assignment -name VERILOG_FILE map_033.v
+set_global_assignment -name VERILOG_FILE map_066.v
 set_global_assignment -name VERILOG_FILE map_071.v
 set_global_assignment -name VERILOG_FILE map_087.v
 set_global_assignment -name VERILOG_FILE ../base/top.v

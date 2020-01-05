@@ -41,7 +41,7 @@
 	wire [22:0]chr_addr_std = chr_addr[22:0];
 	
 	wire [22:0]prg_addr_msk = rom_ce ? {prg_addr[22:21], (prg_addr[20:13] & prg_msk[7:0]), prg_addr[12:0]} : srm_addr_msk[17:0];
-	wire [22:0]chr_addr_msk = {chr_addr[22:21], (chr_addr[20:13] & chr_msk[7:0]), chr_addr[12:0]};
+	wire [22:0]chr_addr_msk = {chr_addr[22:21], (chr_addr[20:13] & chr_msk[7:0]), chr_addr[12:0]};//some mappers may use chr_addr[22] for chr ram if it has ram+rom.
 	
 	
-	
+	wire [1:0]fds_msk = prg_msk[4:3];

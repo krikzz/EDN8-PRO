@@ -85,7 +85,7 @@ module irq_mmc3
 	
 	
 	reg [3:0]irq_a12_st;
-	wire a12_stb = irq_a12_st[2:1] == 0;
+	wire a12_stb = irq_a12_st[3:1] == 0;
 	always @(negedge m2)
 	begin
 		irq_a12_st[3:0] <= {irq_a12_st[2:0], a12d};

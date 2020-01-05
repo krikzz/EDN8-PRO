@@ -269,6 +269,9 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
     if (inf->mir_mode == MIR_4SC)cfg->map_cfg |= MCFG_MIR_4;
     if (inf->mir_mode == MIR_1SC)cfg->map_cfg |= MCFG_MIR_1;
 
+    //forcing simple incremental swap method instead smart swap. Smart method may not work for some games
+    if (inf->rom_type == ROM_TYPE_FDS)cfg->map_cfg |= MCFG_FDS_INC;
+
     if (inf->prg_size > SIZE_FDS_DISK * 2 && inf->rom_type == ROM_TYPE_FDS) {
         //during disk swap use increment disk mode instead of auto detecion for multi disk games.
         //seems like muulti disk gams does not actualy have correct disk number in file request header
