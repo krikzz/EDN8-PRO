@@ -270,7 +270,7 @@ module map_005 //MMC5
 	
 	wire xram_ce_cpu = {cpu_addr[15:10], 10'd0} == 16'h5C00;
 	wire xram_oe_cpu = xram_ce_cpu & cpu_rw & exram_mode[1] == 1;
-	wire xram_we_cpu = ss_act ? xram_we_sst : xram_ce_cpu & exram_mode[1:0] != 2'b11;
+	wire xram_we_cpu = ss_act ? xram_we_sst : xram_ce_cpu & !cpu_rw & exram_mode[1:0] != 2'b11;
 	
 
 	xram xram_inst(
