@@ -50,3 +50,13 @@
 	
 	
 	
+	wire srm_size1k   = srm_msk == 8'b00000000;
+	wire srm_size2k   = srm_msk == 8'b00000001;
+	wire srm_size4k   = srm_msk == 8'b00000011;
+	wire srm_size8k   = srm_msk == 8'b00000111;
+	wire srm_size16k  = srm_msk == 8'b00001111;
+	wire srm_size32k  = srm_msk == 8'b00011111;
+	wire srm_size64k  = srm_msk == 8'b00111111;
+	wire srm_size128k = srm_msk == 8'b01111111;
+	wire srm_size256k = srm_msk == 8'b11111111;
+	

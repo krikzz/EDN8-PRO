@@ -200,6 +200,7 @@ u32 srmCalcFdsCrc(u32 addr, u32 len) {
 
 u8 srmRestoreFDS() {
 
+    u8 skip_header = 0;
     u8 resp;
     u8 *path;
     u32 len;
@@ -207,6 +208,7 @@ u8 srmRestoreFDS() {
     u32 mem_addr;
     FdsSignature s;
 
+    if (registery->cur_game.rom_inf.rom_type != ROM_TYPE_FDS)return 0;
 
     path = malloc(MAX_PATH_SIZE);
     str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
@@ -216,13 +218,15 @@ u8 srmRestoreFDS() {
 
     if (resp == FAT_NO_FILE) {//load source disk image if no saved image. 
         resp = bi_cmd_file_open(registery->cur_game.path, FA_READ);
+        skip_header = 1; //skip header if exists
     }
 
     free(MAX_PATH_SIZE);
     if (resp)return resp;
 
-
-    resp = bi_cmd_file_set_ptr(registery->cur_game.rom_inf.dat_base);
+    if (skip_header) {
+        resp = bi_cmd_file_set_ptr(registery->cur_game.rom_inf.dat_base);
+    }
 
     mem_addr = ADDR_FDS;
     len = s.size;
@@ -316,7 +320,7 @@ u8 srmBackupPRG() {
 
     resp = bi_cmd_file_close();
     if (resp)return resp;
-    
+
     return 0;
 
 }

@@ -2,7 +2,7 @@
 `include "../base/defs.v"
 
 
-module map_189
+module map_194
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -27,32 +27,30 @@ module map_189
 	ss_addr[7:0] == 9   ? mmc_ctrl[0] : 
 	ss_addr[7:0] == 10  ? mmc_ctrl[1] : 
 	ss_addr[7:3] == 2   ? irq_ss_dat : //addr 16-23 for irq
-	ss_addr[7:0] == 32  ? prg : 
 	ss_addr[7:0] == 127 ? map_idx : 8'hff;
 	//*************************************************************
-	assign ram_ce = 0;//{cpu_addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;
-	assign ram_we = 0;//!cpu_rw & ram_ce & !ram_we_off;
+	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;
+	assign ram_we = !cpu_rw & ram_ce & !ram_we_off;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
-	assign chr_we = cfg_chr_ram & !ppu_we;
+	assign chr_we = (cfg_chr_ram | chr_xram) & !ppu_we;
+	assign chr_xram = chr_ce & chr[7:1] == 0 & !cfg_chr_ram;//2K chr ram
 	
 	//A10-Vmir, A11-Hmir
 	assign ciram_a10 = !mir_mod ? ppu_addr[10] : ppu_addr[11];
 	assign ciram_ce = !ppu_addr[13];
 	
-		
-	/*
-	assign prg_addr[12:0] = cpu_addr[12:0];
 	
+	assign prg_addr[12:0] = cpu_addr[12:0];
 	assign prg_addr[18:13] =
 	cpu_addr[14:13] == 0 ? (prg_mod == 0 ? bank_dat[6][5:0] : 6'b111110) :
 	cpu_addr[14:13] == 1 ? bank_dat[7][5:0] : 
 	cpu_addr[14:13] == 2 ? (prg_mod == 1 ? bank_dat[6][5:0] : 6'b111110) : 
 	6'b111111;
-	*/
+	
 	
 	assign chr_addr[9:0] = ppu_addr[9:0];
-	assign chr_addr[17:10] = cfg_chr_ram ? chr[4:0] : chr[7:0];//ines 2.0 reuired to support 32k ram
+	assign chr_addr[17:10] = cfg_chr_ram ? chr[4:0] : chr[7:0];
 	
 	wire [7:0]chr = 
 	ppu_addr[12:11] == {chr_mod, 1'b0} ? {bank_dat[0][7:1], ppu_addr[10]} :
@@ -61,6 +59,8 @@ module map_189
 	ppu_addr[11:10] == 1 ? bank_dat[3][7:0] : 
 	ppu_addr[11:10] == 2 ? bank_dat[4][7:0] : 
    bank_dat[5][7:0];
+	
+	
 	
 	wire [15:0]reg_addr = {cpu_addr[15:13], 12'd0,  cpu_addr[0]};
 	
@@ -119,31 +119,5 @@ module map_189
 		.ss_dout(irq_ss_dat)
 	);
 
-//***************************************************************************** 189
-	
-	assign prg_addr[14:0] = cpu_addr[14:0];
-	assign prg_addr[18:15] = prg[3:0];
-	
-	reg [3:0]prg;
-	
-	always @(negedge m2)	
-	if(ss_act)
-	begin
-		if(ss_we & ss_addr[7:0] == 32)prg <= cpu_dat;
-	end
-		else
-	if(map_rst)
-	begin
-		prg <= 4'hf;
-	end
-		else
-	if(!cpu_rw)
-	begin
-		if(cpu_addr[15:0] >= 16'h4120 & cpu_addr[15:0] < 16'h8000)prg[3:0] <= cpu_dat[7:4] | cpu_dat[3:0];
-	end
-	
 	
 endmodule
-
-
-

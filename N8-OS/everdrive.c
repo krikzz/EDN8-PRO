@@ -9,6 +9,7 @@ u8 edRegisteryReset();
 u8 edLoadSysyInfo();
 void bootloader(u8 *boot_flag);
 u8 edVramBugHandler();
+u8 edLoadFdsBios();
 
 Registery *registery;
 SysInfo *sys_inf;
@@ -83,6 +84,12 @@ u8 edInit(u8 sst_mode) {
 
     if (sys_inf->mcu.ram_rst) {
         bi_cmd_mem_set(RAM_NULL, ADDR_SRM, SIZE_SRM);
+        if (registery->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
+            resp = srmRestoreFDS();
+        } else {
+            resp = srmRestore();
+        }
+        if (resp)return resp;
         rtcReset();
         printError(ERR_BAT_RDY);
     }
@@ -270,12 +277,11 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
     if (inf->mir_mode == MIR_1SC)cfg->map_cfg |= MCFG_MIR_1;
 
     //forcing simple incremental swap method instead smart swap. Smart method may not work for some games
-    if (inf->rom_type == ROM_TYPE_FDS)cfg->map_cfg |= MCFG_FDS_INC;
 
     if (inf->prg_size > SIZE_FDS_DISK * 2 && inf->rom_type == ROM_TYPE_FDS) {
         //during disk swap use increment disk mode instead of auto detecion for multi disk games.
         //seems like muulti disk gams does not actualy have correct disk number in file request header
-        cfg->map_cfg |= MCFG_FDS_INC | MCFG_FDS_ASW;
+        cfg->map_cfg |= MCFG_FDS_ASW;
     }
 
 }
@@ -314,7 +320,7 @@ u8 edApplyOptions(MapConfig *cfg) {
 
 u8 edStartGame(u8 usb_mode) {
 
-    //u8 *ptr;
+    u8 ext_bios = 0;
     u8 resp;
     u16 i;
     MapConfig cfg;
@@ -326,6 +332,11 @@ u8 edStartGame(u8 usb_mode) {
 
 
     ppuOFF();
+
+    if (cur_game->rom_type == ROM_TYPE_FDS) {//load fds bios if exists
+        resp = edLoadFdsBios();
+        if (resp == 0)ext_bios = 1;
+    }
 
     if (usb_mode) {
         //do nothing
@@ -363,6 +374,7 @@ u8 edStartGame(u8 usb_mode) {
     resp = edApplyOptions(&cfg);
     if (resp)return resp;
 
+    if (ext_bios)cfg.map_cfg |= MCFG_FDS_EBI;
 
     PPU_CTRL = 0x00;
     //PPU_ADDR = 0x3f;
@@ -441,6 +453,47 @@ u8 edVramBugHandler() {
         resp = edRegisterySave();
         if (resp)return resp;
     }
+
+    return 0;
+}
+
+u8 edLoadFdsBios() {
+
+    u8 resp;
+    u16 i;
+    u16 addr;
+    u8 len;
+    static const u8 fix[] = {
+        0x05, 0x01, 0xCE,
+        0x8D, 0x24, 0x40, 0xAE, 0x31,
+        0x06, 0x05, 0x7A,
+        0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA,
+        0x0A, 0x06, 0xCA,
+        0xA5, 0x07, 0x20, 0x94, 0xE7, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA,
+        0x03, 0x07, 0x06,
+        0xEA, 0xEA, 0xEA,
+        0x1A, 0x07, 0x1B,
+        0xEA, 0xEA, 0xEA, 0xA2, 0x27, 0xAD, 0x30, 0x40,
+        0x29, 0x10, 0xD0, 0x5A, 0xF0, 0x23, 0xEA, 0xEA,
+        0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA, 0xEA,
+        0x00
+    };
+
+    resp = bi_cmd_file_open(PATH_FDS_BIOS, FA_READ);
+    if (resp)return resp;
+
+    resp = bi_cmd_file_read_mem(ADDR_FDS_BIOS, 8192);
+    if (resp)return resp;
+
+    resp = bi_cmd_file_close();
+    if (resp)return resp;
+
+    for (i = 0; fix[i] != 0; i += len + 3) {
+        len = fix[i];
+        addr = (fix[i + 1] << 8) | fix[i + 2];
+        bi_cmd_mem_wr(ADDR_FDS_BIOS + addr, &fix[i + 3], len);
+    }
+
 
     return 0;
 }

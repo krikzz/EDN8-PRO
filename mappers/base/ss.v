@@ -54,8 +54,26 @@ module sst_controller
 	wire sniff_off;
 	
 	
-	sniffer snif_inst(bus, ss_addr[8:0], sniff_off, snif_do, ss_src);
-	ss_sw ss_sw_inst(bus, sys_cfg, sst_data_ce, ss_act, ss_we, ss_src, sniff_off);
+	sniffer snif_inst(
+	
+		.bus(bus),
+		.rd_addr(ss_addr[8:0]),
+		.sniff_off(sniff_off),
+		.dout(snif_do),
+		.ss_src(ss_src)
+	);
+	
+	ss_sw ss_sw_inst(
+	
+		.bus(bus),
+		.sys_cfg(sys_cfg),
+		.sst_ce(sst_data_ce),
+		.ss_act(ss_act),
+		.ss_we(ss_we),
+		.ss_src(ss_src),
+		.sniff_off(sniff_off)
+		
+	);
 
 
 endmodule
@@ -85,7 +103,7 @@ module ss_sw
 	wire nmi = cpu_rw & cpu_addr[15:0] == 16'hfffa;
 	wire joy_hit = joy_hit_save | joy_hit_load;
 	wire joy_hit_save = joy1 == ss_key_save & ss_key_save != 8'hff;
-	wire joy_hit_load = joy1 == ss_key_load & ss_key_save != 8'hff;
+	wire joy_hit_load = joy1 == ss_key_load & ss_key_load != 8'hff;
 	wire btn_hit = !fds_sw & ctrl_ss_btn;
 	
 	

@@ -16,7 +16,7 @@ module map_005 //MMC5
 	
 	assign sync_m2 = 1;
 	assign mir_4sc = 0;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
-	assign srm_addr[16:0] = prg_addr[16:0];
+	assign srm_addr[16:0] = srm_size16k ? {prg_addr[15], prg_addr[12:0]} : prg_addr[16:0];//specific mapping for 16K sram
 	assign prg_oe = cpu_rw;
 	assign chr_oe = !ppu_oe;
 	//*************************************************************  save state setup
@@ -320,7 +320,7 @@ module map_005 //MMC5
 		else
 	begin
 		if(line_ctr == 128)y_pos <=  y_pos + 1;
-		x_pos <= spr_fetch ? 0 : line_start ? x_pos - 1 : x_pos + 1;//look at mapper 163 for more accurate scanline timer
+		x_pos <= spr_fetch ? 0 : line_start ? x_pos - 1 : x_pos + 1;
 	end
 
 //********************************************************************************* irq handler
@@ -339,7 +339,7 @@ module map_005 //MMC5
 		else
 	if(irq_ack)irq_pend <= 0;
 		else
-	if(line_start)
+	if(addr_eq & addr_eq_st)//line_start
 	begin
 		irq_ctr <= irq_ctr + 1;
 		if(irq_ctr == irq_val)irq_pend <= 1;
@@ -347,8 +347,7 @@ module map_005 //MMC5
 
 	
 //********************************************************************************* scanline handler	
-	//wire spr_fetch = line_ctr > 128-3 & line_ctr < 171 - 11;
-	wire spr_fetch = line_ctr > 127 & line_ctr < 159;//wtf? line_start reset couter at first sprite fetch
+	wire spr_fetch = line_ctr > 127 & line_ctr < 159;
 	wire in_frame = in_frame_ctr != 0 & bgr_on;
 	wire addr_eq = ppu_addr_st == ppu_addr & ppu_addr_st[13];
 	
@@ -360,22 +359,20 @@ module map_005 //MMC5
 	
 	
 	
-	
 	always @(negedge m2, negedge ppu_oe)
-	if(!ppu_oe)in_frame_ctr <= 4;//changed
+	if(!ppu_oe)in_frame_ctr <= 4;
 		else
 	if(in_frame_ctr != 0)in_frame_ctr <= in_frame_ctr - 1;
 
 	
-	
-	always @(negedge ppu_oe)//changed
+	always @(negedge ppu_oe)
 	begin
 	
 		ppu_addr_st[13:0] <= ppu_addr[13:0];
 		addr_eq_st <= addr_eq;
 		
 		line_start <= addr_eq & addr_eq_st;
-		line_ctr = line_start ? 0 : line_ctr + 1;//look at mapper 163 for more accurate scanline timer
+		line_ctr = line_start ? 0 : line_ctr + 1;
 
 	end
 

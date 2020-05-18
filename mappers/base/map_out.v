@@ -30,18 +30,20 @@
 	wire chr_we_o = sync_m2 ? (chr_we & !sys_rst) : chr_we;
 	
 	wire prg_mask_off, chr_mask_off, srm_mask_off;
+	wire chr_xram;//used for boards which have both chr ram and rom. 
 	
 	wire [17:0]srm_addr;
 	wire [17:0]srm_addr_msk = srm_mask_off ? srm_addr[17:0] : {(srm_addr[17:10] & srm_msk[7:0]), srm_addr[9:0]};
 	
-	wire [22:0]prg_addr_out = prg_mask_off ? prg_addr_std[22:0] : prg_addr_msk[22:0];
-	wire [22:0]chr_addr_out = chr_mask_off ? chr_addr_std[22:0] : chr_addr_msk[22:0];
+	wire [22:0]prg_addr_out =  prg_mask_off ? prg_addr_std[22:0] : prg_addr_msk[22:0];
+	wire [22:0]chr_addr_out = (chr_mask_off ? chr_addr_std[22:0] : chr_addr_msk[22:0]) | {(chr_xram | cfg_chr_ram), 22'd0};//save state engine expects chr ram to be mapped at upper 4M
+	
 	
 	wire [22:0]prg_addr_std = rom_ce ? prg_addr[22:0] : srm_addr_msk[17:0];
 	wire [22:0]chr_addr_std = chr_addr[22:0];
 	
-	wire [22:0]prg_addr_msk = rom_ce ? {prg_addr[22:21], (prg_addr[20:13] & prg_msk[7:0]), prg_addr[12:0]} : srm_addr_msk[17:0];
-	wire [22:0]chr_addr_msk = {chr_addr[22:21], (chr_addr[20:13] & chr_msk[7:0]), chr_addr[12:0]};//some mappers may use chr_addr[22] for chr ram if it has ram+rom.
+	wire [22:0]prg_addr_msk = rom_ce ? {(prg_addr[22:13] & prg_msk[9:0]), prg_addr[12:0]} : srm_addr_msk[17:0];
+	wire [22:0]chr_addr_msk = {(chr_addr[22:13] & chr_msk[9:0]), chr_addr[12:0]};
 	
 	
 	wire [1:0]fds_msk = prg_msk[4:3];

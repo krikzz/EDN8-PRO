@@ -28,25 +28,33 @@ module map_028
 	//*************************************************************
 
 	assign ram_we = !cpu_rw & ram_ce;
-	assign ram_ce = cpu_addr[14:13] == 2'b11 & cpu_ce & m2;
-	assign rom_ce = !cpu_ce;
+	assign ram_ce = cpu_addr[14:13] == 2'b11 & !cpu_addr[15];
+	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
 	assign chr_we = !ppu_we & ciram_ce;
 	
 	//A10-Vmir, A11-Hmir
 	assign ciram_a10 = !mirror_mode[1] ? mirror_mode[0] : !mirror_mode[0] ? ppu_addr[10] : ppu_addr[11];
 	assign ciram_ce = !ppu_addr[13];
-	
-	assign prg_addr[12:0] = cpu_addr[12:0];
-	assign prg_addr[13] = cpu_ce ? 0 : cpu_addr[13];
-	assign prg_addr[18:14] = cpu_ce ? 0 : prg[4:0];
-	
+		
 	assign chr_addr[12:0] = ppu_addr[12:0];
 	assign chr_addr[14:13] = chr_ram_bank[1:0];
 	
+	assign prg_addr[13:0] = cpu_addr[13:0];
+	assign prg_addr[22:14] = 
+	prg_mode[1] == 0 & prg_size == 0 ? {out_prg[7:0], cpu_addr[14]} : 
+	prg_mode[1] == 0 & prg_size == 1 ? {out_prg[7:1], ine_prg[0], cpu_addr[14]} : 
+	prg_mode[1] == 0 & prg_size == 2 ? {out_prg[7:2], ine_prg[1:0], cpu_addr[14]} : 
+	prg_mode[1] == 0 & prg_size == 3 ? {out_prg[7:3], ine_prg[2:0], cpu_addr[14]} : 
+	prg_mode[0] == cpu_addr[14] ? {out_prg[7:0], cpu_addr[14]} : 
+	prg_size == 0 ? {out_prg[7:0], ine_prg[0]} : 
+	prg_size == 1 ? {out_prg[7:1], ine_prg[1:0]} : 
+	prg_size == 2 ? {out_prg[7:2], ine_prg[2:0]} : 
+	prg_size == 3 ? {out_prg[7:3], ine_prg[3:0]} : 0;
+	
 
 	reg [3:0]ine_prg;
-	reg [5:0]out_prg;
+	reg [7:0]out_prg;
 	
 	reg [1:0]reg_addr;
 	reg [1:0]prg_size;
@@ -54,21 +62,6 @@ module map_028
 	reg [1:0]prg_mode;
 	
 	reg [1:0]chr_ram_bank;
-	
-
-	wire [2:0]size_mask = 
-	prg_size[1:0] == 0 ? 3'b000 : 
-	prg_size[1:0] == 1 ? 3'b001 : 
-	prg_size[1:0] == 2 ? 3'b011 : 3'b111;
-	
-	wire fixed_bank = !prg_mode[1] ? 0 : !prg_mode[0] ? !cpu_addr[14] : cpu_addr[14];
-	wire [4:0]prg;
-	assign prg[0] = !prg_mode[1] ? cpu_addr[14] : fixed_bank ? cpu_addr[14] : ine_prg[0];
-	assign prg[1] = size_mask[0] & !fixed_bank  ? ine_prg[1] : out_prg[0];
-	assign prg[2] = size_mask[1] & !fixed_bank  ? ine_prg[2] : out_prg[1];
-	assign prg[3] = size_mask[2] & !fixed_bank  ? ine_prg[3] : out_prg[2];
-	assign prg[4] = out_prg[3];
-	
 	 
 	
 	always @(negedge m2)
@@ -83,13 +76,13 @@ module map_028
 	if(map_rst)
 	begin
 		ine_prg[3:0] <= 0;
-		out_prg[5:0] <= 5'b11111;
+		out_prg[7:0] <= 8'hff;
 		mirror_mode[1:0] <= 2'b01;
 	end
 		else
 	begin
 	
-		if(!cpu_rw & cpu_ce & cpu_addr[14:12] == 3'b101)reg_addr[1:0] <= {cpu_dat[7], cpu_dat[0]};
+		if(!cpu_rw & !cpu_addr[15] & cpu_addr[14:12] == 3'b101)reg_addr[1:0] <= {cpu_dat[7], cpu_dat[0]};
 			else
 		if(!cpu_rw & !cpu_ce)
 		case(reg_addr)
@@ -107,7 +100,7 @@ module map_028
 				prg_size[1:0] <= cpu_dat[5:4];
 			end
 			3:begin
-				out_prg[5:0] <= cpu_dat[5:0];
+				out_prg[7:0] <= cpu_dat[7:0];
 			end
 		endcase
 		

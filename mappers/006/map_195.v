@@ -14,7 +14,6 @@ module map_195
 	input [`BW_SYS_CFG-1:0]sys_cfg;
 	
 	
-	assign chr_mask_off = chr_ram_ce;
 	assign sync_m2 = 1;
 	assign mir_4sc = 1;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
 	assign srm_addr[12:0] = cpu_addr[12:0];
@@ -35,7 +34,8 @@ module map_195
 	assign ram_we = !cpu_rw & ram_ce & !ram_we_off;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
-	assign chr_we = !ppu_we & (chr_ram_ce | cfg_chr_ram);
+	assign chr_we = !ppu_we & (chr_xram | cfg_chr_ram);
+	assign chr_xram = chr_ce & chr_ram_bnk & !cfg_chr_ram;
 	
 	//A10-Vmir, A11-Hmir
 	assign ciram_a10 = !mir_mod ? ppu_addr[10] : ppu_addr[11];
@@ -51,8 +51,7 @@ module map_195
 	
 	
 	assign chr_addr[9:0] = ppu_addr[9:0];
-	assign chr_addr[17:10] = chr_ram_ce ? chr[2:0] : chr[7:0];
-	assign chr_addr[22] = chr_ram_ce;
+	assign chr_addr[17:10] = chr_xram ? chr[2:0] : chr[7:0];
 	
 	wire [7:0]chr = 
 	ppu_addr[12:11] == {chr_mod, 1'b0} ? {bank_dat[0][7:1], ppu_addr[10]} :
@@ -74,7 +73,6 @@ module map_195
 	reg [7:0]bank_dat[8];
 	reg [7:0]mmc_ctrl[2];
 	
-	wire chr_ram_ce = chr_ram_bnk & chr_ce & !cfg_chr_ram;// & chr_cfg[4]
 	
 	wire chr_ram_bnk = 
 	chr_cfg == 8'h80 ? {chr[7:2], 2'd0} == 8'h28 : 

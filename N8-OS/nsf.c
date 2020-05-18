@@ -45,12 +45,13 @@ typedef struct {
 u8 app_nsfPlay(u8 *path) {
 
     u8 resp;
-    Nsf *hdr;
+    Nsf hdr;
     RomInfo inf;
     FileInfo finf = {0};
     MapConfig cfg;
     u32 addr, size;
     u8 i, banks_on;
+    
 
     gCleanScreen();
     gRepaint();
@@ -69,7 +70,7 @@ u8 app_nsfPlay(u8 *path) {
     resp = bi_cmd_file_read_mem(ADDR_PRG + 0x100000 - inf.prg_size, inf.prg_size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_CHR, inf.prg_size);
+    resp = bi_cmd_file_read_mem(ADDR_CHR, inf.chr_size);
     if (resp)return resp;
 
     resp = bi_cmd_file_close();
@@ -81,13 +82,13 @@ u8 app_nsfPlay(u8 *path) {
     resp = bi_cmd_file_open(path, FA_READ);
     if (resp)return resp;
 
-    hdr = malloc(sizeof (Nsf));
-    resp = bi_cmd_file_read(hdr, sizeof (Nsf));
+    //hdr = malloc(sizeof (Nsf));
+    resp = bi_cmd_file_read(&hdr, sizeof (Nsf));
 
-    addr = hdr->addr_load;
+    addr = hdr.addr_load;
     banks_on = 0;
     for (i = 0; i < 8; i++) {
-        if (hdr->banks[i] != 0)banks_on = 1;
+        if (hdr.banks[i] != 0)banks_on = 1;
     }
 
     if (banks_on) {
@@ -96,8 +97,7 @@ u8 app_nsfPlay(u8 *path) {
         addr &= 0x7FFF;
     }
 
-
-    free(sizeof (Nsf));
+    //free(sizeof (Nsf));
     if (resp)return resp;
 
     size = min(finf.size - 0x80, 0x100000 - 4096 - addr);
@@ -122,19 +122,19 @@ u8 app_nsfPlay(u8 *path) {
     edGetMapConfig(&inf, &cfg);
     resp = edApplyOptions(&cfg);
     if (resp)return resp;
-    cfg.chr_msk = 0xff;
+    cfg.chr_msk = 0x0f;
     cfg.prg_msk = 0xff;
     cfg.map_ctrl &= ~MAP_CTRL_RDELAY;
     cfg.ss_key_load = SS_COMBO_OFF;
     cfg.ss_key_save = SS_COMBO_OFF;
 
     i = 0;
-    if ((hdr->snd_chips & NSF_SU5B))i = MAP_SU5B;
-    if ((hdr->snd_chips & NSF_N163))i = MAP_N163;
-    if ((hdr->snd_chips & NSF_MMC5))i = MAP_MMC5;
-    if ((hdr->snd_chips & NSF_FDS))i = MAP_FDS;
-    if ((hdr->snd_chips & NSF_VRC7))i = MAP_VRC7;
-    if ((hdr->snd_chips & NSF_VRC6))i = MAP_VRC6;
+    if ((hdr.snd_chips & NSF_SU5B))i = MAP_SU5B;
+    if ((hdr.snd_chips & NSF_N163))i = MAP_N163;
+    if ((hdr.snd_chips & NSF_MMC5))i = MAP_MMC5;
+    if ((hdr.snd_chips & NSF_FDS))i = MAP_FDS;
+    if ((hdr.snd_chips & NSF_VRC7))i = MAP_VRC7;
+    if ((hdr.snd_chips & NSF_VRC6))i = MAP_VRC6;
 
 
     cfg.master_vol = volGetMasterVol(i);

@@ -108,6 +108,7 @@
 #define ADDR_SST_FDS    (ADDR_PRG)
 #define ADDR_FDS        ADDR_SRM
 #define ADDR_FDS_SIG    (ADDR_FDS + SIZE_FDS_DISK)
+#define ADDR_FDS_BIOS   (ADDR_PRG + 0x8000)
 
 #define ADDR_FLA_MENU   0x00000 //boot fails mos6502 code
 #define ADDR_FLA_FPGA   0x40000 //boot fails fpga code
@@ -161,7 +162,7 @@
 #define MCFG_SRM_OFF    0x08
 
 #define MCFG_FDS_ASW    0x10    //disk auto swap for fds
-#define MCFG_FDS_INC    0x20    //disk number swithc mode. increment instead of detection by header
+#define MCFG_FDS_EBI    0x20    //use external bios
 //****************************************************************************** 
 extern u8 zp_dat[16];
 extern u8 zp_app[128];

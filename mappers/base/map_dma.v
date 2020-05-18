@@ -28,6 +28,7 @@ module map_dma
 	wire [7:0]srm_msk;
 	wire cfg_prg_ram_off = 0;
 	wire srm_mask_max;
+	wire cfg_chr_ram = 0;
 	//*************************************************************
 
 

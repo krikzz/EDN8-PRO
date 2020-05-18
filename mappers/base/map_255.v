@@ -56,7 +56,7 @@ module map_255
 	
 	assign chr_addr[11:0]  = ppu_addr[11:0];
 	assign chr_addr[13:12] = ppu_off ? {1'b0, ppu_addr[12]} : atr_do[3:2];
-	assign chr_addr[22:17] = ppu_off ? 6'h00 : 6'h3F;
+	assign chr_addr[22:17] = ppu_off ? 6'h20 : 6'h3F;
 	
 	assign map_cpu_dout[7:0] = 
 	bnk_ce ? app_bank[3:0] : 

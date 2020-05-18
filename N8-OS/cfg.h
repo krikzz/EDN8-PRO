@@ -11,7 +11,7 @@
 #include "bios.h"
 
 
-#define OS_VER          0x0203
+#define OS_VER          0x0207
 
 
 #define PATH_OS         "EDN8/nesos.nes"
@@ -29,6 +29,7 @@
 #define PATH_UPD_FPGA   "EDN8/UPDATE/menu-fpg.bin"
 #define PATH_UPD_MENU   "EDN8/UPDATE/menu-cpu.bin"
 #define PATH_UPD_IOCORE "EDN8/UPDATE/iocore.bin"
+#define PATH_FDS_BIOS   "EDN8/disksys.rom"
 
 #define G_SCREEN_W      32
 #define G_SCREEN_H      28

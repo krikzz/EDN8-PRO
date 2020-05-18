@@ -18,9 +18,11 @@ module map_hub
 	map_idx == 30  ? map_out_030 :
 	map_idx == 46  ? map_out_046 :
 	map_idx == 111 ? map_out_111 :
+	map_idx == 162 ? map_out_162 :
 	map_idx == 163 ? map_out_163 :
 	map_idx == 190 ? map_out_190 :
 	map_idx == 207 ? map_out_207 :
+	map_idx == 218 ? map_out_218 :
 	map_idx == 225 ? map_out_225 :
 	map_idx == 226 ? map_out_226 :
 	map_idx == 228 ? map_out_228 :
@@ -45,11 +47,17 @@ module map_hub
 	wire [`BW_MAP_OUT-1:0]map_out_163;
 	map_163 m163(map_out_163, bus, sys_cfg, ss_ctrl);
 	
+	wire [`BW_MAP_OUT-1:0]map_out_162;
+	map_162 m162(map_out_162, bus, sys_cfg, ss_ctrl);
+	
 	wire [`BW_MAP_OUT-1:0]map_out_190;
 	map_190 m190(map_out_190, bus, sys_cfg, ss_ctrl);
 	
 	wire [`BW_MAP_OUT-1:0]map_out_207;
 	map_207 m207(map_out_207, bus, sys_cfg, ss_ctrl);
+	
+	wire [`BW_MAP_OUT-1:0]map_out_218;
+	map_218 m218(map_out_218, bus, sys_cfg, ss_ctrl);
 	
 	wire [`BW_MAP_OUT-1:0]map_out_225;
 	map_225 m225(map_out_225, bus, sys_cfg, ss_ctrl);

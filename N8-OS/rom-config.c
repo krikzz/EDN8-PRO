@@ -80,7 +80,7 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
 
     if ((id.ines[6] & 8) != 0) inf->mir_mode = MIR_4SC;
 
-    if (inf->mapper == 30) {
+    if (inf->mapper == 30 || inf->mapper == 218) {
         if ((id.ines[6] & 9) == 0)inf->mir_mode = MIR_HOR;
         if ((id.ines[6] & 9) == 1)inf->mir_mode = MIR_VER;
         if ((id.ines[6] & 9) == 8)inf->mir_mode = MIR_1SC;

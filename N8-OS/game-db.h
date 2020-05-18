@@ -63,6 +63,7 @@ const GameDB game_db[] = {
     {0x2225C20F, SET_SRM, 16}, //Genghis Khan
     {0x4642DDA6, SET_SRM, 16}, //Nobunaga's Ambition
     {0xC6182024, SET_SRM, 16}, //Romance of the Three Kingdoms 
+    {0xACA15643, SET_SRM, 16}, //Uncharted Waters (U) [!]
     {0xC3DE7C69, SET_SRM, 32}, //Best Play Pro Yakyuu Special, The (Revision A) 
     {0xB8747ABF, SET_SRM, 32}, //Best Play Pro Yakyuu Special (J)
     {0x6F4E4312, SET_SRM, 32}, //Aoki Ookami to Shiroki Mejika - Genchou Hishi
@@ -100,6 +101,8 @@ const GameDB game_db[] = {
     {0x1BC0BE6C, SET_MAP, 195}, //Captain Tsubasa Vol. II - Super Striker (Ch) [a3]
     {0x26EF50E3, SET_MAP, 195}, //Captain Tsubasa Vol. II - Super Striker (Ch)
     {0x555A555E, SET_MAP, 191}, //Sugoro Quest - Dice no Senshi Tachi (Ch)
+    {0x96CE586E, SET_MAP, 189}, //Street Fighter II - The World Warrior (Unl) [!]
+    
     
     {0, 0, 0}//db end
 };

@@ -59,9 +59,9 @@ void bootError() {
     gFillRect(' ', 0, G_BORDER_Y + 1, G_SCREEN_W, 2);
     gSetXY(G_BORDER_X, G_BORDER_Y);
     gConsPrint("EverDrive N8 bootloader v");
-    gAppendNum(BOOT_VER >> 8);
+    gAppendNum(inf.boot_ver >> 8);
     gAppendString(".");
-    gAppendHex8(BOOT_VER);
+    gAppendHex8(inf.boot_ver);
     gConsPrint("ERROR: ");
 
     if (resp == FAT_DISK_ERR || resp == FAT_NOT_READY) {
@@ -99,7 +99,7 @@ void bootError() {
 
     gSetY(G_SCREEN_H / 2 - 1);
 
-    if (resp = FAT_NOT_READY) {
+    if (resp == FAT_NOT_READY) {
         gConsPrintCX("SD card not found");
         return;
     }

@@ -275,7 +275,7 @@ _ss_return:
     lda #$3F
     sta PPU_DATA
 ;************************************** restore cart wram   
-    jmp skip_exram_re;this section moded to saveram.c due conflicts with FDS
+    jmp skip_exram_re;this section moved to saveram.c due conflicts with FDS
     ldx #32 ;8K
     ldy #0
     set_ptr src, MEM_START
@@ -365,6 +365,8 @@ re_hvregs:
     dex
     bne re_hvregs
 ;************************************** restore ppu pal
+    lda #0
+    sta PPU_CTRL ;sync sniffer
     lda #$3F
     sta PPU_ADDR
     lda #$00
