@@ -54,11 +54,10 @@ module top(
 	
 	assign led = map_led | (sys_rst & map_rst & map_idx != 255);//ss_act
 //**************************************************************************************** bus ctrl		
+	wire eep_on, bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, prg_mem_oe, int_ciram_ce, int_ciram_a10;
+	wire [7:0]map_cpu_dout, map_ppu_dout, eep_ram_di;
 	
-	wire bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, prg_mem_oe, int_ciram_ce, int_ciram_a10;
-	wire [7:0]map_cpu_dout, map_ppu_dout;
-	
-	assign {bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, 
+	assign {eep_ram_di[7:0], eep_on, bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, 
 	pwm, cpu_irq, chr_oe, prg_mem_oe, chr_ce, srm_ce, prg_ce, chr_we, srm_we, prg_we, 
 	int_ciram_ce, int_ciram_a10, chr_addr[22:0], prg_addr[22:0], map_ppu_dout[7:0], map_cpu_dout[7:0]} = map_out[`BW_MAP_OUT-1:8];
 	
@@ -111,7 +110,8 @@ module top(
 	
 	
 	assign prg_dat[7:0] = 
-	!prg_oe ? 8'hzz : 
+	!prg_oe ? 8'hzz :
+	eep_on  ? eep_ram_di[7:0] : 
 	mem_dma | map_cpu_oe ? map_cpu_dout[7:0] : cpu_dat[7:0];
 	
 	assign chr_dat[7:0] = 

@@ -52,7 +52,7 @@ module map_hub
 	
 	wire [`BW_MAP_OUT-1:0]map_out_148;
 	map_148 m148(map_out_148, bus, sys_cfg, ss_ctrl);
-			
+	
 	wire [`BW_MAP_OUT-1:0]map_out_243;
 	map_243 m243(map_out_243, bus, sys_cfg, ss_ctrl);
 	

@@ -16,7 +16,7 @@ module map_005 //MMC5
 	
 	assign sync_m2 = 1;
 	assign mir_4sc = 0;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
-	assign srm_addr[16:0] = srm_size16k ? {prg_addr[15], prg_addr[12:0]} : prg_addr[16:0];//specific mapping for 16K sram
+	assign srm_addr[16:0] = srm_size == 16384 ? {prg_addr[15], prg_addr[12:0]} : prg_addr[16:0];//specific mapping for 16K sram
 	assign prg_oe = cpu_rw;
 	assign chr_oe = !ppu_oe;
 	//*************************************************************  save state setup

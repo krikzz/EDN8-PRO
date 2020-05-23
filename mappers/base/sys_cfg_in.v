@@ -5,7 +5,7 @@
 	wire [11:0]map_idx;
 	wire [9:0]prg_msk;
 	wire [9:0]chr_msk;
-	wire [7:0]srm_msk;
+	wire [10:0]srm_msk;
 	wire [7:0]master_vol;
 	wire [7:0]map_cfg;
 	wire [7:0]ss_key_save;
@@ -15,9 +15,11 @@
 
 	wire [7:0]prg_msk_in;
 	wire [3:0]chr_msk_in;
-	assign prg_msk[7:0] = (1'b1 << prg_msk_in[3:0])-1;
-	assign srm_msk[7:0] = (1'b1 << prg_msk_in[7:4])-1;
-	assign chr_msk[7:0] = (1'b1 << chr_msk_in[3:0])-1;
+	assign prg_msk[9:0]  = (1'b1 << prg_msk_in[3:0])-1;
+	assign srm_msk[10:0] = (1'b1 << prg_msk_in[7:4])-1;
+	assign chr_msk[9:0]  = (1'b1 << chr_msk_in[3:0])-1;
+	
+	
 	
 	assign {
 	ctrl[7:0], 
@@ -41,7 +43,7 @@
 	
 	
 
-	wire ctrl_rst_delay = ctrl[0];//with this option quick reset wil reset the game but will not return to menu
+	wire ctrl_rst_delay = ctrl[0];//with this option quick reset will reset the game but will not return to menu
 	wire ctrl_ss_on     = ctrl[1];//vblank hook for in-game menu
 	wire ctrl_gg_on     = ctrl[2];//cheats engine
 	wire ctrl_ss_btn    = ctrl[3];//use external button for in-game menu
@@ -49,14 +51,5 @@
 	wire ctrl_unlock    = ctrl[7];//used for mapper status check at 0x4080 during reboot. force map 255 till mapper is not configured
 	
 	
-	
-	wire srm_size1k   = srm_msk == 8'b00000000;
-	wire srm_size2k   = srm_msk == 8'b00000001;
-	wire srm_size4k   = srm_msk == 8'b00000011;
-	wire srm_size8k   = srm_msk == 8'b00000111;
-	wire srm_size16k  = srm_msk == 8'b00001111;
-	wire srm_size32k  = srm_msk == 8'b00011111;
-	wire srm_size64k  = srm_msk == 8'b00111111;
-	wire srm_size128k = srm_msk == 8'b01111111;
-	wire srm_size256k = srm_msk == 8'b11111111;
-	
+	wire [18:0]srm_size = (1'b1 << prg_msk_in[7:4]) << 7;
+		

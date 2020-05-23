@@ -54,6 +54,9 @@ module map_021 //VRC4+VRC2
 	assign chr_addr[9:0] = ppu_addr[9:0];
 	assign chr_addr[17:10] = map_idx == 22 ? chr[ppu_addr[12:10]][7:1] : chr[ppu_addr[12:10]][7:0];
 	
+	assign map_cpu_oe = cpu_rw & vrc2_latch_ce;
+	assign map_cpu_dout[7:0] = {cpu_addr[15:9], vrc2_latch};
+	
 
 	wire vrc2 = map_idx == 22 | (map_sub == 3 & (map_idx == 23 | map_idx == 25));
 	wire vrc4 = !vrc2;
@@ -82,12 +85,15 @@ module map_021 //VRC4+VRC2
 	map_idx == 25 ? reg_map25[1:0] : reg_map23[1:0];
 	
 	wire [15:0]reg_addr = {cpu_addr[15:12], 8'd0, 2'd0, reg_map[1:0]};
-
+	
+	
+	wire vrc2_latch_ce = {cpu_addr[15:12], 12'd0} == 16'h6000 & cfg_prg_ram_off & vrc2;
 	
 	reg [8:0]chr[8];
 	reg [7:0]prg[2];
 	reg swp_mode;
 	reg [1:0]mir_mode;
+	reg vrc2_latch;
 	
 	
 	always @(negedge m2)
@@ -140,7 +146,9 @@ module map_021 //VRC4+VRC2
 		if(reg_addr[15:0] == 16'hE001)chr[6][8:4] <= cpu_dat[4:0];
 		if(reg_addr[15:0] == 16'hE002)chr[7][3:0] <= cpu_dat[3:0];
 		if(reg_addr[15:0] == 16'hE003)chr[7][8:4] <= cpu_dat[4:0];
-
+		
+		if(vrc2_latch_ce)vrc2_latch <= cpu_dat[0];
+		
 	end
 	
 	

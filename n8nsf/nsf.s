@@ -95,10 +95,11 @@ rst:
     sei
     ldx #$ff
     txs
-
+    
     lda #0
     sta PPU_CTRL
     sta PPU_MASK
+    sta REG_EXEC + 0
 
     set_ptr pal
     jsr set_pal

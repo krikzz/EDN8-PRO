@@ -25,10 +25,9 @@ module map_001 //MMC1
 	ss_addr[7:0] == 4 ? {4'b0000,  buff[4:0]} :
 	ss_addr[7:0] == 127 ? MAP_NUM : 8'hff;
 	//*************************************************************
-	wire ram_area = {cpu_addr[15:13], 13'd0} == 16'h6000;
+	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000 & ram_on;
 	assign ram_we = !cpu_rw & ram_ce;
 	assign chr_we = cfg_chr_ram ? !ppu_we & ciram_ce : 0;
-	assign ram_ce = ram_area;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
 	
@@ -43,8 +42,6 @@ module map_001 //MMC1
 	assign chr_addr[11:0] = ppu_addr[11:0];
 	assign chr_addr[16:12] = 
 	cfg_chr_ram  ? {4'b0000, chr_bank[0]}   : 
-	//cfg_mmc1_vram_mod ? {4'b0000, chr_bank[0]}   : 
-	//cfg_chr_ram  ? {4'b0000, ppu_addr[12]} :
 	chr_bank[4:0];
 
 	wire [1:0]srm_bank = cfg_chr_ram ? chr_bank[3:2] : 2'b00;
@@ -56,20 +53,19 @@ module map_001 //MMC1
 	
 	wire chr_mode = r0[4];
 	wire prg_mode = r0[3];
+	wire ram_on   = r3[4] == 0 | map_idx == 155;
 	
-	
-	reg [4:0]map_regs[4];
-	reg [4:0]buff;
 	wire [4:0]r0 = map_regs[0][4:0];
 	wire [4:0]r1 = map_regs[1][4:0];
 	wire [4:0]r2 = map_regs[2][4:0];
 	wire [4:0]r3 = map_regs[3][4:0];
-	
-	
-	reg reg_we_st;
+		
 	wire reg_we = cpu_addr[15] & !cpu_rw & !reg_we_st;
 	wire reg_rst = reg_we & cpu_dat[7];
 	
+	reg reg_we_st;
+	reg [4:0]map_regs[4];
+	reg [4:0]buff;
 	
 	always @(negedge m2)reg_we_st <= reg_we;
 
@@ -80,7 +76,11 @@ module map_001 //MMC1
 		if(ss_we & ss_addr == 4)buff[4:0] <= cpu_dat[4:0];
 	end
 		else
-	if(map_rst)map_regs[0][4:0] <= 5'b11111;
+	if(map_rst)
+	begin
+		map_regs[0][4:0] <= 5'b11111;
+		map_regs[3][4] <= 0;
+	end
 		else
 	if(reg_rst)
 	begin

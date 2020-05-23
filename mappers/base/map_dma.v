@@ -25,7 +25,7 @@ module map_dma
 	assign srm_addr[17:0] = prg_addr[17:0];
 	wire [9:0]prg_msk;
 	wire [9:0]chr_msk;
-	wire [7:0]srm_msk;
+	wire [10:0]srm_msk;
 	wire cfg_prg_ram_off = 0;
 	wire srm_mask_max;
 	wire cfg_chr_ram = 0;

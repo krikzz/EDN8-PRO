@@ -1,7 +1,7 @@
 
 `include "../base/defs.v"
 
-module map_016
+module map_157
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -16,7 +16,7 @@ module map_016
 	
 	assign sync_m2 = 1;
 	assign mir_4sc = 0;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
-	assign srm_addr[7:0] = eep_addr[7:0];
+
 	assign prg_oe = cpu_rw;
 	assign chr_oe = !ppu_oe;
 	//*************************************************************  save state setup
@@ -47,17 +47,10 @@ module map_016
 	assign prg_addr[17:14] = !cpu_addr[14] ? prg[3:0] : 4'b1111;
 
 	
-	assign chr_addr[9:0] = ppu_addr[9:0];
-	assign chr_addr[17:10] = chr[ppu_addr[12:10]];
-
+	assign chr_addr[12:0] = ppu_addr[12:0];
 	
-	wire regs_ce_s4 = (cpu_addr[15:0] & 16'hE000) == 16'h6000;
-	wire regs_ce_s5 = (cpu_addr[15:0] & 16'h8000) == 16'h8000;
-	wire regs_ce = 
-	map_idx == 16 & map_sub == 4 ? regs_ce_s4 : 
-	map_idx == 16 & map_sub == 5 ? regs_ce_s5 : 
-	map_idx == 159 ? regs_ce_s5 : 
-	regs_ce_s4 | regs_ce_s5;
+	wire regs_ce = (cpu_addr[15:0] & 16'h8000) == 16'h8000;
+
 	
 	reg [7:0]chr[8];
 	reg [4:0]prg;
@@ -92,9 +85,8 @@ module map_016
 	end
 		else
 	begin
-
-	
-		if(!cpu_rw & regs_ce_s5 & cpu_addr[3:0] == 4'hA)
+			
+		if(!cpu_rw & regs_ce & cpu_addr[3:0] == 4'hA)
 		begin
 			irq_ctr <= irq_latch;
 		end
@@ -126,12 +118,10 @@ module map_016
 				irq_pend <= 0;
 			end
 			4'hB:begin
-				if(regs_ce_s4)irq_ctr[7:0] <= cpu_dat[7:0];
-				if(regs_ce_s5)irq_latch[7:0] <= cpu_dat[7:0];
+				irq_latch[7:0] <= cpu_dat[7:0];
 			end
 			4'hC:begin
-				if(regs_ce_s4)irq_ctr[15:8] <= cpu_dat[7:0];
-				if(regs_ce_s5)irq_latch[15:8] <= cpu_dat[7:0];
+				irq_latch[15:8] <= cpu_dat[7:0];
 			end
 		endcase
 	
@@ -144,43 +134,41 @@ module map_016
 	parameter BRAM_24C01    = 4'h4;
 	parameter BRAM_24C02    = 4'h5;
 		
-	wire [3:0]bram_type = 
-	srm_size == 128 ? BRAM_24X01 :
-	srm_size == 256 ? BRAM_24C02 :
-	map_idx  == 159 ? BRAM_24X01 :
-	map_idx  == 16  & map_sub != 4 ? BRAM_24C02 :
-	BRAM_OFF;
+	assign eep_on = 1;
+	assign map_cpu_oe = cpu_rw & {cpu_addr[15:13], 13'd0} == 16'h6000;
+	assign map_cpu_dout[7:0] = {cpu_addr[15:13], (eep_do[0] & eep_do[1]), 1'b0, cpu_addr[10:8]};
+	assign map_led = led_eep;
+	
 
+	assign eep_we = ram_we_eep[0] | ram_we_eep[1];
+	assign eep_oe = ram_oe_eep[0] | ram_oe_eep[1];
 	
-	assign map_cpu_oe = eep_on & cpu_rw & {cpu_addr[15:13], 13'd0} == 16'h6000;
-	assign map_cpu_dout[7:0] = {cpu_addr[15:13], eep_do, cpu_addr[11:8]};
-	assign map_led = eep_on & led_eep;
+	assign eep_ram_di = ram_we_eep[1] ? eep_mem_di[1] : eep_mem_di[0];
+	assign srm_addr[8:0] =  ram_we_eep[1] | ram_oe_eep[1] ? {1'b1, eep_addr[1][7:0]} :  {1'b0, eep_addr[0][7:0]};
 	
+	wire [7:0]eep_mem_di[2];
+	wire [7:0]eep_addr[2];
+	wire [1:0]ram_oe_eep, ram_we_eep, led_eep, eep_do;
 	
-	assign eep_on = bram_type != BRAM_OFF;
-	assign eep_we = eep_on & ram_we_eep;
-	assign eep_oe = eep_on & ram_oe_eep;
-
-	wire [7:0]eep_addr;
-	wire ram_oe_eep, ram_we_eep, led_eep, eep_do;
-	
-	eep_24cXX_sync eep_inst(
+	eep_24cXX_sync eep_int(
 
 		.clk(clk),
-		.rst(map_rst | sys_rst | !eep_on),
-		.bram_type(bram_type),
+		.rst(map_rst | sys_rst),
+		.bram_type(BRAM_24C02),
 		
 		.scl(eep_scl),
 		.sda_in(eep_di),
-		.sda_out(eep_do),
+		.sda_out(eep_do[0]),
 
 		.ram_do(prg_dat),
-		.ram_di(eep_ram_di),
-		.ram_addr(eep_addr),
-		.ram_oe(ram_oe_eep), 
-		.ram_we(ram_we_eep),
-		.led(led_eep)
+		.ram_di(eep_mem_di[0]),
+		.ram_addr(eep_addr[0]),
+		.ram_oe(ram_oe_eep[0]), 
+		.ram_we(ram_we_eep[0]),
+		.led(led_eep[0])
 	);
+	
+	
 	
 	reg eep_dir, eep_di, eep_scl;
 	
@@ -198,6 +186,27 @@ module map_016
 	end
 	
 	
+	
+	wire [17:10]chr_a = chr[ppu_addr[11:10]];
+	
+	
+	eep_24cXX_sync eep_ext(
+
+		.clk(clk),
+		.rst(map_rst | sys_rst),
+		.bram_type(BRAM_24X01),
+		
+		.scl(chr_a[13]),
+		.sda_in(eep_di),
+		.sda_out(eep_do[1]),
+
+		.ram_do(prg_dat),
+		.ram_di(eep_mem_di[1]),
+		.ram_addr(eep_addr[1]),
+		.ram_oe(ram_oe_eep[1]), 
+		.ram_we(ram_we_eep[1]),
+		.led(led_eep[1])
+	);
 	
 endmodule
 

@@ -1,7 +1,7 @@
 
 `include "../base/defs.v"
 
-module map_243
+module map_036
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -20,8 +20,9 @@ module map_243
 	assign chr_oe = !ppu_oe;
 	//*************************************************************  save state setup
 	assign ss_rdat[7:0] = 
-	ss_addr[7:0]  < 8 ? regs[ss_addr[2:0]] : 
-	ss_addr[7:0] == 8 ? reg_addr : 
+	ss_addr[7:0] ==   0 ? chr :
+	ss_addr[7:0] ==   1 ? prg :
+	ss_addr[7:0] ==   2 ? {rr[1:0], pp[1:0], inv, inc} :
 	ss_addr[7:0] == 127 ? map_idx : 8'hff;
 	//*************************************************************
 	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000;
@@ -31,54 +32,55 @@ module map_243
 	assign chr_we = cfg_chr_ram ? !ppu_we & ciram_ce : 0;
 	
 	//A10-Vmir, A11-Hmir
-	assign ciram_a10 = 
-	mirror_mode[1:0] == 2'b00 ? ppu_addr[11] :
-	mirror_mode[1:0] == 2'b01 ? ppu_addr[10] :
-	mirror_mode[1:0] == 2'b11 ? 1 :
-	ppu_addr[11:10] == 0 ? 0 : 1;
-	
+	assign ciram_a10 = cfg_mir_v ? ppu_addr[10] : ppu_addr[11];
 	assign ciram_ce = !ppu_addr[13];
-	
+		
 	assign chr_addr[12:0] = ppu_addr[12:0];
 	assign chr_addr[16:13] = chr[3:0];
 	
 	assign prg_addr[14:0] = cpu_addr[14:0];
 	assign prg_addr[16:15] = prg[1:0];
 	
-	assign map_cpu_oe = regs_ce & cpu_rw & cpu_addr[0];
-	assign map_cpu_dout[7:0] = regs[reg_addr[2:0]];
-
+	assign map_cpu_oe = (cpu_addr[15:0] & 16'hE100) == 16'h4100 & cpu_rw;
+	assign map_cpu_dout[7:0] = {cpu_addr[15:14], rr[1:0], cpu_addr[11:8]};
 	
-	wire regs_ce = (cpu_addr[15:0] & 16'hC100) == 16'h4100;
-		
-	wire [3:0]chr = {regs[2][0], regs[4][0], regs[6][1:0]};
-	wire [2:0]prg = map_idx == 150 ? (regs[2][0] | regs[5][1:0]) : regs[5][1:0];//sub mapper required?
-	wire [1:0]mirror_mode = regs[7][2:1];
+	reg [3:0]chr;
+	reg [1:0]prg, rr, pp;
+	reg inv, inc;
 	
-	reg [2:0]reg_addr;
-	reg [2:0]regs[8];
 	
 	always @(negedge m2)
 	if(ss_act)
 	begin
-		if(ss_we & ss_addr[7:0]  < 8)regs[ss_addr[2:0]] <= cpu_dat;
-		if(ss_we & ss_addr[7:0] == 8)reg_addr <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 0)chr <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 1)prg <= cpu_dat;
+		if(ss_we & ss_addr[7:0] == 2){rr[1:0], pp[1:0], inv, inc} <= cpu_dat;
 	end
 		else
 	if(map_rst)
 	begin
-		regs[4] <= 0;
-		regs[5] <= 0;
-		regs[6] <= 0;
-		regs[7] <= 0;
+		chr <= 0;
+		prg <= 0;
+		rr <= 0;
+		pp <= 0;
+		inv <= 0;
+		inc <= 0;
 	end
 		else
-	if(regs_ce & !cpu_rw)
+	if(!cpu_rw)
 	begin
 		
-		if(cpu_addr[0] == 0)reg_addr[2:0] <= cpu_dat[2:0];
-		if(cpu_addr[0] == 1)regs[reg_addr[2:0]][2:0] <= cpu_dat[2:0];
-	
+		if((cpu_addr[15:0] & 16'hE200) == 16'h4200)chr[3:0] <= cpu_dat[3:0];
+		
+		if((cpu_addr[15:0] & 16'hE103) == 16'h4100)begin
+			rr <= inc ? rr + 1 : inv ? pp ^ 2'b11 : pp;
+		end
+		
+		if((cpu_addr[15:0] & 16'hE103) == 16'h4101)inv <= cpu_dat[4];
+		if((cpu_addr[15:0] & 16'hE103) == 16'h4102)pp[1:0] <= cpu_dat[5:4];
+		if((cpu_addr[15:0] & 16'hE103) == 16'h4103)inc <= cpu_dat[4];
+		if((cpu_addr[15:0] & 16'h8000) == 16'h8000)prg[1:0] <= rr[1:0];
+		
 	end
 	
 	

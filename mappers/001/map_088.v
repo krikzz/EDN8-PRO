@@ -15,7 +15,7 @@ module map_088
 	
 	
 	assign sync_m2 = 1;
-	assign mir_4sc = 0;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
+	assign mir_4sc = cfg_mir_4;//enable support for 4-screen mirroring. for activation should be ensabled in sys_cfg also
 	assign srm_addr[12:0] = cpu_addr[12:0];
 	assign prg_oe = cpu_rw;
 	assign chr_oe = !ppu_oe;

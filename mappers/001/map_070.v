@@ -30,7 +30,7 @@ module map_070 //NOMAP
 	assign chr_we = 0;
 	
 	//A10-Vmir, A11-Hmir
-	assign ciram_a10 = prg[3];// ? ppu_addr[10] : ppu_addr[11];
+	assign ciram_a10 = map_idx == 152 ? prg[3] : cfg_mir_v ? ppu_addr[10] : ppu_addr[11];
 	assign ciram_ce = !ppu_addr[13];
 	
 	assign prg_addr[13:0] = cpu_addr[13:0];

@@ -34,7 +34,7 @@ module map_032 //Irem-G101
 	assign chr_ce = ciram_ce;
 	assign chr_we = cfg_chr_ram ? !ppu_we & ciram_ce : 0;
 	
-	assign ciram_a10 = cfg_mir_v ? 0 : !mode[0] ? ppu_addr[10] : ppu_addr[11];//0=hm, 1vm
+	assign ciram_a10 = cfg_mir_1 | map_sub == 1 ? 1 : !mode[0] ? ppu_addr[10] : ppu_addr[11];//0=hm, 1vm
 	assign ciram_ce = !ppu_addr[13];
 	
 	assign prg_addr[12:0] = cpu_addr[12:0];
@@ -72,14 +72,14 @@ module map_032 //Irem-G101
 		prg[2] <= 30;
 	end
 		else
-	if(!cpu_ce & !cpu_rw)
+	if(!cpu_rw)
 	begin
 		
-		if(cpu_addr[13:12] == 0 & mode[1] == 0)prg[0][4:0] <= cpu_dat[4:0];
-		if(cpu_addr[13:12] == 0 & mode[1] == 1)prg[2][4:0] <= cpu_dat[4:0];
-		if(cpu_addr[13:12] == 1)mode[1:0] <= cpu_dat[1:0];
-		if(cpu_addr[13:12] == 2)prg[1][4:0] <= cpu_dat[4:0];
-		if(cpu_addr[13:12] == 3)chr[cpu_addr[2:0]][6:0] <= cpu_dat[6:0];
+		if({cpu_addr[15:12], 12'd0} == 16'h8000 & mode[1] == 0)prg[0][4:0] <= cpu_dat[4:0];
+		if({cpu_addr[15:12], 12'd0} == 16'h8000 & mode[1] == 1)prg[2][4:0] <= cpu_dat[4:0];
+		if({cpu_addr[15:12], 12'd0} == 16'h9000 & map_sub != 1)mode[1:0] <= cpu_dat[1:0];
+		if({cpu_addr[15:12], 12'd0} == 16'hA000)prg[1][4:0] <= cpu_dat[4:0];
+		if({cpu_addr[15:12], 12'd0} == 16'hB000)chr[cpu_addr[2:0]][6:0] <= cpu_dat[6:0];
 		
 	end
 	

@@ -34,7 +34,7 @@ module map_232
 	
 	assign prg_addr[13:0] = cpu_addr[13:0];
 	assign prg_addr[15:14] = !cpu_addr[14] ? prg_bank[1:0] : 2'b11;
-	assign prg_addr[17:16] = prg_bank[3:2];
+	assign prg_addr[17:16] = map_sub == 1 ? {prg_bank[2], prg_bank[3]} : prg_bank[3:2];
 	
 	
 	assign chr_addr[12:0] = ppu_addr[12:0];

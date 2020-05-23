@@ -6,7 +6,7 @@
 
 
 	
-	`define BW_MAP_OUT	90
+	`define BW_MAP_OUT	99
 	`define BW_SYS_CFG 	64
 	`define BW_SYS_BUS	80
 	`define BW_SS_CTRL	13

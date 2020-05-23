@@ -14,8 +14,11 @@ module map_hub
 	
 	
 	assign map_out = 
-	map_idx == 389 ? map_out_389 :
 	map_idx == 261 ? map_out_261 :
+	map_idx == 262 ? map_out_262 :
+	map_idx == 290 ? map_out_290 :
+	map_idx == 389 ? map_out_389 :
+	map_idx == 516 ? map_out_516 :
 	map_out_nom;
 	
 	
@@ -25,7 +28,16 @@ module map_hub
 	wire [`BW_MAP_OUT-1:0]map_out_261;
 	map_261 m261(map_out_261, bus, sys_cfg, ss_ctrl);
 	
+	wire [`BW_MAP_OUT-1:0]map_out_262;
+	map_262 m262(map_out_262, bus, sys_cfg, ss_ctrl);
+	
+	wire [`BW_MAP_OUT-1:0]map_out_290;
+	map_290 m290(map_out_290, bus, sys_cfg, ss_ctrl);
+	
 	wire [`BW_MAP_OUT-1:0]map_out_389;
 	map_389 m389(map_out_389, bus, sys_cfg, ss_ctrl);
+	
+	wire [`BW_MAP_OUT-1:0]map_out_516;
+	map_516 m516(map_out_516, bus, sys_cfg, ss_ctrl);
 	
 endmodule

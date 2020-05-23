@@ -233,7 +233,7 @@ set_global_assignment -name VERILOG_FILE ../base/map_nom.v
 set_global_assignment -name SDC_FILE ../base/mapper.sdc
 set_global_assignment -name VERILOG_FILE ../base/ss.v
 set_global_assignment -name VERILOG_FILE ../base/gg.v
-set_global_assignment -name VERILOG_INCLUDE_FILE ../base/sys_cfg_in.v
 set_global_assignment -name VERILOG_FILE ../base/base_io.v
+set_global_assignment -name VERILOG_INCLUDE_FILE ../base/sys_cfg_in.v
 set_global_assignment -name VERILOG_INCLUDE_FILE ../base/defs.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

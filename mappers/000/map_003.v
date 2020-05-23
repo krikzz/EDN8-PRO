@@ -25,8 +25,8 @@ module map_003 //CNROM
 	ss_addr[7:0] == 0 ? {4'd0, ppu_bank[3:0]} : 
 	ss_addr[7:0] == 127 ? map_idx : 8'hff;
 	//*************************************************************
-	assign ram_ce = 0;
-	assign ram_we = 0;
+	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000;
+	assign ram_we = !cpu_rw & ram_ce;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
 	assign chr_we = 0;

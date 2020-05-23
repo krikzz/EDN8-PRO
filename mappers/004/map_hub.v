@@ -15,12 +15,13 @@ module map_hub
 	
 	
 	assign map_out = 
-	map_idx == 1 ? map_out_001 : 
-	map_idx == 4 & map_sub == 1 ? map_out_004_s1 : 
-	map_idx == 4 & map_sub == 3 ? map_out_004_s3 :
-	map_idx == 4 ? map_out_004 : 
-	map_idx == 9 ? map_out_009 : 
-	map_idx == 10 ? map_out_009 : 
+	map_idx == 1   ? map_out_001 : 
+	map_idx == 4   & map_sub == 1 ? map_out_004_s1 : 
+	map_idx == 4   & map_sub == 3 ? map_out_004_s3 :
+	map_idx == 4   ? map_out_004 : 
+	map_idx == 9   ? map_out_009 : 
+	map_idx == 10  ? map_out_009 : 
+	map_idx == 155 ? map_out_001 :
 	map_out_nom;
 	
 	

@@ -1,7 +1,7 @@
 
 `include "../base/defs.v"
 
-module map_000
+module map_170
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -20,10 +20,11 @@ module map_000
 	assign chr_oe = !ppu_oe;
 	//*************************************************************  save state setup
 	assign ss_rdat[7:0] = 
+	ss_addr[7:0] == 0 ? latch : 
 	ss_addr[7:0] == 127 ? map_idx : 8'hff;
 	//*************************************************************
-	assign ram_ce = {cpu_addr[15:13], 13'd0} == 16'h6000;
-	assign ram_we = !cpu_rw & ram_ce;
+	assign ram_ce = 0;//{cpu_addr[15:13], 13'd0} == 16'h6000;
+	assign ram_we = 0;//!cpu_rw & ram_ce;
 	assign rom_ce = cpu_addr[15];
 	assign chr_ce = ciram_ce;
 	assign chr_we = cfg_chr_ram ? !ppu_we & ciram_ce : 0;
@@ -33,7 +34,29 @@ module map_000
 	assign ciram_ce = !ppu_addr[13];
 		
 	assign chr_addr[12:0] = ppu_addr[12:0];
-	
 	assign prg_addr[14:0] = cpu_addr[14:0];
+	
+	assign map_cpu_oe = latch_area & cpu_rw;//cpu_addr[15:0] == 16'h7777 & cpu_rw;
+	assign map_cpu_dout[7:0] = {latch, cpu_addr[14:8]};
+	
+	wire latch_area = {cpu_addr[15:13], 13'd0} == 16'h6000;
+	
+	reg latch;
+	
+	always @(negedge m2)
+	if(ss_act)
+	begin
+		if(ss_we & ss_addr[7:0] == 0)latch <= cpu_dat;
+	end
+		else
+	if(map_rst)
+	begin
+		latch <= 0;
+	end
+		else
+	if(!cpu_rw)
+	begin
+		if(latch_area)latch <= cpu_dat[6];
+	end
 	
 endmodule
