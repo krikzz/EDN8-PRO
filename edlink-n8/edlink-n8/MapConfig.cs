@@ -14,6 +14,7 @@ namespace edlink_n8
         public const byte cfg_mir_h = 0;
         public const byte cfg_mir_v = 1;
         public const byte cfg_mir_4 = 2;
+        public const byte cfg_mir_1 = 3;
         public const byte cfg_chr_ram = 4;
         public const byte cfg_srm_off = 8;
 
@@ -66,7 +67,7 @@ namespace edlink_n8
             Console.WriteLine("prg size...." + PrgSize / 1024 + "K");
             string chr_type = (MapCfg & cfg_chr_ram) == 0 ? "" : "ram";
             Console.WriteLine("chr size...." + ChrSize / 1024 + "K "+ chr_type);
-            string stm_state = (MapCfg & cfg_srm_off) == 0 ? SrmSize / 1024 + "K " : "srm off";
+            string stm_state = (MapCfg & cfg_srm_off) != 0 ? "srm off" : SrmSize < 1024 ? (SrmSize + "B ") : (SrmSize / 1024 + "K ");
             Console.WriteLine("srm size...." + stm_state);
 
             Console.WriteLine("master vol.." + MasterVol);
@@ -75,6 +76,7 @@ namespace edlink_n8
             if ((MapCfg & 3) == cfg_mir_h) mir = "h";
             if ((MapCfg & 3) == cfg_mir_v) mir = "v";
             if ((MapCfg & 3) == cfg_mir_4) mir = "4";
+            if ((MapCfg & 3) == cfg_mir_1) mir = "1";
             Console.WriteLine("mirroring..." + mir);
             Console.WriteLine("cfg bits...."+ Convert.ToString(MapCfg, 2).PadLeft(8, '0'));
 
@@ -112,7 +114,7 @@ namespace edlink_n8
         byte getSrmMask(int size)
         {
             byte msk = 0;
-            while ((1024 << msk) < size && msk < 15)
+            while ((128 << msk) < size && msk < 15)
             {
                 msk++;
             }
@@ -148,7 +150,7 @@ namespace edlink_n8
         {
             get
             {
-                return 1024 << (config[cfg_base + 1] >> 4);
+                return 128 << (config[cfg_base + 1] >> 4);
             }
             set
             {

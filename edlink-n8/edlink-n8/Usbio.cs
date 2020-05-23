@@ -132,7 +132,7 @@ namespace edlink_n8
             src = src.Trim();
             dst = dst.Trim();
 
-            if (File.GetAttributes(src).HasFlag(FileAttributes.Directory))
+            if (!src.ToLower().StartsWith("sd:") && File.GetAttributes(src).HasFlag(FileAttributes.Directory))
             {
                 copyFolder(src, dst);
                 return;

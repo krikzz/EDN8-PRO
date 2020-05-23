@@ -82,6 +82,7 @@ namespace edlink_n8
                     chr_addr = Edio.ADDR_OS_CHR;
                 }
 
+
                 prg = new byte[prg_size];
                 chr = new byte[chr_size];
                 Array.Copy(rom, dat_base, prg, 0, prg.Length);
