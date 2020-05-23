@@ -166,7 +166,7 @@ u32 savGetUsedMemory(u32 addr, u32 max_size) {
 
     if (bi_cmd_mem_test(RAM_NULL, addr, max_size))return 0;
 
-    srm_size = 1024;
+    srm_size = 256;
     for (i = srm_size; i < max_size; i *= 2) {
 
         if (bi_cmd_mem_test(RAM_NULL, addr + i, i) == 0) {

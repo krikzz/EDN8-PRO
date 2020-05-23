@@ -40,6 +40,7 @@ typedef struct {
     u8 rst_delay;
     u8 fds_auto_swp;
     u8 sort_files;
+    u8 autostart;
     u8 vol_tbl[16]; //max
 } Options;
 

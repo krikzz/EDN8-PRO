@@ -40,6 +40,7 @@ const GameDB game_db[] = {
     {0x9CBC8253, SET_MIR, MIR_VER}, //Family Circuit (J) [!]
     {0x5B4C6146, SET_MIR, MIR_VER}, //Family Boxing (J) [!]
     {0xA5E6BAF9, SET_MIR, MIR_VER}, //Dragon Slayer 4 - Drasle Family (J) [!]
+    {0x243A8735, SET_MIR, MIR_1SC}, //Major League (Japan)
     //****************************************************************************** WRAM size    
     {0x93991433, SET_SRM, 0}, //ram off Low G Man - The Low Gravity Man (U) [!]
     {0xFCBF28B1, SET_SRM, 2}, //ram 2k. Crisis Force
@@ -82,12 +83,14 @@ const GameDB game_db[] = {
     {0x998422FC, SET_SUB, 1}, //MMC6 Startropics (E) [!].nes
     {0x889129CB, SET_SUB, 1}, //MMC6 Startropics (U) [!].nes
     {0xD054FFB0, SET_SUB, 1}, //MMC6 Startropics II - Zoda's Revenge (U) [!]
+    {0x563E394A, SET_SUB, 1}, //Mahjong Academy (Asia) (Unl)
     {0xFCBF28B1, SET_SUB, 2}, //Crisis Force 
     {0xAC8DCDEA, SET_SUB, 2}, //Bus conflicts. Cybernoid - The Fighting Machine (USA)
     {0xA80A0F01, SET_SUB, 3}, //Acclaim MMC3. Incredible Crash Dummies, The (USA)
     {0x982DFB38, SET_SUB, 3}, //Acclaim MMC3. Mickey's Safari in Letterland (USA)
     {0xF312D1DE, SET_SUB, 4}, //MMC3A. 5.MMC3_rev_A.nes
     {0x8A96E00D, SET_SUB, 3}, //VRC2. Wai Wai World (Japan) 
+    {0xB27B8CF4, SET_SUB, 3}, //Contra (Japan)
     //****************************************************************************** mappers reloc    
     {0xFB2B6B10, SET_MAP, 241}, //Fan Kong Jing Ying (Ch).nes
     {0xB5E83C9A, SET_MAP, 241}, //Xing Ji Zheng Ba (Ch).nes

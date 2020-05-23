@@ -97,7 +97,13 @@ u8 edInit(u8 sst_mode) {
     resp = updateCheck();
     if (resp)return resp;
 
-    ses_cfg->hot_start = 1; //should be in the end
+    if (ses_cfg->hot_start == 0) {
+        ses_cfg->hot_start = 1; //should be in the end
+        if (registery->options.autostart) {
+            edStartGame(0);
+        }
+    }
+
     return 0;
 }
 

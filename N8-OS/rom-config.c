@@ -15,7 +15,7 @@ u8 getRomInfo(RomInfo *inf, u8 *path) {
     return resp;
 }
 
-#pragma codeseg ("BNK05")
+#pragma codeseg ("BNK04")
 
 typedef struct {
     u8 ines[32];
@@ -23,8 +23,6 @@ typedef struct {
     u32 crc;
     u32 dat_base;
 } RomID;
-
-
 
 
 
@@ -108,6 +106,10 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
         inf->map_pack = maprout[inf->mapper];
     } else {
         mapPack20(inf);
+    }
+    
+    if(inf->mapper == 157){
+        inf->srm_size = inf->srm_size == 0 ? 256 : 512;//for games with dual eeprom
     }
 
     if (inf->map_pack == 0xff && inf->mapper != 0xff)inf->supported = 0;
@@ -248,15 +250,37 @@ void romConfigNES20(RomInfo *inf, u8 *ines) {
     if (ram_size != 0)inf->srm_size += 64L << ram_size;
     ram_size = (ines[10] >> 4);
     if (ram_size != 0)inf->srm_size += 64L << ram_size;
-    if (inf->srm_size != 0 && inf->srm_size < 1024)inf->srm_size = 1024;
+    //if (inf->srm_size != 0 && inf->srm_size < 1024)inf->srm_size = 1024;
+
 
     if ((ines[9] & 0xF0) == 0 && ines[5] == 0) {
+
         inf->chr_ram = 1;
-        inf->chr_size = 64L << (ines[11] & 0x0f);
+
+        inf->chr_size = 0;
+        ram_size = (ines[11] & 0x0f);
+        if (ram_size != 0)inf->chr_size += 64L << ram_size;
+        ram_size = (ines[11] >> 4);
+        if (ram_size != 0)inf->chr_size += 64L << ram_size;
+        //inf->chr_size = 64L << (ines[11] & 0x0f);
+
     } else {
+
         inf->chr_ram = 0;
-        inf->chr_size = (u32) (((ines[9] & 0xF0) << 4) | ines[5]) * 8192;
+        
+        if ((ines[9] & 0xF0) == 0xF0) {
+            inf->chr_size = 1 << (ines[5] >> 2) * ((ines[5] & 3) + 1);
+        } else {
+            inf->chr_size = (u32) (((ines[9] & 0xF0) << 4) | ines[5]) * 8192;
+        }
     }
+
+    if ((ines[9] & 0x0F) == 0x0F) {
+        inf->prg_size = 1 << (ines[4] >> 2) * ((ines[4] & 3) + 1);
+    } else {
+        inf->prg_size = (u32) (((ines[9] & 0x0F) << 8) | ines[4]) * 16384;
+    }
+
 
     romConfigGlobl(inf);
 }

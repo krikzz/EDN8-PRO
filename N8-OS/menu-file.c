@@ -249,6 +249,9 @@ u8 fimeRomInfo(u8 *path) {
     vals[FINF_SRM_SIZE] = ptr;
     if (inf.srm_size == 0) {
         ptr = str_append(ptr, "Off");
+    } else if (inf.srm_size < 1024) {
+        ptr = str_append_num(ptr, inf.srm_size);
+        ptr = str_append(ptr, "B");
     } else {
         ptr = str_append_num(ptr, inf.srm_size / 1024);
         ptr = str_append(ptr, "K");

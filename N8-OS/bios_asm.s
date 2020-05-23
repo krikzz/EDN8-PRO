@@ -105,6 +105,9 @@ app_reboot:;wait for STATUS_UNLOCK state and clearing FPG_PEND
 @2:
     bit PPU_STAT
     bpl @2
+    
+    lda #$ff
+    sta $11 ;fix for Minna no Taabou no Nakayoshi Daisakusen
 
     ldx #$fd
     txs

@@ -620,7 +620,7 @@ u8 bi_get_rom_mask(u32 size) {
 
 u8 bi_get_srm_mask(u32 size) {
 
-    u32 max = 1024;
+    u32 max = 128;
     u8 msk = 0;
 
     while (max < size) {
