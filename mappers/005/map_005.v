@@ -214,7 +214,7 @@ module map_005 //MMC5
 	begin
 		
 		if(!cpu_rw & cpu_addr[15:0] == 16'h2000)sprite_mode <= cpu_dat[5];
-		if(!cpu_rw & cpu_addr[15:0] == 16'h2001)bgr_on <= cpu_dat[3];
+		if(!cpu_rw & cpu_addr[15:0] == 16'h2001)bgr_on <= cpu_dat[3] | cpu_dat[4] ;
 		
 		if(!cpu_rw & cpu_addr[15:0] == 16'h5100)prg_mode[1:0] <= cpu_dat[1:0];
 		if(!cpu_rw & cpu_addr[15:0] == 16'h5101)chr_mode[1:0] <= cpu_dat[1:0];
@@ -330,18 +330,28 @@ module map_005 //MMC5
 	reg irq_ack;
 	always @(negedge m2)irq_ack = cpu_rw & cpu_addr[15:0] == 16'h5204;
 	
+	
+	always @(negedge ppu_oe, negedge in_frame)
+	if(!in_frame)
+	begin
+		irq_ctr <= 0;
+	end
+		else
+	if(addr_eq & addr_eq_st)//line_start
+	begin
+		irq_ctr <= irq_ctr + 1;
+	end
+	
 	always @(negedge ppu_oe, negedge in_frame, posedge irq_ack)//changed
 	if(!in_frame)
 	begin
 		irq_pend <= 0;
-		irq_ctr <= 0;
 	end
 		else
 	if(irq_ack)irq_pend <= 0;
 		else
 	if(addr_eq & addr_eq_st)//line_start
 	begin
-		irq_ctr <= irq_ctr + 1;
 		if(irq_ctr == irq_val)irq_pend <= 1;
 	end
 
