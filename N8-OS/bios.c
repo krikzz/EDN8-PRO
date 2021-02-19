@@ -87,10 +87,17 @@ u8 bi_init() {
     }
 
     if (resp) {
-
         resp = bi_cmd_disk_init();
         if (resp)return resp;
+    }
 
+
+    //CMD_FPG_CFG isn't used anymore but should be initialized
+    if (1) {
+        u8 buff[40];
+        mem_set(buff, 0, sizeof (buff));
+        bi_cmd_tx(CMD_FPG_CFG);
+        bi_fifo_wr(buff, sizeof (buff));
     }
 
     return 0;
@@ -291,20 +298,10 @@ u8 bi_cmd_file_del(u8 *path) {
     return bi_check_status();
 }
 
-u8 bi_cmd_fpg_init(u8 map_pack) {
+u8 bi_cmd_fpg_init_sdc(u8 *path) {
 
     u32 size;
     u8 resp;
-    u8 path[32];
-
-
-    path[0] = 0;
-    str_append(path, PATH_MAP);
-    str_append(path, "/");
-    if (map_pack < 128)str_append(path, "0");
-    if (map_pack < 10)str_append(path, "0");
-    str_append_num(path, map_pack);
-    str_append(path, ".RBF");
 
     resp = bi_file_get_size(path, &size);
     if (resp == FAT_NO_FILE)return ERR_MAP_NOT_FOUND;
@@ -313,25 +310,33 @@ u8 bi_cmd_fpg_init(u8 map_pack) {
     resp = bi_cmd_file_open(path, FA_READ);
     if (resp)return resp;
 
-
     bi_cmd_tx(CMD_FPG_SDC);
     bi_fifo_wr(&size, 4);
 
-    bi_reboot(STATUS_UNLOCK | STATUS_FPG_OK);
+    //bi_reboot(STATUS_UNLOCK | STATUS_FPG_OK);
+    resp = REG_APP_BANK;
+    bi_halt(STATUS_FPG_OK);
+    REG_APP_BANK = resp;
 
     return 0;
 }
 
-void bi_cmd_fpg_init_cfg(MapConfig *cfg) {
+void bi_cmd_fpg_init_usb() {
 
-    //after fpga reboot this config will be applied
-    bi_cmd_tx(CMD_FPG_CFG);
-    bi_fifo_wr(cfg, sizeof (MapConfig));
+    u8 bank = REG_APP_BANK;
+    u16 len = 1; //next 1 byte received via fifo will be sent to usb (ack byte)
+
+    bi_cmd_tx(CMD_USB_WR);
+    bi_fifo_wr(&len, 2);
+
+    bi_halt(STATUS_FPG_OK);
+    REG_APP_BANK = bank;
 }
 
 u8 bi_cmd_file_crc(u32 len, u32 *crc_base) {
 
     u8 resp;
+
     bi_cmd_tx(CMD_F_FCRC);
     bi_fifo_wr(&len, 4);
     bi_fifo_wr(crc_base, 4);
@@ -641,18 +646,11 @@ void bi_exit_game() {
 
     bi_cfg_set(&cfg);
     asm("jmp ($FFFC)");
-
-    //bi_cmd_fpg_init(&cfg, 255);
 }
 
 void bi_cfg_set(MapConfig *cfg) {
 
     bi_cmd_mem_wr(ADDR_CFG, cfg, sizeof (MapConfig));
-}
-
-void bi_cfg_get(MapConfig *cfg) {
-
-    bi_cmd_mem_rd(ADDR_CFG, cfg, sizeof (MapConfig));
 }
 
 u8 bi_file_get_size(u8 *path, u32 *size) {
@@ -698,3 +696,22 @@ void bi_halt(u8 status) {
     zp_arg = status;
     bi_halt_exec();
 }
+
+void bi_start_app(MapConfig *cfg) {
+
+    u32 addr, len;
+    u8 ack;
+
+    addr = ADDR_CFG;
+    len = sizeof (MapConfig);
+    ack = 0xaa;
+
+    bi_cmd_tx(CMD_MEM_WR);
+    bi_fifo_wr(&addr, 4);
+    bi_fifo_wr(&len, 4);
+    bi_fifo_wr(&ack, 1);
+    bi_fifo_wr(cfg, sizeof (MapConfig));
+
+    bi_reboot(STATUS_CMD_OK);
+}
+

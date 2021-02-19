@@ -88,7 +88,7 @@ u8 app_recentMenu() {
 
         gRepaint();
         joy = sysJoyWait();
-        if (joy == JOY_A)return 0;
+        if (joy == JOY_B)return 0;
 
         if (joy == JOY_U) {
             selector = dec_mod(selector, MAX_RECENT);
@@ -98,7 +98,7 @@ u8 app_recentMenu() {
             selector = inc_mod(selector, MAX_RECENT);
         }
 
-        if (joy == JOY_B) {
+        if (joy == JOY_A) {
             if (recent->slot[selector].path[0] != 0) {
 
                 name_buff = malloc(MAX_PATH_SIZE);

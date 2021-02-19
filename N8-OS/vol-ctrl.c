@@ -160,7 +160,7 @@ void app_volOptions() {
         joy = sysJoyWait();
 
 
-        if (joy == JOY_A) {
+        if (joy == JOY_B) {
             break;
         }
 

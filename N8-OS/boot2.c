@@ -53,6 +53,9 @@ void bootError() {
 
     gSetXY(G_BORDER_X, G_SCREEN_H - G_BORDER_Y - 1);
     gConsPrint("2019 krikzz");
+    gSetX(G_SCREEN_W - G_BORDER_X - 7);
+    gAppendString("SN:");
+    gAppendHex16(inf.serial_l);
 
     gSetPal(PAL_B1);
     gFillRect('-', 0, G_BORDER_Y, G_SCREEN_W, 4);
@@ -118,7 +121,7 @@ void bootError() {
         gSetY(G_SCREEN_H / 2 - 2);
         gConsPrintCX("Unknown disk format");
         gConsPrint("");
-        gConsPrintCX("Please use FAT32 or exFAT");
+        gConsPrintCX("Please use FAT32");
         return;
     }
 

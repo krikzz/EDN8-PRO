@@ -11,7 +11,7 @@
 #include "bios.h"
 
 
-#define OS_VER          0x0208
+#define OS_VER          0x0211
 
 
 #define PATH_OS         "EDN8/nesos.nes"
@@ -30,6 +30,7 @@
 #define PATH_UPD_MENU   "EDN8/UPDATE/menu-cpu.bin"
 #define PATH_UPD_IOCORE "EDN8/UPDATE/iocore.bin"
 #define PATH_FDS_BIOS   "EDN8/disksys.rom"
+#define PATH_DEF_GAME   "default-game.nes"
 
 #define G_SCREEN_W      32
 #define G_SCREEN_H      28

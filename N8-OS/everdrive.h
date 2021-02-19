@@ -30,11 +30,11 @@
 #define SS_MOD_QSS      0x02    //quick save/load state without in-game menu
 #define MAP_IDX_FDS     254
 
-
 typedef struct {
     u8 ss_mode;
     u8 ss_key_save;
     u8 ss_key_load;
+    u8 ss_key_menu;
     u8 cheats;
     u8 swap_ab;
     u8 rst_delay;
@@ -53,6 +53,7 @@ typedef struct {
     Game cur_game;
     Options options;
     u8 vram_bug_msg;
+    u8 ram_backup_req;
     u16 crc;
 } Registery;
 
@@ -70,6 +71,7 @@ typedef struct {
     u8 hot_start;
     u8 boot_flag;
     u8 save_prg;
+    MapConfig cfg;
 } SessionCFG;
 
 extern Registery *registery;
@@ -83,6 +85,9 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg);
 u8 edApplyOptions(MapConfig *cfg);
 u8 edStartGame(u8 usb_mode);
 u8 edRegisterySave();
+void edGetMapPath(u8 map_pack, u8 *path);
+u8 edBramBackup();
+void edRebootGame();
 
 void usbListener();
 void printError(u8 code);

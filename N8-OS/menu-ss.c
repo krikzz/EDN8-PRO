@@ -16,17 +16,19 @@ void inGameMenu() {
 #pragma codeseg ("BNK08")
 
 void ss_return();
-
-enum {
-    SS_SAVE,
-    SS_LOAD,
-    SS_BANK,
-    SS_EXIT,
-    SS_SWAP_DISK,
-    SS_SIZE
-};
+void ss_reset();
 
 void app_inGameMenu() {
+
+    enum {
+        SS_SAVE,
+        SS_LOAD,
+        SS_BANK,
+        SS_RESET,
+        SS_EXIT,
+        SS_SWAP_DISK,
+        SS_SIZE
+    };
 
     u8 resp;
     FileInfo inf = {0};
@@ -38,7 +40,7 @@ void app_inGameMenu() {
     u8 update_info = 1;
 
     edInit(1);
-    
+
 
     REG_SST_ADDR = 0xff; //ss hit byte
     ss_src = REG_SST_DATA;
@@ -49,6 +51,7 @@ void app_inGameMenu() {
     box.selector = 0;
     items[SS_SAVE] = "Save State";
     items[SS_LOAD] = "Load State";
+    items[SS_RESET] = "Reset Game";
     items[SS_EXIT] = "Exit Game";
     items[SS_SWAP_DISK] = 0; //"Swap Disk";
     items[SS_SIZE] = 0;
@@ -56,24 +59,20 @@ void app_inGameMenu() {
     ss_bank_hex = decToBcd(ses_cfg->ss_bank);
 
     //quick ss section
-    if (
-            registery->options.ss_mode == SS_MOD_QSS &&
-            registery->options.ss_key_load != registery->options.ss_key_save) {
-
-        if (ss_src == SS_SRC_JOY_LOAD) {
-            ppuOFF();
-            resp = srmRestoreSS(ss_bank_hex);
-            if (resp)printError(resp);
-            ss_return();
-        }
-
-        if (ss_src == SS_SRC_JOY_SAVE) {
-            ppuOFF();
-            resp = srmBackupSS(ss_bank_hex);
-            if (resp)printError(resp);
-            ss_return();
-        }
+    if (ss_src != 0xff && ss_src == registery->options.ss_key_load) {
+        ppuOFF();
+        resp = srmRestoreSS(ss_bank_hex);
+        if (resp)printError(resp);
+        ss_return();
     }
+
+    if (ss_src != 0xff && ss_src == registery->options.ss_key_save) {
+        ppuOFF();
+        resp = srmBackupSS(ss_bank_hex);
+        if (resp)printError(resp);
+        ss_return();
+    }
+
 
     while (1) {
 
@@ -107,7 +106,7 @@ void app_inGameMenu() {
 
         if (box.act == JOY_L) {
             ses_cfg->ss_bank = dec_mod(ses_cfg->ss_bank, MAX_SS_SLOTS);
-            ss_bank_hex = decToBcd(ses_cfg->ss_bank); 
+            ss_bank_hex = decToBcd(ses_cfg->ss_bank);
             update_info = 1;
         }
 
@@ -143,7 +142,13 @@ void app_inGameMenu() {
         ss_return();
     }
 
+    if (box.selector == SS_RESET) {
+        
+        edRebootGame();
+    }
+
     if (box.selector == SS_EXIT) {
+
         bi_exit_game();
     }
 

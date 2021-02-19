@@ -330,6 +330,21 @@ u8 fileHexView(u8 *path) {
             rd_req = 1;
         }
 
+        if (joy == JOY_L) {
+            addr = 0;
+            resp = bi_cmd_file_set_ptr(addr);
+            if (resp)break;
+            rd_req = 1;
+        }
+
+        if (joy == JOY_R) {
+            addr = size / 256 * 256;
+            if (addr == size && addr != 0)addr -= 256;
+            resp = bi_cmd_file_set_ptr(addr);
+            if (resp)break;
+            rd_req = 1;
+        }
+
         if (rd_req) {
 
             block = 256;
@@ -380,7 +395,7 @@ u8 fileHexView(u8 *path) {
 
         gRepaint();
         joy = sysJoyWait();
-        if (joy == JOY_A)break;
+        if (joy == JOY_B)break;
 
 
     }
@@ -422,12 +437,27 @@ u8 fileSrmMenu(u8 *path) {
     if (box.act == ACT_EXIT)return 0;
 
     if (box.selector == SR_TO_RAM) {
+        gCleanScreen();
+        gRepaint();
         resp = srmFileToMem(path, ADDR_SRM, SIZE_SRM);
-        return resp;
+        if (resp)return resp;
+        registery->ram_backup_req = 1;
+        resp = edBramBackup();
+        if (resp)return resp;
+        fmForceUpdate();
+        return 0;
+        //return edRegisterySave();
     }
 
     if (box.selector == SR_TO_FILE) {
-        resp = srmMemToFile(path, ADDR_SRM, SIZE_SRM);
+
+        u32 size;
+        gCleanScreen();
+        gRepaint();
+        resp = bi_file_get_size(path, &size);
+        if (resp)return resp;
+        size = min(SIZE_SRM, size);
+        resp = srmMemToFile(path, ADDR_SRM, size);
         return resp;
     }
 

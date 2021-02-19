@@ -84,9 +84,9 @@
 #define STATUS_CMD_OK   0x02 //mcu finished command execution
 #define STATUS_FPG_OK   0x04 //fpga reboot complete
 
-#define SS_SRC_JOY_SAVE 0x01 //ss joy save combo
-#define SS_SRC_JOY_LOAD 0x02 //ss joy load combo
-#define SS_SRC_BTN      0x04 //external button
+//#define SS_SRC_JOY_SAVE 0x01 //ss joy save combo
+//#define SS_SRC_JOY_LOAD 0x02 //ss joy load combo
+//#define SS_SRC_BTN      0x04 //external button
 
 #define VRM_UPD_MODE    0x80
 #define VRM_MODE_STD    0xA0
@@ -130,7 +130,7 @@
 #define APP_SIZE        0x2000
 
 #define GG_SLOTS        8
-#define SS_COMBO_OFF    0xFF //turn off ss combo val
+#define SS_COMBO_OFF    0x00 //turn off ss combo val
 //****************************************************************************** file mode
 #define	FA_READ			0x01
 #define	FA_WRITE		0x02
@@ -171,6 +171,7 @@ extern void *zp_dst;
 extern u16 zp_len;
 extern u16 zp_arg;
 extern u16 zp_ret;
+extern u8 zp_cmd[64];
 
 
 #pragma zpsym("zp_dat")
@@ -180,6 +181,7 @@ extern u16 zp_ret;
 #pragma zpsym("zp_len")
 #pragma zpsym("zp_arg")
 #pragma zpsym("zp_ret")
+#pragma zpsym("zp_cmd")
 
 typedef struct {
     u32 size;
@@ -209,6 +211,7 @@ typedef struct {
     u8 ss_key_save;
     u8 ss_key_load;
     u8 map_ctrl;
+    u8 ss_key_menu;
 } MapConfig;
 
 typedef struct {
@@ -245,7 +248,7 @@ typedef struct {
     u8 boot_status;
     u8 ram_rst;
     u8 disk_status;
-    u8 cart_form;//cartridge form factor
+    u8 cart_form; //cartridge form factor
     u8 pwr_sys;
     u8 pwr_usb;
     u8 reserved[9];
@@ -274,8 +277,8 @@ u8 bi_cmd_file_del(u8 *path);
 void bi_cmd_uart_wr(void *data, u16 len);
 void bi_cmd_usb_wr(void *data, u16 len);
 void bi_cmd_fifo_wr(void *data, u16 len);
-u8 bi_cmd_fpg_init(u8 map_pack);
-void bi_cmd_fpg_init_cfg(MapConfig *cfg);
+u8 bi_cmd_fpg_init_sdc(u8 *path);
+void bi_cmd_fpg_init_usb();
 u8 bi_cmd_file_crc(u32 len, u32 *crc_base);
 void bi_cmd_mem_set(u8 val, u32 addr, u32 len);
 u8 bi_cmd_mem_test(u8 val, u32 addr, u32 len);
@@ -289,7 +292,7 @@ void bi_cmd_rtc_set(RtcTime *time);
 void bi_cmd_sys_inf(SysInfoIO *inf);
 void bi_cmd_reboot();
 void bi_cmd_game_ctr();
-void bi_cmd_fla_rd(void *dst, u32 addr, u32 len) ;
+void bi_cmd_fla_rd(void *dst, u32 addr, u32 len);
 u8 bi_cmd_fla_wr_sdc(u32 addr, u32 len);
 
 
@@ -310,10 +313,12 @@ u8 bi_get_rom_mask(u32 size);
 u8 bi_get_srm_mask(u32 size);
 void bi_exit_game();
 void bi_cfg_set(MapConfig *cfg);
-void bi_cfg_get(MapConfig *cfg);
 void bi_sleep(u16 ms);
 u16 bi_get_ticks();
 void bi_reboot_usb();
+void bi_start_app(MapConfig *cfg);
+
+
 
 #endif	/* BIOS_H */
 

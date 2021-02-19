@@ -105,8 +105,9 @@ const GameDB game_db[] = {
     {0x26EF50E3, SET_MAP, 195}, //Captain Tsubasa Vol. II - Super Striker (Ch)
     {0x555A555E, SET_MAP, 191}, //Sugoro Quest - Dice no Senshi Tachi (Ch)
     {0x96CE586E, SET_MAP, 189}, //Street Fighter II - The World Warrior (Unl) [!]
-    
-    
+    {0xD5224FDE, SET_MAP, 195}, //Waixing's Chinese translation of SNK's God Slayer/Crystalis.
+
+
     {0, 0, 0}//db end
 };
 

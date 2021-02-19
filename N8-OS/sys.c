@@ -118,13 +118,30 @@ void sysPalInit(u8 fade_to_black) {
 
 u8 sysJoyRead() {
 
+    u8 joy;
+    u8 tmp;
+
+    joy = sysJoyRead_raw();
+
+    if (registery->options.swap_ab) {
+
+        tmp = joy;
+        joy &= ~(JOY_B | JOY_A);
+        if ((tmp & JOY_B))joy |= JOY_A;
+        if ((tmp & JOY_A))joy |= JOY_B;
+    }
+
+    return joy;
+}
+
+u8 sysJoyRead_raw() {
+
     u16 delay;
     u8 joy = 0;
     u8 i;
 
     delay = bi_get_ticks();
     while (bi_get_ticks() - delay < 10); //antiglitch
-    //sysVsync();
 
     JOY_PORT1 = 0x01;
     JOY_PORT1 = 0x00;
@@ -132,13 +149,6 @@ u8 sysJoyRead() {
     for (i = 0; i < 8; i++) {
         joy <<= 1;
         if ((JOY_PORT1 | JOY_PORT2) & 3)joy |= 1;
-    }
-
-    if (!registery->options.swap_ab) {
-        i = joy;
-        joy &= ~(JOY_A | JOY_B);
-        if ((i & JOY_A))joy |= JOY_B;
-        if ((i & JOY_B))joy |= JOY_A;
     }
 
     usbListener();
@@ -161,7 +171,7 @@ u8 sysJoyWait() {
         if ((bi_get_ticks() - time) > JOY_DELAY) {
 
             time += JOY_SPEED;
-            if ((joy & (JOY_A | JOY_B)) == 0)return joy;
+            if ((joy & (JOY_B | JOY_A)) == 0)return joy;
         }
 
 

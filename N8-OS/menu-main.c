@@ -24,7 +24,7 @@ void mmDeviceInfo();
 void mmDeviceInfo_full();
 void volOptions();
 void mmHotKeySetup();
-void mmHotKeyInfo();
+//void mmHotKeyInfo();
 void mmAppendKeyCode(u8 joy);
 
 enum {
@@ -121,7 +121,6 @@ u8 mmOptions() {
     Options *opt = &registery->options;
 
     static u8 * off_on[] = {"OFF", "ON "};
-    static u8 * ss_mod[] = {"OFF", "STD", "QSS"};
 
     arg[OP_IG_MENU] = "In-Game Menu";
     arg[OP_CHEATS] = "Cheats";
@@ -146,7 +145,7 @@ u8 mmOptions() {
 
     while (1) {
 
-        val[OP_IG_MENU] = ss_mod[opt->ss_mode];
+        val[OP_IG_MENU] = off_on[opt->ss_mode];
         val[OP_CHEATS] = off_on[opt->cheats];
         val[OP_RST_DELAY] = off_on[opt->rst_delay];
         val[OP_FILE_SORT] = off_on[opt->sort_files];
@@ -168,21 +167,21 @@ u8 mmOptions() {
             box.selector = inc_mod(box.selector, OP_SIZE);
         }
 
-        if (joy == JOY_A) {
+        if (joy == JOY_B) {
             break;
         }
 
-        if (joy == JOY_B) {
+        if (joy == JOY_A) {
 
             if (box.selector != OP_RTC)changed = 1;
 
-            if (box.selector == OP_IG_MENU)opt->ss_mode = (opt->ss_mode + 1) % 3;
-            if (box.selector == OP_CHEATS)opt->cheats = (opt->cheats ^ 1) & 1;
-            if (box.selector == OP_RST_DELAY)opt->rst_delay = (opt->rst_delay ^ 1) & 1;
-            if (box.selector == OP_FILE_SORT)opt->sort_files = (opt->sort_files ^ 1) & 1;
-            if (box.selector == OP_SWAP_AB)swap_ab = (swap_ab ^ 1) & 1;
-            if (box.selector == OP_AUTOSTART)opt->autostart = (opt->autostart ^ 1) & 1;
-            if (box.selector == OP_FDS_AUTO_SWP)opt->fds_auto_swp = (opt->fds_auto_swp ^ 1) & 1;
+            if (box.selector == OP_IG_MENU)opt->ss_mode ^= 1;
+            if (box.selector == OP_CHEATS)opt->cheats ^= 1;
+            if (box.selector == OP_RST_DELAY)opt->rst_delay ^= 1;
+            if (box.selector == OP_FILE_SORT)opt->sort_files ^= 1;
+            if (box.selector == OP_SWAP_AB)swap_ab ^= 1;
+            if (box.selector == OP_AUTOSTART)opt->autostart ^= 1;
+            if (box.selector == OP_FDS_AUTO_SWP)opt->fds_auto_swp ^= 1;
             if (box.selector == OP_IG_COMBO)mmHotKeySetup(); //
             if (box.selector == OP_RTC)rtcSetup();
             if (box.selector == OP_AUDIO_VOL)volOptions();
@@ -199,12 +198,7 @@ u8 mmOptions() {
     return 0;
 }
 
-enum {
-    HK_KEY_SAVE = 0,
-    HK_KEY_LOAD,
-    HK_INFO,
-    HK_SIZE
-};
+
 
 static u8 * key_codes[] = {"RIGHT", "LEFT", "DOWN", "UP", "START", "SELECT", "B", "A"};
 
@@ -212,6 +206,11 @@ void mmAppendKeyCode(u8 joy) {
 
     u8 i;
     u8 c = 0;
+
+    if (joy == SS_COMBO_OFF) {
+        gAppendString("OFF");
+        return;
+    }
 
     for (i = 0; i < 8; i++) {
         if (((joy >> i) & 1)) {
@@ -228,6 +227,14 @@ void mmAppendKeyCode(u8 joy) {
 
 void mmHotKeySetup() {
 
+    enum {
+        HK_KEY_SAVE = 0,
+        HK_KEY_LOAD,
+        HK_KEY_MENU,
+        //HK_INFO,
+        HK_SIZE
+    };
+
     Options *opt = &registery->options;
     ListBox box;
     u8 * items[HK_SIZE]; // = {"Set Save-State HotKey", "Set Load-State HotKey", 0};
@@ -237,26 +244,30 @@ void mmHotKeySetup() {
     box.items = items;
     box.selector = 0;
 
-    items[HK_KEY_SAVE] = "Set Save-State Key";
-    items[HK_KEY_LOAD] = "Set Load-State Key";
-    items[HK_INFO] = "Information";
+    items[HK_KEY_SAVE] = "Quick Save-State";
+    items[HK_KEY_LOAD] = "Quick Load-State";
+    items[HK_KEY_MENU] = "In-Game Menu";
+    //items[HK_INFO] = "Information";
     items[HK_SIZE] = 0;
 
     while (1) {
 
         gCleanScreen();
         gSetPal(PAL_G2);
-        gDrawFooter("Save Key: ", 2, 0);
+        gDrawFooter("Save Key: ", 3, 0);
         mmAppendKeyCode(opt->ss_key_save);
         gConsPrint("Load Key: ");
         mmAppendKeyCode(opt->ss_key_load);
+        gConsPrint("Menu Key: ");
+        mmAppendKeyCode(opt->ss_key_menu);
 
         guiDrawListBox(&box);
         if (box.act == ACT_EXIT)return;
 
         if (box.selector == HK_KEY_SAVE)opt->ss_key_save = mmInGameCombo();
         if (box.selector == HK_KEY_LOAD)opt->ss_key_load = mmInGameCombo();
-        if (box.selector == HK_INFO)mmHotKeyInfo();
+        if (box.selector == HK_KEY_MENU)opt->ss_key_menu = mmInGameCombo();
+        //if (box.selector == HK_INFO)mmHotKeyInfo();
     }
     //
 }
@@ -277,13 +288,13 @@ u8 mmInGameCombo() {
         gCleanScreen();
         gSetPal(PAL_G2);
         gDrawHeader(hdr, G_CENTER);
-        gDrawFooter("Keep pressed Two Buttons", 1, G_CENTER);
+        gDrawFooter("hold two or more buttons", 1, G_CENTER);
 
         gSetY(G_SCREEN_H / 2 - 2);
         gSetPal(PAL_B2);
 
 
-        joy = sysJoyRead();
+        joy = sysJoyRead_raw();
         ctr = 0;
         buff[0] = 0;
 
@@ -296,6 +307,8 @@ u8 mmInGameCombo() {
             }
         }
 
+        if (joy == JOY_STA)ctr = 2;
+
         if (ctr < 2)time = bi_get_ticks();
         delay = bi_get_ticks() - time;
 
@@ -304,6 +317,12 @@ u8 mmInGameCombo() {
         gRepaint();
 
         if (ctr > 1 && delay > 480) {
+
+            if (joy == JOY_STA) {
+                buff[0] = 0;
+                str_append(buff, "OFF");
+                joy = SS_COMBO_OFF;
+            }
 
             time = bi_get_ticks();
             while (1) {
@@ -331,6 +350,7 @@ u8 mmInGameCombo() {
 
 }
 
+/*
 void mmHotKeyInfo() {
 
 
@@ -367,7 +387,7 @@ void mmHotKeyInfo() {
     gRepaint();
     sysJoyWait();
 }
-
+ */
 void mmAbout() {
 
     gSetPal(PAL_B1);

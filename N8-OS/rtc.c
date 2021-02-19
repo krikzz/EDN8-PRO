@@ -120,7 +120,7 @@ void app_rtcSetup() {
             changed = 1;
         }
 
-        if (joy == JOY_A || joy == JOY_STA) {
+        if (joy == JOY_B || joy == JOY_STA) {
             break;
         }
 

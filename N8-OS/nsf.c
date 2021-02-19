@@ -51,7 +51,7 @@ u8 app_nsfPlay(u8 *path) {
     MapConfig cfg;
     u32 addr, size;
     u8 i, banks_on;
-    
+
 
     gCleanScreen();
     gRepaint();
@@ -139,8 +139,16 @@ u8 app_nsfPlay(u8 *path) {
 
     cfg.master_vol = volGetMasterVol(i);
 
-    bi_cmd_fpg_init_cfg(&cfg);
-    return bi_cmd_fpg_init(inf.map_pack);
-}
+    //bi_cmd_fpg_init_cfg(&cfg);
+    //return bi_cmd_fpg_init_sdc(0);//inf.map_pack
+    if (1) {
+        u8 map_path[24];
+        edGetMapPath(inf.map_pack, map_path);
+        resp = bi_cmd_fpg_init_sdc(map_path); //reconfigure fpga
+        if (resp)return resp;
+    }
+    bi_start_app(&cfg);
 
+    return 0;
+}
 

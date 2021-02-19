@@ -4,9 +4,23 @@
 
 u8 tst() {
 
+    u8 i;
+    u8 vals[128];
+    gCleanScreen();
+    while (sysJoyRead() == 0);
+
+    for (i = 0; i < sizeof (vals); i++) {
+        vals[i] = sysJoyRead();
+    }
+
+    for (i = 0; i < sizeof (vals); i++) {
+        if (i % 8 == 0)gConsPrint("");
+        gAppendHex8(vals[i]);
+    }
+
     gRepaint();
-    sysJoyWait();
-    return 0;
+    while (1)sysJoyWait();
+
 }
 
 int main() {
@@ -40,7 +54,10 @@ void printError(u8 code) {
     bi_cmd_sys_inf(&inf);
     ppuON();
     gCleanScreen();
-    
+
+    if (code == FAT_NO_FILE && str_cmp_len(PATH_DEF_GAME, registery->cur_game.path, 0)) {
+        code = ERR_GAME_NOT_SEL;
+    }
 
     gSetY(G_SCREEN_H / 2 - 2);
 
@@ -73,7 +90,7 @@ void printError(u8 code) {
     } else if (code == FAT_NO_FS) {
         gConsPrintCX("Unknown disk format");
         gConsPrintCX("");
-        gConsPrintCX("Please use FAT32 or exFAT");
+        gConsPrintCX("Please use FAT32");
     } else if (code == ERR_REGI_CRC) {
         gConsPrintCX("Settings were reset to default");
         gConsPrintCX("");

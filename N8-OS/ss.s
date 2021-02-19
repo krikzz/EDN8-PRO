@@ -451,6 +451,7 @@ vsync:
     ldx MEM_CPU_REGS+1
 
     ;return to game via nmi handler
-    jmp ($FFFA)  
+    jmp ($FFFA)
 
 
+    

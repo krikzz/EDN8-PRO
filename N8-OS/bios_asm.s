@@ -93,6 +93,7 @@ app_reboot:;wait for STATUS_UNLOCK state and clearing FPG_PEND
     lda #0
     sta REG_FIFO_DATA;exec
     wait_status
+    
 
     ldx #0
 @1:

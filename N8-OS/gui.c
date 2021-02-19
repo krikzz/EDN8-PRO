@@ -224,12 +224,12 @@ void app_guiDrawListBox(ListBox *box) {
 
         joy = sysJoyWait();
 
-        if (joy == JOY_B) {
+        if (joy == JOY_A) {
             box->act = ACT_OPEN;
             return;
         }
 
-        if (joy == JOY_A) {
+        if (joy == JOY_B) {
             box->act = ACT_EXIT;
             return;
         }
@@ -286,8 +286,8 @@ u8 app_guiConfirmBox(u8 *str, u8 def) {
         gRepaint();
         joy = sysJoyWait();
 
-        if ((joy & JOY_A))return 0;
-        if ((joy & JOY_B))return selector;
+        if ((joy & JOY_B))return 0;
+        if ((joy & JOY_A))return selector;
 
         if (joy == JOY_R && selector == 1)selector--;
         if (joy == JOY_L && selector == 0)selector++;

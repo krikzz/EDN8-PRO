@@ -62,10 +62,11 @@ u8 app_ggEdit(u8 *src, u8 *game) {
     gCleanScreen();
     gRepaint();
 
+    /*
     if (game[0] == 0) {
         printError(ERR_GAME_NOT_SEL);
         return 0;
-    }
+    }*/
 
     gg_txt = malloc(sizeof (CheatText));
 
@@ -425,7 +426,7 @@ u8 ggEditSlot(TextSlot *slot) {
         gRepaint();
         joy = sysJoyWait();
 
-        if (joy == JOY_A)return changed;
+        if (joy == JOY_B)return changed;
 
         if (joy == JOY_L && code_pos != 0) {
             code_pos--;

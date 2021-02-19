@@ -53,7 +53,7 @@ void fmInitMemory() {
 }
 
 void fmForceUpdate() {
-    fm->load_dir = 1;
+    fm->load_dir = 1; 
 }
 
 
@@ -104,7 +104,7 @@ u8 app_fmanager() {
 
 
         resp = fmRepaint();
-        if (resp)return resp;
+        if (resp)return resp; 
 
         joy = sysJoyWait();
 
@@ -151,7 +151,7 @@ u8 app_fmanager() {
             fm->selector -= MAX_ROWS;
         }
 
-        if (joy == JOY_B) {
+        if (joy == JOY_A) {
             if (fm->dir_size == 0)continue;
             resp = fmGetPath(0);
             if (resp)return resp;
@@ -160,7 +160,7 @@ u8 app_fmanager() {
             continue;
         }
 
-        if (joy == JOY_A) {
+        if (joy == JOY_B) {
             resp = fmDirClose();
             if (resp)return resp;
             continue;
