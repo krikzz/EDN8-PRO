@@ -11,6 +11,8 @@
 	wire [7:0]ss_key_save;
 	wire [7:0]ss_key_load;
 	wire [7:0]ctrl;
+	wire [7:0]ss_key_menu;
+	
 	
 
 	wire [7:0]prg_msk_in;
@@ -22,6 +24,7 @@
 	
 	
 	assign {
+	ss_key_menu[7:0],
 	ctrl[7:0], 
 	ss_key_load[7:0], 
 	ss_key_save[7:0], 

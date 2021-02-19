@@ -90,7 +90,7 @@ module map_005 //MMC5
 	
 	assign map_ppu_oe = ppu_oe ? 0 : vram_ce_exr | vram_ce_fda | vram_ce_fcl | ext_atr_ce;
 	assign map_ppu_dout[7:0] = 
-	exram_mode[1] == 1 ? 8'h00 : 
+	vram_ce_exr & exram_mode[1] ? 8'h00 : 
 	ext_atr_ce ? {ext_atr[7:6], ext_atr[7:6], ext_atr[7:6], ext_atr[7:6]} : 
 	split_act & ppu_atr_ce ? split_pal : 
 	vram_ce_exr ? xram_dout[7:0] : 

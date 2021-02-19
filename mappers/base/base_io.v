@@ -91,18 +91,18 @@ module base_io
 	
 //****************************************************************************************************************** peripheral interface	
 	assign dout_pi[7:0] = 
-	pi_ce_cfg_reg ? scfg[pi_addr[2:0]][7:0] :
+	pi_ce_cfg_reg ? scfg[pi_addr[3:0]][7:0] :
 	pi_ce_fifo ? fifo_do_b[7:0] : 
 	8'hff;
 
 	
 	//pi to internal registers
-	reg [7:0]scfg[8];
-	assign sys_cfg[`BW_SYS_CFG-1:0] = {scfg[7],scfg[6],scfg[5],scfg[4],scfg[3],scfg[2],scfg[1],scfg[0]};
+	reg [7:0]scfg[16];
+	assign sys_cfg[`BW_SYS_CFG-1:0] = {scfg[8], scfg[7],scfg[6],scfg[5],scfg[4],scfg[3],scfg[2],scfg[1],scfg[0]};
 	
 	always @(negedge pi_clk)
 	begin
-		if(pi_ce_cfg_reg & pi_we)scfg[pi_addr[2:0]][7:0] <= pi_do[7:0];
+		if(pi_ce_cfg_reg & pi_we)scfg[pi_addr[3:0]][7:0] <= pi_do[7:0];
 	end
 	
 

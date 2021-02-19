@@ -24,13 +24,13 @@
 	wire pi_ce_sys = pi_act & pi_dst_sys;//8M area
 	
 //**************************************************************************64K for system registers	
-	wire pi_ce_regs = pi_ce_sys & pi_addr[21:16] == 0;
+	wire pi_ce_regs 	 = pi_ce_sys  & pi_addr[21:16] == 0;
 	
-	wire pi_ce_cfg = pi_ce_regs & pi_addr[15:8] == 0;//256B
-	wire pi_ce_cfg_ggc = pi_ce_cfg & pi_addr[7:5] == 0;//32B cheat codes
-	wire pi_ce_cfg_reg = pi_ce_cfg & pi_addr[7:5] == 1 & pi_addr[4:3] == 0;//8B mapper configuration
+	wire pi_ce_cfg 	 = pi_ce_regs & pi_addr[15:8] == 0;//256B
+	wire pi_ce_cfg_ggc = pi_ce_cfg  & pi_addr[7:5] == 0;//32B cheat codes
+	wire pi_ce_cfg_reg = pi_ce_cfg  & pi_addr[7:5] == 1 & pi_addr[4] == 0;//16B mapper configuration
 	
-	wire pi_ce_ss = pi_ce_regs & pi_addr[15:13] == 1;//8K
+	wire pi_ce_ss 		 = pi_ce_regs & pi_addr[15:13] == 1;//8K
 	
 
 //**************************************************************************64K for fifo

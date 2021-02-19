@@ -50,7 +50,7 @@ module sst_controller
 	wire [10:0]ss_addr = pi_ce_ss ? pi_addr[10:0] : sst_addr_cpu[10:0];
 	wire ss_we;
 	wire [7:0]snif_do;
-	wire [2:0]ss_src;
+	wire [7:0]ss_src;
 	wire sniff_off;
 	
 	
@@ -72,7 +72,6 @@ module sst_controller
 		.ss_we(ss_we),
 		.ss_src(ss_src),
 		.sniff_off(sniff_off)
-		
 	);
 
 
@@ -89,7 +88,7 @@ module ss_sw
 	input [`BW_SYS_CFG-1:0]sys_cfg;
 	input sst_ce;
 	output ss_act, ss_we;
-	output reg [2:0]ss_src;
+	output reg [7:0]ss_src;
 	output sniff_off;
 	
 	assign ss_act = ((game_out & m2) | ss_latch) & !(game_ret & m2);
@@ -101,12 +100,11 @@ module ss_sw
 	wire ss_req = ss_req_st[1:0] == 2'b10;
 	
 	wire nmi = cpu_rw & cpu_addr[15:0] == 16'hfffa;
-	wire joy_hit = joy_hit_save | joy_hit_load;
-	wire joy_hit_save = joy1 == ss_key_save & ss_key_save != 8'hff;
-	wire joy_hit_load = joy1 == ss_key_load & ss_key_load != 8'hff;
+	wire joy_hit = joy_hit_save | joy_hit_load | joy_hit_menu;
+	wire joy_hit_save = joy1 == ss_key_save & ss_key_save != 8'h00;
+	wire joy_hit_load = joy1 == ss_key_load & ss_key_load != 8'h00;
+	wire joy_hit_menu = joy1 == ss_key_menu & ss_key_menu != 8'h00;
 	wire btn_hit = !fds_sw & ctrl_ss_btn;
-	
-	
 	
 	
 	reg ss_latch;
@@ -118,7 +116,7 @@ module ss_sw
 	always @(negedge m2)
 	begin
 				
-		if(ss_req_st[1:0] == 2'b01)ss_src[2:0] <= {btn_hit, joy_hit_load, joy_hit_save};
+		if(ss_req_st[1:0] == 2'b01)ss_src[7:0] <= joy1[7:0];
 	
 		if(ss_latch)ss_req_st[1:0] <= 2'b00;
 			else
@@ -198,7 +196,7 @@ module sniffer
 	input [8:0]rd_addr;
 	input sniff_off;
 	output [7:0]dout;
-	input [2:0]ss_src;
+	input [7:0]ss_src;
 	
 	parameter PPU_CTRL = 3'd0;
 	parameter PPU_MASK = 3'd1;
@@ -232,7 +230,7 @@ module sniffer
 	rd_addr[5:0] == 2 ? ppu_scrl[15:8] : 
 	rd_addr[5:0] == 3 ? ppu_scrl[7:0] :
 	rd_addr[5:0] == 15 ? 8'h53 : 
-	rd_addr[5:0] == 63 ? ss_src[2:0] : 
+	rd_addr[5:0] == 63 ? ss_src[7:0] : 
 	8'hff;
 	
 	
