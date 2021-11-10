@@ -1,0 +1,23 @@
+
+EverDrive N8 PRO specs:
+
+Large ROM memory. 16MB vs 1MB in original N8.
+New OS with way faster menu and handy functions.
+In-game menu. You can save game or return to system menu.
+Multi slot save states. 8 independed slots for save states.
+Much faster rom loading.
+Wide support of file systems: FAT16/FAT32/EXFAT.
+Up to 1024 files per folder. Or unlimited if file sorting disabled.
+Improved audio mixing circuit with op amp.
+Dedicated button for swap FDS disk side or Save State menu.
+USB port for developers.
+Hi quality 6-layers PCB.
+New Cyclone IV fpga with larger resources.
+ARM based I/O co-processor for SD and USB operations handling.
+Built-in NSF player with expansion chips support (VRC6, VRC7, Sunsoft-5b, Namco-163)
+Overall hardware design improvements.
+
+
+Product still in development and specs can be changed or complemented.
+
+

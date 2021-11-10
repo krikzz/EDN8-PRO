@@ -1,0 +1,15 @@
+map cfg:
+8-map_idx
+8-prg_msk
+8-chr_msk
+8-master-vol
+8-cfg-bits
+
+74
+75
+76
+77
+78
+79
+80
+81

@@ -1,0 +1,25 @@
+cpu bus:
+8+16+3
+
+ppu bus:
+8+14+4
+
+ram-rom
+5+12
+
+ppu-ram
+3+12
+
+var:
+snd-1, gain-2, clk-1, bus_ctrl-6, fds-btn-1
+1+2+1+5+1
+
+8+16+3+8+14+4+5+12+3+12+1+2+1+5+1
+
+
+system bus:
+53
+ram: 
+34
+
+totl: 87

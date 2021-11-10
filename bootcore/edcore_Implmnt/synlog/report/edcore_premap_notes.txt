@@ -1,0 +1,13 @@
+@N: MF248 |Running in 64-bit mode.
+@N: MF666 |Clock conversion enabled. (Command "set_option -fix_gated_and_generated_clocks 1" in the project file.)
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":32:38:32:41|Tristate driver boot0 (in view: work.top(verilog)) on net boot0 (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_1 (in view: work.top(verilog)) on net gpio[3] (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_2 (in view: work.top(verilog)) on net gpio[2] (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_3 (in view: work.top(verilog)) on net gpio[1] (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_4 (in view: work.top(verilog)) on net gpio[0] (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":32:38:32:41|Tristate driver ice_sdo (in view: work.top(verilog)) on net ice_sdo (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":32:38:32:41|Tristate driver mcu_rst (in view: work.top(verilog)) on net mcu_rst (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":32:38:32:41|Tristate driver spi_miso (in view: work.top(verilog)) on net spi_miso (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_1 (in view: work.top(verilog)) on net gpio[3] (in view: work.top(verilog)) has its enable tied to GND.
+@N: MO111 :"e:\projects\edn8-pro\bootcore\top.v":41:20:41:26|Tristate driver gpio_2 (in view: work.top(verilog)) on net gpio[2] (in view: work.top(verilog)) has its enable tied to GND.
+@N: BN225 |Writing default property annotation file E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.sap.

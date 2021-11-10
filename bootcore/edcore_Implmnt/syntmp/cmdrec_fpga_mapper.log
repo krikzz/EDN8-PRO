@@ -1,0 +1,14 @@
+C:\lscc\iCEcube2.2017.08\synpbase\bin64\m_generic.exe  -prodtype  synplify_pro   -encrypt  -pro  -rundir  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt   -part iCE40HX1K  -package VQ100    -maxfan 10000 -RWCheckOnRam 0 -pipe -fixgatedclocks 1 -fixgeneratedclocks 1 -summaryfile E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synlog\report\edcore_fpga_mapper.xml  -flow mapping  -multisrs  -oedif  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.edf   -autoconstraint  -freq 1.000   E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synwork\edcore_prem.srd  -sap  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.sap  -otap  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.tap  -omap  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.map  -devicelib  C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v  -sap  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.sap  -ologparam  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\syntmp\edcore.plg  -osyn  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.srm  -prjdir  E:\projects\EDN8-PRO\bootcore\  -prjname  edcore_syn  -log  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synlog\edcore_fpga_mapper.srr 
+rc:1 success:1 runtime:1
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.edf|io:o|time:1568583169|size:42535|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synwork\edcore_prem.srd|io:i|time:1568583169|size:6432|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.sap|io:o|time:1568583169|size:411|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.tap|io:o|time:0|size:0|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.map|io:o|time:1568583170|size:28|exec:0
+file:C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v|io:i|time:1557676760|size:224837|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.sap|io:o|time:1568583169|size:411|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\syntmp\edcore.plg|io:o|time:1568583170|size:446|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\edcore.srm|io:o|time:1568583169|size:11641|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synlog\edcore_fpga_mapper.srr|io:o|time:1568583170|size:10499|exec:0
+file:C:\lscc\iCEcube2.2017.08\synpbase\bin\m_generic.exe|io:i|time:1557676758|size:17853440|exec:1
+file:C:\lscc\iCEcube2.2017.08\synpbase\bin64\m_generic.exe|io:i|time:1557676759|size:32355840|exec:1

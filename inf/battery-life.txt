@@ -1,0 +1,6 @@
+CR2032: 220mAh
+ram128K: 0.0005mA or 0.5ua 40-50 years
+ram256K: 0.0015ma or 1.5ua 13-16 years
+
+final rev:
+ram256K + RTC: 0.0009mA 0.9uA 28 years

@@ -1,0 +1,2 @@
+spi:  2.1mb/s
+sdio: 6.6mb/s (5.5m at 36mhz)

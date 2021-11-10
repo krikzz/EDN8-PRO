@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>n8-edio</name>
+            <make-project-type>0</make-project-type>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions/>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>windows-1251</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>Src</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>app</name>
+                    <type>0</type>
+                </confElem>
+                <confElem>
+                    <name>bootld</name>
+                    <type>0</type>
+                </confElem>
+            </confList>
+        </data>
+    </configuration>
+</project>

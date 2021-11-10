@@ -1,0 +1,1 @@
+E:/soft/portable/STM32\ST-LINK/ST-LINK_CLI -c SWD UR -P build/edio.hex -V -Rst

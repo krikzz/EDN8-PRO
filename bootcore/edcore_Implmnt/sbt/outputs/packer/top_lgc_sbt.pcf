@@ -1,0 +1,49 @@
+set_location CONSTANT_ZERO_LUT4 11 14 3 #SB_LUT4
+set_location CONSTANT_ONE_LUT4 12 15 2 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_1 11 13 4 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_5 11 14 0 #SB_LUT4
+set_location cpu_addr_ibuf_RNIFFNB[0] 12 15 0 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_2 11 13 0 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_3 11 13 6 #SB_LUT4
+set_location GND -1 -1 -1 #GND
+set_location rom_inst.ram0_RNIBF5F_0 11 13 3 #SB_LUT4
+set_location rom_inst.ram0 10 13 0 #SB_RAM40_4KNRNW
+set_location rom_inst.ram1 10 15 0 #SB_RAM40_4KNRNW
+set_location cpu_ce_ibuf_RNI9TA51 12 15 6 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_6 11 14 1 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F_4 11 13 7 #SB_LUT4
+set_location cpu_ce_ibuf_RNI9TA51_0 12 15 7 #SB_LUT4
+set_location rom_inst.ram0_RNIBF5F 11 13 2 #SB_LUT4
+set_io cpu_dat[4] 68
+set_io gpio[3] 20
+set_io cpu_addr[8] 53
+set_io cpu_dat[2] 65
+set_io cpu_addr[1] 80
+set_io cpu_ex 73
+set_io cpu_dat[0] 63
+set_io cpu_ce 78
+set_io cpu_addr[3] 82
+set_io cpu_dir 52
+set_io cpu_dat[1] 64
+set_io cpu_addr[4] 83
+set_io ice_sdo 45
+set_io cpu_dat[6] 71
+set_io cpu_addr[5] 85
+set_io boot0 8
+set_io spi_miso 4
+set_io gpio[1] 24
+set_io cpu_rw 74
+set_io cpu_dat[7] 72
+set_io cpu_addr[6] 86
+set_io clk 90
+set_io gpio[0] 25
+set_io cpu_addr[7] 87
+set_io cpu_dat[5] 69
+set_io cpu_addr[0] 79
+set_io mcu_rst 7
+set_io gpio[2] 21
+set_io cpu_addr[9] 56
+set_io boot_on 91
+set_io cpu_m2 89
+set_io cpu_dat[3] 66
+set_io cpu_addr[2] 81

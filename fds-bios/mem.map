@@ -1,0 +1,27 @@
+Modules list:
+-------------
+fdsio.o:
+    CODE              Offs = 000000   Size = 001735
+    USER              Offs = 000000   Size = 00009F
+    USER_END          Offs = 000000   Size = 0001C5
+    VECTORS           Offs = 000000   Size = 000006
+
+
+Segment list:
+-------------
+Name                  Start   End     Size
+--------------------------------------------
+CODE                  00E000  00F734  001735
+USER                  00F735  00F7D3  00009F
+USER_END              00FE35  00FFF9  0001C5
+VECTORS               00FFFA  00FFFF  000006
+
+
+Exports list:
+-------------
+
+
+
+Imports list:
+-------------
+

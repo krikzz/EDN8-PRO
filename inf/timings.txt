@@ -1,0 +1,5 @@
+ppu latch:
+100ns latch time
+75ns latch end to rd
+175 read time
+25ns read end to latch start

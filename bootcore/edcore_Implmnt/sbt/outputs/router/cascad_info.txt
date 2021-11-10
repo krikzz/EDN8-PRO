@@ -1,0 +1,12 @@
+[VIC]
+rom_oe_i_cascade_=ltout:in0
+[RCC]
+cpu_addr_c_1=RADDR_1;
+cpu_addr_c_2=RADDR_2;
+cpu_addr_c_3=RADDR_3;
+cpu_addr_c_4=RADDR_4;
+cpu_addr_c_5=RADDR_5;
+cpu_addr_c_6=RADDR_6;
+cpu_addr_c_7=RADDR_7;
+cpu_addr_c_8=RADDR_8;
+cpu_addr_c_i_0=RADDR_0;

@@ -1,0 +1,28 @@
+---------------------------------------
+Resource Usage Report for top 
+
+Mapping to part: ice40hx1kvq100
+Cell usage:
+GND             1 use
+SB_RAM512x8NRNW  2 uses
+VCC             1 use
+SB_LUT4         11 uses
+
+I/O ports: 45
+I/O primitives: 33
+SB_GB_IO       1 use
+SB_IO          32 uses
+
+I/O Register bits:                  0
+Register bits not including I/Os:   0 (0%)
+
+RAM/ROM usage summary
+Block Rams : 2 of 16 (12%)
+
+
+@S |Mapping Summary:
+Total  LUTs: 11 (0%)
+
+Distribution of All Consumed LUTs = LUT4 
+Distribution of All Consumed Luts 11 = 11 
+

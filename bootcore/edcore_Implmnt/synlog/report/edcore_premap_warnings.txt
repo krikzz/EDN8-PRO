@@ -1,0 +1,1 @@
+@W: MT529 :"e:\projects\edn8-pro\bootcore\top.v":115:17:115:20|Found inferred clock top|clk which controls 2 sequential elements including rom_inst.ram1. This clock has no specified timing constraint which may prevent conversion of gated or generated clocks and may adversely impact design performance. 

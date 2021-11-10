@@ -1,0 +1,1 @@
+never mind, found it: Guevara writes $40 to $4017 during boot, but Guerrilla War does not, so it's left uninitialized. does the Everdrive firmware initialize this register before loading the game?

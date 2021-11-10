@@ -1,0 +1,13 @@
+@P:  Worst Slack : NA
+@P:  top|clk - Estimated Frequency : NA
+@P:  top|clk - Requested Frequency : 1.0 MHz
+@P:  top|clk - Estimated Period : NA
+@P:  top|clk - Requested Period : 1000.000
+@P:  top|clk - Slack : NA
+@P: top Part : ice40hx1kvq100
+@P: top I/O primitives : 33
+@P: top I/O Register bits : 0
+@P: top Register bits (Non I/O) : 0 (0%)
+@P: top Block Rams : 2 of 16 (12%)
+@P: top Total Luts : 11 (0%)
+@P:  CPU Time : 0h:00m:00s

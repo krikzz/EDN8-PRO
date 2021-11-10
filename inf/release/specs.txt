@@ -1,0 +1,22 @@
+
+Cyclone IV FPGA.
+16MB of ROM memory. 8MB for PRG and  8MB for CHR.
+256K of battery ram for saves.
+Real time clock for logging date and time of saves.
+High quality 6-layers PCB.
+ARM based 32bit I/O co-processor for SD and USB operations acceleration.
+Up to 1024 files per folder, or unlimited if file sorting disabled.
+Wide support of file systems: FAT16/FAT32/EXFAT.
+In-game menu. You can save game or return to system menu without physical reset.
+Multi slot save states. 99 independent slots for save states.
+Instant ROM loading.
+USB port for development and system update without removing SD card.
+Improved audio mixing circuit with op amp.
+Dedicated button, which is used for swap FDS disk side or as alternate method to call Save State menu.
+Built-in NSF player with expansion chips support (VRC6, VRC7, Sunsoft-5b, Namco-163).
+Battery voltage monitoring. Battery can be replaced in time if it going dry.
+Ultra low battery ram consumption. Estimated battery life 25 years.
+Wide range of supported mappers.
+NES2.0 partial support.
+Game Genie cheats support.
+

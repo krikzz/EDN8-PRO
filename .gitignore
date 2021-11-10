@@ -1,0 +1,12 @@
+*.bak
+*.o
+*.drc
+*.deb
+iceCube*.log
+accel_uc.log
+db
+output_files
+incremental_db
+.vs
+obj
+build

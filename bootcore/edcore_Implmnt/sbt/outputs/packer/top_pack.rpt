@@ -1,0 +1,110 @@
+* ******************************************************************************
+
+* iCEcube Report
+
+* Version:            2017.08.27940
+
+* Build Date:         Sep 11 2017 16:52:36
+
+* File Generated:     Sep 16 2019 00:32:52
+
+* Purpose:            General info of design implementation
+
+* Copyright (C) 2006-2010 by Lattice Semiconductor Corp. All rights reserved.
+
+* ******************************************************************************
+
+Synthesis/Placement Summary:
+----------------------------
+    Status:  Successful
+    Runtime: 0 seconds
+
+Device Info:
+------------
+    Device Family: iCE40
+    Device:        iCE40HX1K
+    Package:       VQ100
+
+Design statistics:
+------------------
+    FFs:                  0
+    LUTs:                 13
+    RAMs:                 2
+    IOBs:                 33
+    GBs:                  1
+    PLLs:                 0
+    Warm Boots:           0
+
+Logic Resource Utilization:
+---------------------------
+    Total Logic Cells: 13/1280
+        Combinational Logic Cells: 13       out of   1280      1.01563%
+        Sequential Logic Cells:    0        out of   1280      0%
+        Logic Tiles:               3        out of   160       1.875%
+    Registers: 
+        Logic Registers:           0        out of   1280      0%
+        IO Registers:              0        out of   560       0
+    Block RAMs:                    2        out of   16        12.5%
+    Warm Boots:                    0        out of   1         0%
+    Pins:
+        Input Pins:                15       out of   72        20.8333%
+        Output Pins:               18       out of   72        25%
+        InOut Pins:                0        out of   72        0%
+    Global Buffers:                1        out of   8         12.5%
+    PLLs:                          0        out of   0       
+
+IO Bank Utilization:
+--------------------
+    Bank 3: 7        out of   18        38.8889%
+    Bank 1: 13       out of   19        68.4211%
+    Bank 0: 12       out of   19        63.1579%
+    Bank 2: 1        out of   16        6.25%
+
+Detailed I/O Info:
+------------------
+    Input Pins: 
+    Pin Number  Direction  IO Standard  Pull Up  IO Bank  IO Function                   Signal Name  
+    ----------  ---------  -----------  -------  -------  -----------                   -----------  
+    53          Input      SB_LVCMOS    No       1        Simple Input                  cpu_addr[8]  
+    56          Input      SB_LVCMOS    No       1        Simple Input                  cpu_addr[9]  
+    74          Input      SB_LVCMOS    No       1        Simple Input                  cpu_rw       
+    78          Input      SB_LVCMOS    No       0        Simple Input                  cpu_ce       
+    79          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[0]  
+    80          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[1]  
+    81          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[2]  
+    82          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[3]  
+    83          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[4]  
+    85          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[5]  
+    86          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[6]  
+    87          Input      SB_LVCMOS    No       0        Simple Input                  cpu_addr[7]  
+    89          Input      SB_LVCMOS    No       0        Simple Input                  cpu_m2       
+    90          Input      SB_LVCMOS    No       0        Simple Input                  clk          
+    91          Input      SB_LVCMOS    Yes      0        Simple Input                  boot_on      
+
+    Output Pins: 
+    Pin Number  Direction  IO Standard  Pull Up  IO Bank  IO Function                   Signal Name  
+    ----------  ---------  -----------  -------  -------  -----------                   -----------  
+    4           Output     SB_LVCMOS    No       3        Output Tristatable by Enable  spi_miso     
+    7           Output     SB_LVCMOS    No       3        Output Tristatable by Enable  mcu_rst      
+    8           Output     SB_LVCMOS    No       3        Output Tristatable by Enable  boot0        
+    20          Output     SB_LVCMOS    No       3        Output Tristatable by Enable  gpio[3]      
+    21          Output     SB_LVCMOS    No       3        Output Tristatable by Enable  gpio[2]      
+    24          Output     SB_LVCMOS    No       3        Output Tristatable by Enable  gpio[1]      
+    25          Output     SB_LVCMOS    No       3        Output Tristatable by Enable  gpio[0]      
+    45          Output     SB_LVCMOS    No       2        Output Tristatable by Enable  ice_sdo      
+    52          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dir      
+    63          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[0]   
+    64          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[1]   
+    65          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[2]   
+    66          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[3]   
+    68          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[4]   
+    69          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[5]   
+    71          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[6]   
+    72          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_dat[7]   
+    73          Output     SB_LVCMOS    No       1        Output Tristatable by Enable  cpu_ex       
+
+Detailed Global Buffer Info:
+----------------------------
+    Buffer Number  IO Bank  Driven By  Fanout  Signal Name
+    -------------  -------  ---------  ------  -----------
+    7              0        IO         2       clk_c_g  

@@ -1,0 +1,16 @@
+@N|Running in 64-bit mode
+@N|Running in 64-bit mode
+@N: CG364 :"C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v":1219:7:1219:21|Synthesizing module SB_RAM512x8NRNW in library work.
+@N: CG364 :"E:\projects\EDN8-PRO\bootcore\top.v":54:7:54:11|Synthesizing module boot1 in library work.
+@N: CG364 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Synthesizing module top in library work.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":14:31:14:37|Input cpu_irq is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:7:19:14|Input spi_mosi is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:17:19:23|Input spi_clk is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:26:19:31|Input spi_ss is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:7:21:12|Input ice_ss is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:15:21:21|Input ice_sck is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:24:21:30|Input ice_sdi is unused.
+@N|Running in 64-bit mode
+@N: NF107 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Selected library: work cell: top view verilog as top level
+@N: NF107 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Selected library: work cell: top view verilog as top level
+

@@ -1,0 +1,82 @@
+Synopsys HDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Synopsys Verilog Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+@I::"C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v" (library work)
+@I::"C:\lscc\iCEcube2.2017.08\synpbase\lib\vlog\hypermods.v" (library __hyper__lib__)
+@I::"C:\lscc\iCEcube2.2017.08\synpbase\lib\vlog\umr_capim.v" (library snps_haps)
+@I::"C:\lscc\iCEcube2.2017.08\synpbase\lib\vlog\scemi_objects.v" (library snps_haps)
+@I::"C:\lscc\iCEcube2.2017.08\synpbase\lib\vlog\scemi_pipes.svh" (library snps_haps)
+@I::"E:\projects\EDN8-PRO\bootcore\top.v" (library work)
+Verilog syntax check successful!
+File E:\projects\EDN8-PRO\bootcore\top.v changed - recompiling
+Selecting top level module top
+@N: CG364 :"C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v":1219:7:1219:21|Synthesizing module SB_RAM512x8NRNW in library work.
+
+@N: CG364 :"E:\projects\EDN8-PRO\bootcore\top.v":54:7:54:11|Synthesizing module boot1 in library work.
+
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":105:9:105:9|Port-width mismatch for port RCLKE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":106:6:106:6|Port-width mismatch for port RE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":108:9:108:9|Port-width mismatch for port WCLKN. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":109:9:109:9|Port-width mismatch for port WCLKE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":111:6:111:6|Port-width mismatch for port WE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":107:9:107:9|Port-width mismatch for port WADDR. The port definition is 9 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":110:9:110:9|Port-width mismatch for port WDATA. The port definition is 8 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":119:9:119:9|Port-width mismatch for port RCLKE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":120:6:120:6|Port-width mismatch for port RE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":122:9:122:9|Port-width mismatch for port WCLKN. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":123:9:123:9|Port-width mismatch for port WCLKE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":125:6:125:6|Port-width mismatch for port WE. The port definition is 1 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":121:9:121:9|Port-width mismatch for port WADDR. The port definition is 9 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@W: CS263 :"E:\projects\EDN8-PRO\bootcore\top.v":124:9:124:9|Port-width mismatch for port WDATA. The port definition is 8 bits, but the actual port connection bit width is 32. Adjust either the definition or the instantiation of this port.
+@N: CG364 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Synthesizing module top in library work.
+
+@W: CL246 :"E:\projects\EDN8-PRO\bootcore\top.v":13:13:13:20|Input port bits 14 to 10 of cpu_addr[14:0] are unused. Assign logic for all port bits or change the input port size.
+@W: CL157 :"E:\projects\EDN8-PRO\bootcore\top.v":18:8:18:15|*Output spi_miso has undriven bits; assigning undriven bits to 0.  Simulation mismatch possible. Assign all bits of the output.
+@W: CL157 :"E:\projects\EDN8-PRO\bootcore\top.v":22:8:22:14|*Output ice_sdo has undriven bits; assigning undriven bits to 0.  Simulation mismatch possible. Assign all bits of the output.
+@W: CL157 :"E:\projects\EDN8-PRO\bootcore\top.v":24:8:24:12|*Output boot0 has undriven bits; assigning undriven bits to 0.  Simulation mismatch possible. Assign all bits of the output.
+@W: CL157 :"E:\projects\EDN8-PRO\bootcore\top.v":24:15:24:21|*Output mcu_rst has undriven bits; assigning undriven bits to 0.  Simulation mismatch possible. Assign all bits of the output.
+@W: CL157 :"E:\projects\EDN8-PRO\bootcore\top.v":27:13:27:16|*Output gpio has undriven bits; assigning undriven bits to 0.  Simulation mismatch possible. Assign all bits of the output.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":14:31:14:37|Input cpu_irq is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:7:19:14|Input spi_mosi is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:17:19:23|Input spi_clk is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":19:26:19:31|Input spi_ss is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:7:21:12|Input ice_ss is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:15:21:21|Input ice_sck is unused.
+@N: CL159 :"E:\projects\EDN8-PRO\bootcore\top.v":21:24:21:30|Input ice_sdi is unused.
+
+At c_ver Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 70MB peak: 71MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Mon Sep 16 00:32:47 2019
+
+###########################################################]
+Synopsys Netlist Linker, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+@N: NF107 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Selected library: work cell: top view verilog as top level
+@N: NF107 :"E:\projects\EDN8-PRO\bootcore\top.v":3:7:3:9|Selected library: work cell: top view verilog as top level
+
+At syn_nfilter Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 67MB peak: 68MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Mon Sep 16 00:32:48 2019
+
+###########################################################]
+@END
+
+At c_hdl Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 3MB peak: 4MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Mon Sep 16 00:32:48 2019
+
+###########################################################]

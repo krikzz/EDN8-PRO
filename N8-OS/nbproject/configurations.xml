@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="f1" displayName="hdr" projectFiles="true">
+        <itemPath>app.h</itemPath>
+        <itemPath>bios.h</itemPath>
+        <itemPath>cfg.h</itemPath>
+        <itemPath>errors.h</itemPath>
+        <itemPath>everdrive.h</itemPath>
+        <itemPath>game-db.h</itemPath>
+        <itemPath>gfx.h</itemPath>
+        <itemPath>gui.h</itemPath>
+        <itemPath>rom-config.h</itemPath>
+        <itemPath>saveram.h</itemPath>
+        <itemPath>std.h</itemPath>
+        <itemPath>sys.h</itemPath>
+        <itemPath>types.h</itemPath>
+        <itemPath>var.h</itemPath>
+        <itemPath>vol-ctrl.h</itemPath>
+      </logicalFolder>
+      <itemPath>bios.c</itemPath>
+      <itemPath>bios_asm.s</itemPath>
+      <itemPath>boot1.s</itemPath>
+      <itemPath>boot2.c</itemPath>
+      <itemPath>crt0.s</itemPath>
+      <itemPath>everdrive.c</itemPath>
+      <itemPath>fmanager.c</itemPath>
+      <itemPath>gfx.c</itemPath>
+      <itemPath>gg.c</itemPath>
+      <itemPath>gui.c</itemPath>
+      <itemPath>main.c</itemPath>
+      <itemPath>menu-file.c</itemPath>
+      <itemPath>menu-main.c</itemPath>
+      <itemPath>menu-ss.c</itemPath>
+      <itemPath>nsf.c</itemPath>
+      <itemPath>recent.c</itemPath>
+      <itemPath>rom-config.c</itemPath>
+      <itemPath>rtc.c</itemPath>
+      <itemPath>saveram.c</itemPath>
+      <itemPath>ss.s</itemPath>
+      <itemPath>std.c</itemPath>
+      <itemPath>sys.c</itemPath>
+      <itemPath>tst.c</itemPath>
+      <itemPath>update.c</itemPath>
+      <itemPath>usb.c</itemPath>
+      <itemPath>vol-ctrl.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+      <itemPath>boot.cfg</itemPath>
+      <itemPath>build/mem.map</itemPath>
+      <itemPath>nes.cfg</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>gcc1|WinAVR</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath>nesboot.nes</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>E:/cc65/include</pElem>
+            </incDir>
+          </cTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+    <conf name="run" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>winmake|MinGW</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath>usb.bat</executablePath>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

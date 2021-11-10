@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "edlink-n8", "edlink-n8\edlink-n8.csproj", "{497599EE-78FE-4F88-98B6-1EE97F20836D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{497599EE-78FE-4F88-98B6-1EE97F20836D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{497599EE-78FE-4F88-98B6-1EE97F20836D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{497599EE-78FE-4F88-98B6-1EE97F20836D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{497599EE-78FE-4F88-98B6-1EE97F20836D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BADC4965-7093-4A81-A2C1-706C1217D93F}
+	EndGlobalSection
+EndGlobal

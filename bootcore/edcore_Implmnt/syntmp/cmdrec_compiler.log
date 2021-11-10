@@ -1,0 +1,8 @@
+C:\lscc\iCEcube2.2017.08\synpbase\bin64\c_hdl.exe  -osyn  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synwork\edcore_comp.srs  -hdllog  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synlog\edcore_compiler.srr  -encrypt  -mp  4  -verification_mode 0  -verilog  -prodtype  synplify_pro  -primux -fixsmult -infer_seqShift -ice -sdff_counter -nram -divnmod -nostructver   -I E:\projects\EDN8-PRO\bootcore\  -I C:\lscc\iCEcube2.2017.08\synpbase\lib   -v2001  -devicelib  C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v  -encrypt  -pro  -dmgen  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\dm  -ui -fid2 -ram -sharing on -ll 2000 -autosm  -lib work E:\projects\EDN8-PRO\bootcore\top.v 
+rc:0 success:1 runtime:2
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synwork\edcore_comp.srs|io:o|time:1568583168|size:5420|exec:0
+file:E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\synlog\edcore_compiler.srr|io:o|time:1568583168|size:8298|exec:0
+file:C:\lscc\iCEcube2.2017.08\synpbase\lib\generic\sb_ice40.v|io:i|time:1557676760|size:224837|exec:0
+file:E:\projects\EDN8-PRO\bootcore\top.v|io:i|time:1568583164|size:4703|exec:0
+file:C:\lscc\iCEcube2.2017.08\synpbase\bin\c_hdl.exe|io:i|time:1557676758|size:1338368|exec:1
+file:C:\lscc\iCEcube2.2017.08\synpbase\bin64\c_hdl.exe|io:i|time:1557676759|size:1754112|exec:1

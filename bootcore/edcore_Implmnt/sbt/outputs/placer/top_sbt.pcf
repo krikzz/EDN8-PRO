@@ -1,0 +1,49 @@
+set_location cpu_addr_ibuf_RNIFFNB[0] 12 15 0 # SB_LUT4 (LogicCell: cpu_addr_ibuf_RNIFFNB[0]_LC_0)
+set_location cpu_ce_ibuf_RNI9TA51 12 15 6 # SB_LUT4 (LogicCell: cpu_ce_ibuf_RNI9TA51_LC_1)
+set_location cpu_ce_ibuf_RNI9TA51_0 12 15 7 # SB_LUT4 (LogicCell: cpu_ce_ibuf_RNI9TA51_0_LC_2)
+set_location rom_inst.ram0_RNIBF5F 11 13 2 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_LC_3)
+set_location rom_inst.ram0_RNIBF5F_0 11 13 3 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_0_LC_4)
+set_location rom_inst.ram0_RNIBF5F_1 11 13 4 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_1_LC_5)
+set_location rom_inst.ram0_RNIBF5F_2 11 13 0 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_2_LC_6)
+set_location rom_inst.ram0_RNIBF5F_3 11 13 6 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_3_LC_7)
+set_location rom_inst.ram0_RNIBF5F_4 11 13 7 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_4_LC_8)
+set_location rom_inst.ram0_RNIBF5F_5 11 14 0 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_5_LC_9)
+set_location rom_inst.ram0_RNIBF5F_6 11 14 1 # SB_LUT4 (LogicCell: rom_inst.ram0_RNIBF5F_6_LC_10)
+set_location GND -1 -1 -1 # GND
+set_io boot0_obuft 0 12 0 # ICE_IO
+set_io boot_on_ibuf 6 17 0 # ICE_IO
+set_io clk_ibuf_gb_io 6 17 1 # ICE_GB_IO
+set_io cpu_addr_ibuf[0] 12 17 0 # ICE_IO
+set_io cpu_addr_ibuf[1] 11 17 1 # ICE_IO
+set_io cpu_addr_ibuf[2] 10 17 1 # ICE_IO
+set_io cpu_addr_ibuf[3] 10 17 0 # ICE_IO
+set_io cpu_addr_ibuf[4] 9 17 1 # ICE_IO
+set_io cpu_addr_ibuf[5] 9 17 0 # ICE_IO
+set_io cpu_addr_ibuf[6] 8 17 1 # ICE_IO
+set_io cpu_addr_ibuf[7] 8 17 0 # ICE_IO
+set_io cpu_addr_ibuf[8] 13 4 1 # ICE_IO
+set_io cpu_addr_ibuf[9] 13 6 1 # ICE_IO
+set_io cpu_ce_ibuf 12 17 1 # ICE_IO
+set_io cpu_dat_obuft[0] 13 9 0 # ICE_IO
+set_io cpu_dat_obuft[1] 13 11 0 # ICE_IO
+set_io cpu_dat_obuft[2] 13 11 1 # ICE_IO
+set_io cpu_dat_obuft[3] 13 12 0 # ICE_IO
+set_io cpu_dat_obuft[4] 13 13 0 # ICE_IO
+set_io cpu_dat_obuft[5] 13 13 1 # ICE_IO
+set_io cpu_dat_obuft[6] 13 14 0 # ICE_IO
+set_io cpu_dat_obuft[7] 13 14 1 # ICE_IO
+set_io cpu_dir_obuft 13 4 0 # ICE_IO
+set_io cpu_ex_obuft 13 15 0 # ICE_IO
+set_io cpu_m2_ibuf 7 17 0 # ICE_IO
+set_io cpu_rw_ibuf 13 15 1 # ICE_IO
+set_io gpio_obuft[0] 0 2 0 # ICE_IO
+set_io gpio_obuft[1] 0 2 1 # ICE_IO
+set_io gpio_obuft[2] 0 4 0 # ICE_IO
+set_io gpio_obuft[3] 0 4 1 # ICE_IO
+set_io ice_sdo_obuft 11 0 0 # ICE_IO
+set_io mcu_rst_obuft 0 12 1 # ICE_IO
+set_location rom_inst.ram0 10 13 0 # SB_RAM40_4KNRNW
+set_location rom_inst.ram1 10 15 0 # SB_RAM40_4KNRNW
+set_io spi_miso_obuft 0 13 0 # ICE_IO
+set_location CONSTANT_ONE_LUT4 12 15 2 # SB_LUT4 (LogicCell: LC_11)
+set_location CONSTANT_ZERO_LUT4 11 14 3 # SB_LUT4 (LogicCell: LC_12)

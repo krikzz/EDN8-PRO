@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="edio" displayName="edio" projectFiles="true">
+        <logicalFolder name="f1" displayName="hdr" projectFiles="true">
+          <itemPath>Src/edio/boot.h</itemPath>
+          <itemPath>Src/edio/bootram.h</itemPath>
+          <itemPath>Src/edio/cfg.h</itemPath>
+          <itemPath>Src/edio/cmd.h</itemPath>
+          <itemPath>Src/edio/dbg.h</itemPath>
+          <itemPath>Src/edio/disk.h</itemPath>
+          <itemPath>Src/edio/edio.h</itemPath>
+          <itemPath>Src/edio/error.h</itemPath>
+          <itemPath>Src/edio/fat.h</itemPath>
+          <itemPath>Src/edio/flash.h</itemPath>
+          <itemPath>Src/edio/fpga.h</itemPath>
+          <itemPath>Src/edio/link.h</itemPath>
+          <itemPath>Src/edio/mcuprog.h</itemPath>
+          <itemPath>Src/edio/memory.h</itemPath>
+          <itemPath>Src/edio/signature.h</itemPath>
+          <itemPath>Src/edio/std.h</itemPath>
+          <itemPath>Src/edio/stm-io.h</itemPath>
+          <itemPath>Src/edio/stm-sdio.h</itemPath>
+          <itemPath>Src/edio/stm-spi.h</itemPath>
+          <itemPath>Src/edio/var.h</itemPath>
+        </logicalFolder>
+        <itemPath>Src/edio/boot.c</itemPath>
+        <itemPath>Src/edio/bootram.c</itemPath>
+        <itemPath>Src/edio/cmd.c</itemPath>
+        <itemPath>Src/edio/dbg.c</itemPath>
+        <itemPath>Src/edio/disk.c</itemPath>
+        <itemPath>Src/edio/edio.c</itemPath>
+        <itemPath>Src/edio/encrypt.c</itemPath>
+        <itemPath>Src/edio/fat.c</itemPath>
+        <itemPath>Src/edio/flash.c</itemPath>
+        <itemPath>Src/edio/fpga.c</itemPath>
+        <itemPath>Src/edio/link.c</itemPath>
+        <itemPath>Src/edio/mcuprog.c</itemPath>
+        <itemPath>Src/edio/memory.c</itemPath>
+        <itemPath>Src/edio/signature.c</itemPath>
+        <itemPath>Src/edio/std.c</itemPath>
+        <itemPath>Src/edio/stm-io.c</itemPath>
+        <itemPath>Src/edio/stm-sdio.c</itemPath>
+        <itemPath>Src/edio/stm-spi.c</itemPath>
+        <itemPath>Src/edio/usb-service.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="ff" displayName="ff" projectFiles="true">
+        <itemPath>Src/ff/00history.txt</itemPath>
+        <itemPath>Src/ff/00readme.txt</itemPath>
+        <itemPath>Src/ff/diskio.c</itemPath>
+        <itemPath>Src/ff/diskio.h</itemPath>
+        <itemPath>Src/ff/ff.c</itemPath>
+        <itemPath>Src/ff/ff.h</itemPath>
+        <itemPath>Src/ff/ffconf.h</itemPath>
+        <itemPath>Src/ff/ffsystem.c</itemPath>
+        <itemPath>Src/ff/ffunicode.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="Src" displayName="Src" projectFiles="true">
+        <itemPath>Src/main.c</itemPath>
+        <itemPath>Src/stm32f4xx_hal_msp.c</itemPath>
+        <itemPath>Src/stm32f4xx_it.c</itemPath>
+        <itemPath>Src/system_stm32f4xx.c</itemPath>
+        <itemPath>Src/usb_device.c</itemPath>
+        <itemPath>Src/usbd_cdc_if.c</itemPath>
+        <itemPath>Src/usbd_conf.c</itemPath>
+        <itemPath>Src/usbd_desc.c</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+      <itemPath>Makefile_boot</itemPath>
+      <itemPath>STM32F401RCTx_FLASH.ld</itemPath>
+      <itemPath>STM32F401RCTx_FLASH_upd.ld</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>Src</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="app" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>arm-gcc|MinGW</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE}</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath>prog_rover.bat</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+              <pElem>Src</pElem>
+              <pElem>Inc</pElem>
+              <pElem>E:/devtools/arm-gcc/lib/gcc/arm-none-eabi/7.3.1/include</pElem>
+              <pElem>Src/edio</pElem>
+              <pElem>Src/ff</pElem>
+              <pElem>Drivers/STM32F4xx_HAL_Driver/Inc</pElem>
+              <pElem>Drivers/STM32F4xx_HAL_Driver/Inc/Legacy</pElem>
+              <pElem>Middlewares/ST/STM32_USB_Device_Library/Core/Inc</pElem>
+              <pElem>Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc</pElem>
+              <pElem>Drivers/CMSIS/Device/ST/STM32F4xx/Include</pElem>
+              <pElem>Drivers/CMSIS/Include</pElem>
+              <pElem>Drivers/STM32F4xx_HAL_Driver/Src</pElem>
+              <pElem>Middlewares/ST/STM32_USB_Device_Library/Core/Src</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>DUSE_FULL_LL_DRIVER</Elem>
+              <Elem>STM32F401xC</Elem>
+              <Elem>USE_HAL_DRIVER</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+    <conf name="bootld" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>arm-gcc|MinGW</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile_boot</buildCommand>
+          <cleanCommand>${MAKE} clean</cleanCommand>
+          <executablePath>prog_boot.bat</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+              <pElem>Src</pElem>
+              <pElem>Inc</pElem>
+              <pElem>E:/devtools/arm-gcc/lib/gcc/arm-none-eabi/7.3.1/include</pElem>
+              <pElem>Src/edio</pElem>
+              <pElem>Src/ff</pElem>
+              <pElem>Drivers/STM32F4xx_HAL_Driver/Inc</pElem>
+              <pElem>Drivers/STM32F4xx_HAL_Driver/Inc/Legacy</pElem>
+              <pElem>Middlewares/ST/STM32_USB_Device_Library/Core/Inc</pElem>
+              <pElem>Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc</pElem>
+              <pElem>Drivers/CMSIS/Device/ST/STM32F4xx/Include</pElem>
+              <pElem>Drivers/CMSIS/Include</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>BOOT_MODULE</Elem>
+              <Elem>STM32F401xC</Elem>
+              <Elem>USE_HAL_DRIVER</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

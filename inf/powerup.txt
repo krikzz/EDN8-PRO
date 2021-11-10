@@ -1,0 +1,7 @@
+nes cpu: 18-23ms
+ice40 default boot time 36-37ms
+ice40 fast boot time 10ms
+
+iCE40LP/HX1K - Low Frequency (Default) 53 ms
+iCE40LP/HX1K - Medium Frequency 25 ms
+iCE40LP/HX1K - High Frequency 13 ms

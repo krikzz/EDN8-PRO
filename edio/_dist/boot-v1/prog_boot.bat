@@ -1,0 +1,4 @@
+ST-LINK\ST-LINK_CLI -OB RDP=0 WRP=0xff
+ST-LINK\ST-LINK_CLI -c SWD UR -P edio_boot.bin 0x08000000 -V -Rst
+
+pause

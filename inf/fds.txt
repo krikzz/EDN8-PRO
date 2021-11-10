@@ -1,0 +1,2 @@
+The pitch of FDS audio is now correct, but there is still problems with envelope effect which bends/vibrates notes.
+When a game uses envelope effect to alter the pitch of the note it will sound wrong.

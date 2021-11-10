@@ -1,0 +1,16 @@
+#OPTIONS:"|-layerid|0|-orig_srs|E:\\projects\\EDN8-PRO\\bootcore\\edcore_Implmnt\\synwork\\edcore_comp.srs|-prodtype|synplify_pro|-primux|-fixsmult|-infer_seqShift|-ice|-sdff_counter|-nram|-divnmod|-nostructver|-I|E:\\projects\\EDN8-PRO\\bootcore\\|-I|C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib|-v2001|-devicelib|C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\generic\\sb_ice40.v|-encrypt|-pro|-ui|-fid2|-ram|-sharing|on|-ll|2000|-autosm|-lib|work"
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\bin64\\c_ver.exe":1557676759
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\generic\\sb_ice40.v":1557676760
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\vlog\\hypermods.v":1557676761
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\vlog\\umr_capim.v":1557676761
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\vlog\\scemi_objects.v":1557676761
+#CUR:"C:\\lscc\\iCEcube2.2017.08\\synpbase\\lib\\vlog\\scemi_pipes.svh":1557676761
+#CUR:"E:\\projects\\EDN8-PRO\\bootcore\\top.v":1568583164
+0			"E:\projects\EDN8-PRO\bootcore\top.v" verilog
+#Dependency Lists(Uses List)
+0 -1
+#Dependency Lists(Users Of)
+0 -1
+#Design Unit to File Association
+module work top 0
+module work boot1 0

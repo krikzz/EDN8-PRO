@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flipbytes", "flipbytes\flipbytes.csproj", "{3D8ECAFB-7343-478B-91E7-3BC6F4FD7020}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D8ECAFB-7343-478B-91E7-3BC6F4FD7020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8ECAFB-7343-478B-91E7-3BC6F4FD7020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8ECAFB-7343-478B-91E7-3BC6F4FD7020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8ECAFB-7343-478B-91E7-3BC6F4FD7020}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77806F1E-82FE-461D-9CDB-6AF0A230F63D}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,15 @@
+ble_pack cpu_ce_ibuf_RNI9TA51_LC_1 {cpu_ce_ibuf_RNI9TA51}
+ble_pack cpu_ce_ibuf_RNI9TA51_0_LC_2 {cpu_ce_ibuf_RNI9TA51_0}
+ble_pack rom_inst.ram0_RNIBF5F_LC_3 {rom_inst.ram0_RNIBF5F}
+ble_pack rom_inst.ram0_RNIBF5F_0_LC_4 {rom_inst.ram0_RNIBF5F_0}
+ble_pack rom_inst.ram0_RNIBF5F_1_LC_5 {rom_inst.ram0_RNIBF5F_1}
+ble_pack rom_inst.ram0_RNIBF5F_2_LC_6 {rom_inst.ram0_RNIBF5F_2}
+ble_pack rom_inst.ram0_RNIBF5F_3_LC_7 {rom_inst.ram0_RNIBF5F_3}
+ble_pack rom_inst.ram0_RNIBF5F_4_LC_8 {rom_inst.ram0_RNIBF5F_4}
+clb_pack PLB_0 {cpu_ce_ibuf_RNI9TA51_LC_1, cpu_ce_ibuf_RNI9TA51_0_LC_2, rom_inst.ram0_RNIBF5F_LC_3, rom_inst.ram0_RNIBF5F_0_LC_4, rom_inst.ram0_RNIBF5F_1_LC_5, rom_inst.ram0_RNIBF5F_2_LC_6, rom_inst.ram0_RNIBF5F_3_LC_7, rom_inst.ram0_RNIBF5F_4_LC_8}
+ble_pack rom_inst.ram0_RNIBF5F_5_LC_9 {rom_inst.ram0_RNIBF5F_5}
+ble_pack rom_inst.ram0_RNIBF5F_6_LC_10 {rom_inst.ram0_RNIBF5F_6}
+ble_pack cpu_addr_ibuf_RNIFFNB[0]_LC_0 {cpu_addr_ibuf_RNIFFNB[0]}
+ble_pack LC_11 {CONSTANT_ONE_LUT4}
+ble_pack LC_12 {CONSTANT_ZERO_LUT4}
+clb_pack PLB_1 {rom_inst.ram0_RNIBF5F_5_LC_9, rom_inst.ram0_RNIBF5F_6_LC_10, cpu_addr_ibuf_RNIFFNB[0]_LC_0, LC_11, LC_12}

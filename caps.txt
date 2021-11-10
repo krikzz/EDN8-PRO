@@ -1,0 +1,3 @@
+20p  for 8mhz
+6.8p for 32k
+

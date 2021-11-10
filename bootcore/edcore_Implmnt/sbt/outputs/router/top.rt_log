@@ -1,0 +1,29 @@
+* ******************************************************************************
+
+* iCEcube Router
+
+* Version:            2017.08.27940
+
+* Build Date:         Sep 11 2017 17:03:42
+
+* File Generated:     Sep 16 2019 00:32:52
+
+* Purpose:            Router runtime info
+
+* Copyright (C) 2006-2010 by Lattice Semiconductor Corp. All rights reserved.
+
+* ******************************************************************************
+
+Executing : C:\lscc\iCEcube2.2017.08\sbt_backend\bin\win32\opt\sbrouter.exe C:\lscc\iCEcube2.2017.08\sbt_backend\devices\ICE40P01.dev E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\sbt\netlist\oadb-top C:\lscc\iCEcube2.2017.08\sbt_backend\devices\ice40HX1K.lib E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\sbt\outputs\packer\top_pk.sdc --outdir E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\sbt\outputs\router --sdf_file E:/projects/EDN8-PRO/bootcore/edcore_Implmnt\sbt\outputs\simulation_netlist\top_sbt.sdf --pin_permutation 
+I1203: Reading Design top
+I1202: Reading Architecture of device iCE40HX1K
+I1209: Started routing
+I1223: Total Nets : 45 
+I1212: Iteration  1 :    12 unrouted : 0 seconds
+I1212: Iteration  2 :     0 unrouted : 0 seconds
+I1215: Routing is successful
+I1206: Completed routing
+I1204: Writing Design top
+I1210: Writing routes
+I1218: Exiting the router
+I1224: Router run-time : 1 seconds

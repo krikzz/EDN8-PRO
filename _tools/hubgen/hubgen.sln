@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hubgen", "hubgen\hubgen.csproj", "{A38DEACA-C1E6-4145-9562-697307AE9FF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A38DEACA-C1E6-4145-9562-697307AE9FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A38DEACA-C1E6-4145-9562-697307AE9FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A38DEACA-C1E6-4145-9562-697307AE9FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A38DEACA-C1E6-4145-9562-697307AE9FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BBD8EC0-319F-4733-946D-67491A093ABE}
+	EndGlobalSection
+EndGlobal

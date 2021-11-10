@@ -1,0 +1,1 @@
+E:\projects\edprog\loclinker_eep\bin\Release\loclinker_eep -fpga  E:\projects\EDN8-PRO\bootcore\edcore_Implmnt\sbt\outputs\bitmap\top_bitmap.bin
