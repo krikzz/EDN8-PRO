@@ -1,5 +1,6 @@
 EDN8-V2.12 ???
 1) Fix for MMC5
+2) Fixed cart button hook for in-game menu
 
 
 EDN8-V2.11 27.12.2020

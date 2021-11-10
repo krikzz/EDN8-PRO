@@ -89,7 +89,7 @@ module map_090
 	assign map_cpu_dout[7:0] = mul_oe ? (!cpu_addr[0] ? mul_rez[7:0] : mul_rez[15:8]) : ram[cpu_addr[2:0]];
 	assign map_cpu_oe = mul_oe | ram_oe;
 	
-	wire mul_oe = {!cpu_ce, cpu_addr[14:1], 1'b0} == 16'h5800 & cpu_rw & m2;
+	wire mul_oe = {!cpu_ce, cpu_addr[14:1], 1'b0}   == 16'h5800 & cpu_rw & m2;
 	wire ram_oe = {!cpu_ce, cpu_addr[14:3], 3'b000} == 16'h5800 & cpu_rw & m2 & !mul_oe;
 	
 	wire nt_advanced = control[0][5];

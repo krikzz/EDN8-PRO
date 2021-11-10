@@ -48,5 +48,8 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 переделать маппер 90 https://wiki.nesdev.com/w/index.php/J.Y._Company_ASIC  
 https://github.com/MiSTer-devel/NES_MiSTer/blob/master/rtl/mappers/JYCompany.sv
 добавить функцию копирования сеййв файлов
-https://twitter.com/shiggypoo/status/1407040316075618311?s=20
-https://twitter.com/shiggypoo/status/1407036120009949185?s=20
+?https://twitter.com/shiggypoo/status/1407040316075618311?s=20
+?https://twitter.com/shiggypoo/status/1407036120009949185?s=20
+
+сделать ммц3 согласно схемы реверс инжениринга MMC3C_schematics
+после релиза ос 2.12 сделать рефакторинг кода в систем верилог
