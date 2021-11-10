@@ -59,14 +59,14 @@ void app_inGameMenu() {
     ss_bank_hex = decToBcd(ses_cfg->ss_bank);
 
     //quick ss section
-    if (ss_src != 0xff && ss_src == registery->options.ss_key_load) {
+    if (ss_src != 0x00 && ss_src == registery->options.ss_key_load) {
         ppuOFF();
         resp = srmRestoreSS(ss_bank_hex);
         if (resp)printError(resp);
         ss_return();
     }
 
-    if (ss_src != 0xff && ss_src == registery->options.ss_key_save) {
+    if (ss_src != 0x00 && ss_src == registery->options.ss_key_save) {
         ppuOFF();
         resp = srmBackupSS(ss_bank_hex);
         if (resp)printError(resp);

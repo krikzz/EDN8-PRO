@@ -4,7 +4,7 @@
 
 u8 tst() {
 
-
+/*
     while (1) {
 
         gCleanScreen();
@@ -30,13 +30,13 @@ u8 tst() {
         gRepaint();
         usbListener();
 
-    }
+    }*/
 
     return 0;
 }
 
 void testJoy() {
-
+/*
     u8 joy_key[4];
     u8 joy_inf[16];
     u8 i, u;
@@ -79,7 +79,7 @@ void testJoy() {
         gRepaint();
         usbListener();
 
-    }
+    }*/
 
 }
 
