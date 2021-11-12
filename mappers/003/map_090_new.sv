@@ -1,7 +1,7 @@
 
 `include "../base/defs.v"
 
-module map_090_old
+module map_090
 (map_out, bus, sys_cfg, ss_ctrl);
 
 	`include "../base/bus_in.v"
@@ -24,7 +24,7 @@ module map_090_old
 	ss_addr[7:3] == 0 ? chr_reg[ss_addr[2:0]][7:0] : 
 	ss_addr[7:3] == 1 ? chr_reg[ss_addr[2:0]][15:8] : 
 	ss_addr[7:3] == 2 ? irq_reg[ss_addr[2:0]] : 
-	ss_addr[7:3] == 3 ? ram[ss_addr[2:0]] : 
+	//ss_addr[7:3] == 3 ? ram[ss_addr[2:0]] : 
 	ss_addr[7:2] == 8 ? nt_reg[ss_addr[1:0]][7:0] : 
 	ss_addr[7:2] == 9 ? nt_reg[ss_addr[1:0]][15:8] : 
 	ss_addr[7:2] == 10 ? prg_reg[ss_addr[1:0]] : 
@@ -61,8 +61,8 @@ module map_090_old
 	
 	wire [7:0]obank = control[3][7:0];
 	
-	wire chr_a18 = !chr_block_mode ? chr_block[0] : chr_map[chr_mode][8];
-	//wire ntb_a18 = !chr_block_mode ? chr_block[0] : nt_reg[chr_mode][8];
+	wire chr_a18 = chr_block_mode == 0 ? obank[0] : chr_map[chr_mode][8];
+	
 	assign chr_addr[9:0] = ppu_addr[9:0];
 	assign chr_addr[20:10] = 
 	!ppu_addr[13] ? {obank[4:3], chr_a18, chr_map[chr_mode][7:0]} : nt_reg[ppu_addr[11:10]][8:0];
@@ -71,7 +71,7 @@ module map_090_old
 	
 	reg [15:0]chr_reg[8];
 	reg [7:0]irq_reg[8];
-	reg [7:0]ram[8];
+	//reg [7:0]ram[8];
 	
 	reg [15:0]nt_reg[4];
 	reg [6:0]prg_reg[4];
@@ -85,17 +85,28 @@ module map_090_old
 	reg irq_pend;
 	reg irq_inc;
 	
+	reg [7:0] accum;
+	reg [7:0] accumtest;
+	wire [1:0] dip = 2'b00;
+	
 	assign irq = irq_pend;
 	
 	assign map_cpu_dout[7:0] = 
-	//mul_oe
-	mul_oe ? (!cpu_addr[0] ? mul_rez[7:0] : mul_rez[15:8]) : 
-													    ram[cpu_addr[2:0]];
+	cpu_addr[15:0] == 16'h5800 ? mul_rez[7:0]  : 
+	cpu_addr[15:0] == 16'h5801 ? mul_rez[15:8] : 
+	cpu_addr[15:0] == 16'h5802 ? accum : 
+	cpu_addr[15:0] == 16'h5803 ? accumtest : 
+	dip_oe 							? {dip[1:0], 6'h00} :
+										  8'hff;
+
 	
-	assign map_cpu_oe = mul_oe | ram_oe;
+	assign map_cpu_oe = mul_oe | acc_oe | act_oe | dip_oe;// | ram_oe;
 	
 	wire mul_oe = {!cpu_ce, cpu_addr[14:1], 1'b0}   == 16'h5800 & cpu_rw & m2;
-	wire ram_oe = {!cpu_ce, cpu_addr[14:3], 3'b000} == 16'h5800 & cpu_rw & m2 & !mul_oe;
+	//wire ram_oe = {!cpu_ce, cpu_addr[14:3], 3'b000} == 16'h5800 & cpu_rw & m2 & !mul_oe;
+	wire acc_oe = cpu_addr == 16'h5802 & cpu_rw;
+	wire act_oe = cpu_addr == 16'h5803 & cpu_rw;
+	wire dip_oe = cpu_addr == 16'h5000 | cpu_addr == 16'h5400;
 	
 	wire nt_advanced = control[0][5];
 	wire nt_ram_off = control[0][6];
@@ -107,7 +118,7 @@ module map_090_old
 		if(ss_we & ss_addr[7:3] == 0)chr_reg[ss_addr[2:0]][7:0] <= cpu_dat;
 		if(ss_we & ss_addr[7:3] == 1)chr_reg[ss_addr[2:0]][15:8] <= cpu_dat;
 		if(ss_we & ss_addr[7:3] == 2)irq_reg[ss_addr[2:0]] <= cpu_dat;
-		if(ss_we & ss_addr[7:3] == 3)ram[ss_addr[2:0]] <= cpu_dat;
+		//if(ss_we & ss_addr[7:3] == 3)ram[ss_addr[2:0]] <= cpu_dat;
 		if(ss_we & ss_addr[7:2] == 8)nt_reg[ss_addr[1:0]][7:0] <= cpu_dat;
 		if(ss_we & ss_addr[7:2] == 9)nt_reg[ss_addr[1:0]][15:8] <= cpu_dat;
 		if(ss_we & ss_addr[7:2] == 10)prg_reg[ss_addr[1:0]] <= cpu_dat;
@@ -133,11 +144,23 @@ module map_090_old
 		if(!map_rst & map_idx == 90)control[0][5] <= 0;
 		if(!map_rst & map_idx == 211)control[0][5] <= 1;
 		
+			
 		
 		
 		if(!map_rst & !cpu_rw)
-		case({!cpu_ce, cpu_addr[14:3], 3'b000})
-			16'h5800:ram[cpu_addr[2:0]] <= cpu_dat[7:0];
+		case({cpu_addr[15:11], 11'd0})
+		
+			16'h5800:begin
+			
+				if(cpu_addr[1] == 0 | cpu_addr[1:0] == 1)mul_req <= 1;
+				
+				if(cpu_addr[1:0] == 0)mul_inp[0] <= cpu_dat[7:0];
+				if(cpu_addr[1:0] == 1)mul_inp[1] <= cpu_dat[7:0];
+				if(cpu_addr[1:0] == 2) accum <= accum + cpu_dat;
+				if(cpu_addr[1:0] == 3)begin accum <= 0; accumtest <= cpu_dat; end
+			end
+			
+			//16'h5800:ram[cpu_addr[2:0]] <= cpu_dat[7:0];
 			16'h8000:prg_reg[cpu_addr[1:0]] <= cpu_dat[6:0];
 			16'h9000:chr_reg[cpu_addr[2:0]][7:0] <= cpu_dat[7:0];
 			16'hA000:chr_reg[cpu_addr[2:0]][15:8] <= cpu_dat[7:0];
@@ -148,6 +171,7 @@ module map_090_old
 			16'hD000:control[cpu_addr[1:0]] <= cpu_dat[7:0];
 			16'hC000:
 			begin
+			
 				if(cpu_addr[2:0] == 1)irq_reg[cpu_addr[2:0]] <= cpu_dat[7:0];
 				if(cpu_addr[2:0] == 6)irq_reg[cpu_addr[2:0]] <= cpu_dat[7:0];
 				if(cpu_addr[2:0] == 4)irq_reg[cpu_addr[2:0]] <= cpu_dat[7:0] ^ irq_reg[6];
@@ -169,11 +193,12 @@ module map_090_old
 		endcase
 		
 		
+		/*
 		if({!cpu_ce, cpu_addr[14:1], 1'b0} == 16'h5800 & !cpu_rw)
 		begin
 			mul_req <= 1;
 			mul_inp[cpu_addr[0]] <= cpu_dat[7:0];
-		end
+		end*/
 		
 		if(mul_req)
 		begin
@@ -230,14 +255,14 @@ module map_090_old
 
 
 	
-	wire [2:0]prg_mode = control[0][2:0];
-	wire [1:0]chr_mode = control[0][4:3];
+	wire [2:0]prg_mode 	= control[0][2:0];
+	wire [1:0]chr_mode 	= control[0][4:3];
 	wire [1:0]mirror_mode = control[1][1:0];
 	
 	
-	wire [4:0]chr_block = control[3][4:0];
-	wire chr_block_mode = control[3][5];
-	wire mirror_chr = control[3][7];
+	//wire [4:0]chr_block 	= control[3][4:0];
+	wire chr_block_mode 	= control[3][5];
+	wire mirror_chr 		= control[3][7];
 
 	wire [6:0]prg_map[8];
 	assign prg_map[0] = cpu_ce ? {prg_reg[3][4:0], 2'b11} : {5'h1f, cpu_addr[14:13]};
@@ -261,7 +286,7 @@ module map_090_old
 	assign chr_map[3] = chr_reg[ppu_mad[2:0]][8:0];
 	
 	
-	wire [2:0]ppu_mad = !mirror_chr ? ppu_addr[12:10] : 
+	wire [2:0]ppu_mad = mirror_chr == 0 ? ppu_addr[12:10] : 
 	ppu_addr[12:10] == 2 ? 0 :
 	ppu_addr[12:10] == 3 ? 1 : ppu_addr[12:10];
 
@@ -269,3 +294,32 @@ module map_090_old
 endmodule
 
 
+/*
+module mmc3_irq_a12
+(ppu_addr_12, clk, m2, filter, ppu_a12);
+	
+	input ppu_addr_12, clk, m2;
+	output filter;
+	output reg ppu_a12;
+	
+	assign filter = a12_filter[7:1] == 0;
+
+
+	reg [7:0]a12_filter;
+	
+	reg [7:0]a12_st;
+	
+	always @(negedge clk)
+	begin
+		a12_st[7:0] <= {a12_st[6:0], ppu_addr_12};
+		if(a12_st[7:0] == 8'b10000000)ppu_a12 <= 0;
+		if(a12_st[7:0] == 8'b01111111)ppu_a12 <= 1;
+	end
+	
+	always @(negedge m2)
+	begin
+		a12_filter[7:0] <= {a12_filter[6:0], ppu_a12};
+	end
+
+endmodule
+*/
