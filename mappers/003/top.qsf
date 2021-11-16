@@ -225,7 +225,6 @@ set_location_assignment PIN_D5 -to xio[2]
 set_location_assignment PIN_R4 -to boot_on
 set_global_assignment -name VERILOG_FILE map_hub.v
 set_global_assignment -name VERILOG_FILE map_079.v
-set_global_assignment -name SYSTEMVERILOG_FILE map_090_new.sv
 set_global_assignment -name VERILOG_FILE map_090.v
 set_global_assignment -name VERILOG_FILE map_133.v
 set_global_assignment -name VERILOG_FILE map_137.v

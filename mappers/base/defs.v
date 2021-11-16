@@ -1,7 +1,7 @@
 
 
-	`define SS_OFF	 	//remove save state
-	`define GG_OFF	//remove cheats engine
+	`define SS_ON	 	//remove save state
+	`define GG_ON	//remove cheats engine
 	`define SND_ON  //remove expansion sound if any exists
 
 
