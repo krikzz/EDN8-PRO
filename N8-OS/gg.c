@@ -174,7 +174,8 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt) {
 
         if (src == 0) {
             src = buff;
-            str_make_sync_name(game, src, PATH_CHEATS, "txt", SYNC_IDX_OFF);
+            //str_make_sync_name(game, src, PATH_CHEATS, "txt", SYNC_IDX_OFF);
+            fatMakeSyncPath(src, PATH_CHEATS, game, "txt");
         }
 
         resp = bi_file_get_size(src, &fsize);
@@ -225,13 +226,14 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
     }
 
     buff = malloc(MAX_PATH_SIZE);
-    str_make_sync_name(game, buff, PATH_CHEATS, "txt", SYNC_IDX_OFF);
+    //str_make_sync_name(game, buff, PATH_CHEATS, "txt", SYNC_IDX_OFF);
+    fatMakeSyncPath(buff, PATH_CHEATS, game, "txt");
 
     if (empty) {
 
         resp = bi_cmd_file_del(buff);
         if (resp == FAT_NO_FILE)resp = 0;
-        
+
     } else {
 
         resp = bi_cmd_file_open(buff, FA_WRITE | FA_OPEN_ALWAYS);
@@ -247,7 +249,7 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
 
 
     free(MAX_PATH_SIZE);
-    
+
     return resp;
 }
 
@@ -328,7 +330,7 @@ u8 ggEditor(CheatText *gg_txt, u8 *game_path) {
     sel.hdr = "Code Menu";
     sel.items = sle_items;
 
-    game_name = str_extract_name(game_path);
+    game_name = str_extract_fname(game_path);
 
     while (1) {
 

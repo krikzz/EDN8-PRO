@@ -149,7 +149,7 @@ void str_copy(u8 *src, u8 *dst) {
     *dst = 0;
 }
 
-u8 *str_extract_name(u8 *str) {
+u8 *str_extract_fname(u8 *str) {
 
     u8 *name_ptr = str;
     while (*str != 0) {
@@ -172,22 +172,6 @@ u8 *str_extract_ext(u8 *str) {
     return name_ptr;
 }
 
-void str_make_sync_name(u8 *src, u8 *dst, u8 *dst_path, u8 *dst_ext, u8 idx) {
-
-    dst[0] = 0;
-    dst = str_append(dst, dst_path);
-    dst = str_append(dst, "/");
-    str_append(dst, str_extract_name(src));
-
-    dst = str_extract_ext(dst);
-    *dst = 0;
-    if (idx != SYNC_IDX_OFF) {
-        dst = str_append_hex8(dst, idx);
-        dst = str_append(dst, ".");
-    }
-
-    str_append(dst, dst_ext);
-}
 
 u8* str_append_date(u8 *dst, u16 date) {
 

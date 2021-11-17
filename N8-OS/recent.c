@@ -68,14 +68,14 @@ u8 app_recentMenu() {
         gCleanScreen();
         gSetPal(PAL_G2);
         gDrawHeader("Recently Played", G_CENTER);
-        file_name = str_extract_name(recent->slot[selector].path);
+        file_name = str_extract_fname(recent->slot[selector].path);
         gDrawFooter(file_name, 2, G_LEFT);
 
         gSetY((G_SCREEN_H - MAX_RECENT) / 2 - 2);
 
         for (i = 0; i < MAX_RECENT; i++) {
 
-            file_name = str_extract_name(recent->slot[i].path);
+            file_name = str_extract_fname(recent->slot[i].path);
             gSetPal(selector == i ? PAL_G2 : PAL_B1);
 
             if (file_name[0] == 0) {

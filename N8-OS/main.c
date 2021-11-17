@@ -174,6 +174,8 @@ void printError(u8 code) {
         gConsPrintCX("Last game was loaded via USB");
     } else if (code == ERR_FDS_SIZE) {
         gConsPrintCX("FDS ROM is too large");
+    } else if (code == ERR_ROM_SIZE) {
+        gConsPrintCX("ROM is too large");
     } else {
         gConsPrintCX("Unexcpected error");
     }

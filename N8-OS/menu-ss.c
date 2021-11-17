@@ -48,7 +48,7 @@ void app_inGameMenu() {
     //mem_set(&box, 0, sizeof (ListBox));
     box.hdr = 0;
     box.items = items;
-    box.selector = 0;
+    box.selector = ses_cfg->ss_selector;
     items[SS_SAVE] = "Save State";
     items[SS_LOAD] = "Load State";
     items[SS_RESET] = "Reset Game";
@@ -68,6 +68,11 @@ void app_inGameMenu() {
 
     if (ss_src != 0x00 && ss_src == registery->options.ss_key_save) {
         ppuOFF();
+
+        if (registery->options.ss_recover) {
+            srmSSrpoint(ss_bank_hex);
+        }
+
         resp = srmBackupSS(ss_bank_hex);
         if (resp)printError(resp);
         ss_return();
@@ -92,17 +97,24 @@ void app_inGameMenu() {
         }
 
         buff[0] = 0;
+
+
         str_append(buff, "Slot: ");
-        str_append_hex8(buff, ss_bank_hex);
+        if (registery->options.ss_recover && ss_bank_hex == 0x99) {
+            str_append(buff, "RC");
+        } else {
+            str_append_hex8(buff, ss_bank_hex);
+        }
+
         items[SS_BANK] = buff;
 
         box.selector |= SEL_DPD;
         guiDrawListBox(&box);
+        ses_cfg->ss_selector = box.selector;
 
         if (box.act == ACT_EXIT) {
             ss_return();
         }
-
 
         if (box.act == JOY_L) {
             ses_cfg->ss_bank = dec_mod(ses_cfg->ss_bank, MAX_SS_SLOTS);
@@ -120,7 +132,9 @@ void app_inGameMenu() {
         //gCleanScreen();
         if (box.selector == SS_BANK)continue;
 
-        if (box.act == ACT_OPEN)break;
+        if (box.act == ACT_OPEN) {
+            break;
+        }
     }
 
     ppuOFF();
@@ -131,6 +145,11 @@ void app_inGameMenu() {
     }
 
     if (box.selector == SS_SAVE) {
+
+        if (registery->options.ss_recover) {
+            srmSSrpoint(ss_bank_hex);
+        }
+
         resp = srmBackupSS(ss_bank_hex);
         if (resp)printError(resp);
         ss_return();
@@ -143,7 +162,7 @@ void app_inGameMenu() {
     }
 
     if (box.selector == SS_RESET) {
-        
+
         edRebootGame();
     }
 

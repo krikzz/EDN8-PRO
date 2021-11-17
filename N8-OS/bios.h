@@ -109,6 +109,7 @@
 #define ADDR_FDS        ADDR_SRM
 #define ADDR_FDS_SIG    (ADDR_FDS + SIZE_FDS_DISK)
 #define ADDR_FDS_BIOS   (ADDR_PRG + 0x8000)
+#define ADDR_FBUFF      (ADDR_OS_PRG - SIZE_FBUFF)
 
 #define ADDR_FLA_MENU   0x00000 //boot fails mos6502 code
 #define ADDR_FLA_FPGA   0x40000 //boot fails fpga code
@@ -119,12 +120,15 @@
 #define SIZE_PRG        0x800000        //PRG chip size
 #define SIZE_CHR        0x800000        //CHR chip size
 #define SIZE_OS_PRG     0x20000         //OS PRG size 
-#define SIZE_OS_CHR     0x4000          //IS CHR size
+#define SIZE_OS_CHR     0x4000          //OS CHR size
 #define SIZE_SST_HW     0x4000          //size of save state block with hardware state
 #define SIZE_SST_ERAM   0x8000          //size of save state block with extended ram
 #define SIZE_SRM_GAME   0x10000         //max size of battery ram which will be copird on sd
 #define SIZE_FDS_DISK   65500L          
 #define SIZE_FIFO       2048            //fifo buffer size between cpu and mcu
+#define SIZE_FBUFF      0x20000
+#define SIZE_MAX_PRG    (SIZE_PRG - SIZE_OS_PRG - SIZE_FBUFF)
+#define SIZE_MAX_CHR    (SIZE_PRG - SIZE_OS_CHR)
 
 #define APP_ADDR        0x6000
 #define APP_SIZE        0x2000

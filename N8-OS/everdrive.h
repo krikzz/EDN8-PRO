@@ -21,6 +21,7 @@
 #include "vol-ctrl.h"
 #include "rom-config.h"
 #include "var.h"
+#include "fs.h"
 
 
 #define CART_ID_PRO     0x17
@@ -35,6 +36,7 @@ typedef struct {
     u8 ss_key_save;
     u8 ss_key_load;
     u8 ss_key_menu;
+    u8 ss_recover; 
     u8 cheats;
     u8 swap_ab;
     u8 rst_delay;
@@ -68,6 +70,7 @@ typedef struct {
 
 typedef struct {
     u8 ss_bank;
+    u8 ss_selector;
     u8 hot_start;
     u8 boot_flag;
     u8 save_prg;

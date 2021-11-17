@@ -3,7 +3,13 @@ EDN8-V2.12 ???
 2) Fixed cart button hook for in-game menu
 3) Fix for mapper 90
 4) Included mapper 209
+5) In-game menu remember the last selected item
+6) State recovery option* 
 
+*99th save slots turn into recovery slot. 
+Before than new save data will be written to the any of save slots, old save data from current slot will be copied to recovery slot automatically.
+
+***************************************************************************
 
 EDN8-V2.11 27.12.2020
 1) Included YM2413 core update from Necronomfive

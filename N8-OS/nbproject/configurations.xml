@@ -10,6 +10,7 @@
         <itemPath>cfg.h</itemPath>
         <itemPath>errors.h</itemPath>
         <itemPath>everdrive.h</itemPath>
+        <itemPath>fs.h</itemPath>
         <itemPath>game-db.h</itemPath>
         <itemPath>gfx.h</itemPath>
         <itemPath>gui.h</itemPath>
@@ -28,6 +29,7 @@
       <itemPath>crt0.s</itemPath>
       <itemPath>everdrive.c</itemPath>
       <itemPath>fmanager.c</itemPath>
+      <itemPath>fs.c</itemPath>
       <itemPath>gfx.c</itemPath>
       <itemPath>gg.c</itemPath>
       <itemPath>gui.c</itemPath>

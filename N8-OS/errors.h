@@ -25,6 +25,8 @@
 #define ERR_BAT_RDY             0x4D
 #define ERR_BAD_NSF             0x4E
 #define ERR_BAD_FILE            0x4F
+#define ERR_ROM_SIZE            0x50
+#define ERR_FBUFF_SIZE          0x51
 
 
 //mcu errors

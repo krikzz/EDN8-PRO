@@ -38,6 +38,7 @@ u8 edInit(u8 sst_mode) {
 
     if (sst_mode)return 0; //all memory should be allocated before this point
     ses_cfg->ss_bank = 0;
+    ses_cfg->ss_selector = 0;
 
     bootloader(&ses_cfg->boot_flag);
 
@@ -332,6 +333,8 @@ u8 edStartGame(u8 usb_mode) {
     if (registery->cur_game.rom_inf.supported == 0 && !usb_mode)return ERR_MAP_NOT_SUPP;
     if (cur_game->usb_game && !usb_mode)return ERR_USB_GAME;
 
+    if (cur_game->prg_size > SIZE_MAX_PRG)return ERR_ROM_SIZE;
+    if (cur_game->chr_size > SIZE_MAX_CHR)return ERR_ROM_SIZE;
 
     ppuOFF();
     resp = edBramRestore();
