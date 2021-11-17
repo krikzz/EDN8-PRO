@@ -56,21 +56,21 @@ u8 srmBackupSS(u8 bank) {
 
     path = malloc(MAX_PATH_SIZE);
     srmGetPathSS(path, bank);
-    resp = bi_cmd_file_open(path, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE);
     free(MAX_PATH_SIZE);
     if (resp)return resp;
 
-    resp = bi_cmd_file_write_mem(ADDR_SST_HW, SIZE_SST_HW); //internal system memory and hardware registers
+    resp = fileWrite_mem(ADDR_SST_HW, SIZE_SST_HW); //internal system memory and hardware registers
     if (resp)return resp;
 
     if (registery->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
-        resp = bi_cmd_file_write_mem(ADDR_SST_FDS, 0x8000); //fds work ram 32K
+        resp = fileWrite_mem(ADDR_SST_FDS, 0x8000); //fds work ram 32K
     } else {
-        resp = bi_cmd_file_write_mem(ADDR_SRM, SIZE_SST_ERAM); //extended memory (on board ram)
+        resp = fileWrite_mem(ADDR_SRM, SIZE_SST_ERAM); //extended memory (on board ram)
     }
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -105,22 +105,22 @@ u8 srmRestoreSS(u8 bank) {
     path = malloc(MAX_PATH_SIZE);
     srmGetPathSS(path, bank);
     //resp = srmFileToMem(path, ADDR_SST, SIZE_SST);
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
     free(MAX_PATH_SIZE);
     if (resp == FAT_NO_FILE)return 0;
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_SST_HW, SIZE_SST_HW); //internal system memory and hardware registers
+    resp = fileRead_mem(ADDR_SST_HW, SIZE_SST_HW); //internal system memory and hardware registers
     if (resp)return resp;
 
     if (registery->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
-        resp = bi_cmd_file_read_mem(ADDR_SST_FDS, 0x8000); //fds work ram 32K
+        resp = fileRead_mem(ADDR_SST_FDS, 0x8000); //fds work ram 32K
     } else {
-        resp = bi_cmd_file_read_mem(ADDR_SRM, SIZE_SST_ERAM); //extended memory (on board ram)
+        resp = fileRead_mem(ADDR_SRM, SIZE_SST_ERAM); //extended memory (on board ram)
     }
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -133,7 +133,7 @@ u8 srmGetInfoSS(FileInfo *inf, u8 bank) {
 
     path = malloc(MAX_PATH_SIZE);
     srmGetPathSS(path, bank);
-    resp = bi_cmd_file_info(path, inf);
+    resp = fileGetInfo(path, inf);
     free(MAX_PATH_SIZE);
 
     return resp;
@@ -152,18 +152,18 @@ u8 srmFileToMem(u8 *path, u32 addr, u32 max_size) {
     u8 resp;
     u32 size;
 
-    resp = bi_file_get_size(path, &size);
+    resp = fileSize(path, &size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
     size = min(size, max_size);
 
-    resp = bi_cmd_file_read_mem(addr, size);
+    resp = fileRead_mem(addr, size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -173,13 +173,13 @@ u8 srmMemToFile(u8 *path, u32 addr, u32 len) {
 
     u8 resp;
 
-    resp = bi_cmd_file_open(path, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
 
-    resp = bi_cmd_file_write_mem(addr, len);
+    resp = fileWrite_mem(addr, len);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -241,10 +241,10 @@ u8 srmRestoreFDS() {
     fatMakeSyncPath(path, PATH_SAVE_DIR, registery->cur_game.path, "srm");
 
     s.size = registery->cur_game.rom_inf.prg_size;
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
 
     if (resp == FAT_NO_FILE) {//load source disk image if no saved image. 
-        resp = bi_cmd_file_open(registery->cur_game.path, FA_READ);
+        resp = fileOpen(registery->cur_game.path, FA_READ);
         skip_header = 1; //skip header if exists
     }
 
@@ -252,7 +252,7 @@ u8 srmRestoreFDS() {
     if (resp)return resp;
 
     if (skip_header) {
-        resp = bi_cmd_file_set_ptr(registery->cur_game.rom_inf.dat_base);
+        resp = fileSetPtr(registery->cur_game.rom_inf.dat_base);
     }
 
     mem_addr = ADDR_FDS;
@@ -261,25 +261,25 @@ u8 srmRestoreFDS() {
 
         block = min(SIZE_FDS_DISK, len);
 
-        resp = bi_cmd_file_read_mem(mem_addr, block);
+        resp = fileRead_mem(mem_addr, block);
         if (resp)return resp;
 
         len -= block;
         mem_addr += 0x10000;
     }
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     s.crc = srmCalcFdsCrc(ADDR_FDS, s.size);
     bi_cmd_mem_wr(ADDR_FDS_SIG, &s, sizeof (FdsSignature));
 
     /* this is condition for sd bug. VERICO-32GB
-    resp = bi_cmd_file_open(PATH_RAMDUMP, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(PATH_RAMDUMP, FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
-    resp = bi_cmd_file_write_mem(ADDR_SRM, SIZE_SRM);
+    resp = fileWrite_mem(ADDR_SRM, SIZE_SRM);
     if (resp)return resp;
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;*/
 
     return 0;
@@ -309,7 +309,7 @@ u8 srmBackupFDS() {
     //str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
     fatMakeSyncPath(path, PATH_SAVE_DIR, registery->cur_game.path, "srm");
 
-    resp = bi_cmd_file_open(path, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE);
     free(MAX_PATH_SIZE);
     if (resp)return resp;
 
@@ -319,14 +319,14 @@ u8 srmBackupFDS() {
 
         block = min(SIZE_FDS_DISK, len);
 
-        resp = bi_cmd_file_write_mem(mem_addr, block);
+        resp = fileWrite_mem(mem_addr, block);
         if (resp)return resp;
 
         len -= block;
         mem_addr += 0x10000;
     }
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
 
@@ -337,16 +337,16 @@ u8 srmBackupPRG() {
 
     u8 resp;
 
-    resp = bi_cmd_file_open(registery->cur_game.path, FA_WRITE);
+    resp = fileOpen(registery->cur_game.path, FA_WRITE);
     if (resp)return resp;
 
-    resp = bi_cmd_file_set_ptr(16);
+    resp = fileSetPtr(16);
     if (resp)return resp;
 
-    resp = bi_cmd_file_write_mem(ADDR_PRG, registery->cur_game.rom_inf.prg_size);
+    resp = fileWrite_mem(ADDR_PRG, registery->cur_game.rom_inf.prg_size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;

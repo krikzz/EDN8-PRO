@@ -24,7 +24,7 @@ u8 fileHexView(u8 *path);
 u8 fileSrmMenu(u8 *path);
 u8 fileBinMenu(u8 *path);
 u8 fileInfo(u8 *path);
-u8 fileDel(u8 *path);
+u8 fileDelMenu(u8 *path);
 u8 fimeNsfMenu(u8 *path);
 
 u8 app_fileMenu(u8 *path) {
@@ -95,7 +95,7 @@ u8 fimeTextMenu(u8 *path) {
     }
 
     if (box.selector == TXT_DEL) {
-        resp = fileDel(path);
+        resp = fileDelMenu(path);
         if (resp)return resp;
     }
 
@@ -156,7 +156,7 @@ u8 fimeRomMenu(u8 *path) {
     }
 
     if (box.selector == RM_DEL) {
-        return fileDel(path);
+        return fileDelMenu(path);
     }
 
     return 0;
@@ -193,7 +193,7 @@ u8 fimeRomInfo(u8 *path) {
     resp = getRomInfo(&inf, path);
     if (resp)return resp;
 
-    resp = bi_cmd_file_info(path, &finf);
+    resp = fileGetInfo(path, &finf);
     if (resp)return resp;
 
     box.hdr = "Rom Info";
@@ -303,10 +303,10 @@ u8 fileHexView(u8 *path) {
     static u8 i;
     u16 block;
 
-    resp = bi_file_get_size(path, &size);
+    resp = fileSize(path, &size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
     buff = malloc(256);
@@ -320,7 +320,7 @@ u8 fileHexView(u8 *path) {
         if (joy == JOY_U && addr >= 256) {
 
             addr -= 256;
-            resp = bi_cmd_file_set_ptr(addr);
+            resp = fileSetPtr(addr);
             if (resp)break;
             rd_req = 1;
         }
@@ -332,7 +332,7 @@ u8 fileHexView(u8 *path) {
 
         if (joy == JOY_L) {
             addr = 0;
-            resp = bi_cmd_file_set_ptr(addr);
+            resp = fileSetPtr(addr);
             if (resp)break;
             rd_req = 1;
         }
@@ -340,7 +340,7 @@ u8 fileHexView(u8 *path) {
         if (joy == JOY_R) {
             addr = size / 256 * 256;
             if (addr == size && addr != 0)addr -= 256;
-            resp = bi_cmd_file_set_ptr(addr);
+            resp = fileSetPtr(addr);
             if (resp)break;
             rd_req = 1;
         }
@@ -352,7 +352,7 @@ u8 fileHexView(u8 *path) {
                 block = size - addr;
                 mem_set(buff, 0, 256);
             }
-            resp = bi_cmd_file_read(buff, block);
+            resp = fileRead(buff, block);
             if (resp)break;
             rd_req = 0;
         }
@@ -400,7 +400,7 @@ u8 fileHexView(u8 *path) {
 
     }
 
-    bi_cmd_file_close();
+    fileClose();
     free(256);
     return resp;
 }
@@ -454,7 +454,7 @@ u8 fileSrmMenu(u8 *path) {
         u32 size;
         gCleanScreen();
         gRepaint();
-        resp = bi_file_get_size(path, &size);
+        resp = fileSize(path, &size);
         if (resp)return resp;
         size = min(SIZE_SRM, size);
         resp = srmMemToFile(path, ADDR_SRM, size);
@@ -470,7 +470,7 @@ u8 fileSrmMenu(u8 *path) {
     }
 
     if (box.selector == SR_DEL) {
-        return fileDel(path);
+        return fileDelMenu(path);
     }
 
     return 0;
@@ -510,7 +510,7 @@ u8 fileBinMenu(u8 *path) {
     }
 
     if (box.selector == BIN_DEL) {
-        return fileDel(path);
+        return fileDelMenu(path);
     }
 
     return 0;
@@ -536,7 +536,7 @@ u8 fileInfo(u8 *path) {
     str_buff = malloc(128);
 
 
-    resp = bi_cmd_file_info(path, &finf);
+    resp = fileGetInfo(path, &finf);
     if (resp)return resp;
 
     box.hdr = "File Info";
@@ -618,14 +618,14 @@ u8 fimeNsfMenu(u8 *path) {
     }
 
     if (box.selector == NSF_DEL) {
-        resp = fileDel(path);
+        resp = fileDelMenu(path);
         if (resp)return resp;
     }
 
     return 0;
 }
 
-u8 fileDel(u8 *path) {
+u8 fileDelMenu(u8 *path) {
 
     u8 resp;
 
@@ -633,7 +633,7 @@ u8 fileDel(u8 *path) {
     resp = guiConfirmBox("Delete This File?", 0);
     if (resp == 0)return 0;
 
-    resp = bi_cmd_file_del(path);
+    resp = fileDel(path);
     if (resp)return resp;
 
     fmForceUpdate();

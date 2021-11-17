@@ -61,29 +61,29 @@ u8 app_nsfPlay(u8 *path) {
     resp = getRomInfo(&inf, PATH_NSF_PLAYER);
     if (resp)return resp;
 
-    resp = bi_cmd_file_open(PATH_NSF_PLAYER, FA_READ);
+    resp = fileOpen(PATH_NSF_PLAYER, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_set_ptr(16);
+    resp = fileSetPtr(16);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_PRG + 0x100000 - inf.prg_size, inf.prg_size);
+    resp = fileRead_mem(ADDR_PRG + 0x100000 - inf.prg_size, inf.prg_size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_CHR, inf.chr_size);
+    resp = fileRead_mem(ADDR_CHR, inf.chr_size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
-    bi_cmd_file_info(path, &finf);
+    fileGetInfo(path, &finf);
     if (resp)return resp;
 
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
     //hdr = malloc(sizeof (Nsf));
-    resp = bi_cmd_file_read(&hdr, sizeof (Nsf));
+    resp = fileRead(&hdr, sizeof (Nsf));
 
     addr = hdr.addr_load;
     banks_on = 0;
@@ -102,16 +102,16 @@ u8 app_nsfPlay(u8 *path) {
 
     size = min(finf.size - 0x80, 0x100000 - 4096 - addr);
 
-    resp = bi_cmd_file_set_ptr(0);
+    resp = fileSetPtr(0);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_PRG + 0x100000 - 4096, 0x80);
+    resp = fileRead_mem(ADDR_PRG + 0x100000 - 4096, 0x80);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_PRG + addr, size);
+    resp = fileRead_mem(ADDR_PRG + addr, size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     //tune should not use last 32 bytes in address space

@@ -118,3 +118,15 @@ void fatAppenIdx(u8 *path, u8 idx) {
 u8 fileGetInfo(u8 *path, FileInfo *inf) {
     return bi_cmd_file_info(path, inf);
 }
+
+u8 fileSize(u8 *path, u32 *size) {
+    return bi_file_get_size(path, size);
+}
+
+u8 fileSetPtr(u32 addr) {
+    return bi_cmd_file_set_ptr(addr);
+}
+
+u8 fileDel(u8 *path) {
+    return bi_cmd_file_del(path);
+}

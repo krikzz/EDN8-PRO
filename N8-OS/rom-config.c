@@ -122,12 +122,12 @@ u8 mapPack20(RomInfo *inf) {
     u8 resp;
     inf->map_pack = 0xff;
 
-    resp = bi_cmd_file_open(PATH_MAPROUT, FA_READ);
+    resp = fileOpen(PATH_MAPROUT, FA_READ);
     if (resp)return resp;
-    resp = bi_cmd_file_set_ptr(inf->mapper);
-    resp = bi_cmd_file_read(&inf->map_pack, 1);
+    resp = fileSetPtr(inf->mapper);
+    resp = fileRead(&inf->map_pack, 1);
     if (resp)return resp;
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -174,13 +174,13 @@ u8 getRomID(RomID *id, u8 *path) {
     u8 resp;
     u32 crc_len;
 
-    resp = bi_cmd_file_info(path, &finf);
+    resp = fileGetInfo(path, &finf);
     if (resp)return resp;
 
-    resp = bi_cmd_file_open(path, FA_READ);
+    resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read(id->ines, 32);
+    resp = fileRead(id->ines, 32);
     if (resp)return resp;
 
     id->size = finf.size;
@@ -193,14 +193,14 @@ u8 getRomID(RomID *id, u8 *path) {
 
     crc_len = min(MAX_ID_CALC_LEN, finf.size - id->dat_base);
 
-    resp = bi_cmd_file_set_ptr(id->dat_base);
+    resp = fileSetPtr(id->dat_base);
     if (resp)return resp;
 
     id->crc = 0;
     resp = bi_cmd_file_crc(crc_len, &id->crc);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;

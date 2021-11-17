@@ -103,13 +103,13 @@ u8 testRamBackup() {
 
     u8 resp;
 
-    resp = bi_cmd_file_open(PATH_RAMDUMP, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(PATH_RAMDUMP, FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
 
-    resp = bi_cmd_file_write_mem(ADDR_SRM, SIZE_SRM);
+    resp = fileWrite_mem(ADDR_SRM, SIZE_SRM);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -119,13 +119,13 @@ u8 testRamRestore() {
 
     u8 resp;
 
-    resp = bi_cmd_file_open(PATH_RAMDUMP, FA_READ);
+    resp = fileOpen(PATH_RAMDUMP, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_SRM, SIZE_SRM);
+    resp = fileRead_mem(ADDR_SRM, SIZE_SRM);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -210,24 +210,24 @@ u8 testSDC() {
     gConsPrint("Testing SDC... ");
     gRepaint();
 
-    resp = bi_cmd_file_open(PATH_SDC_FILE, FA_READ);
+    resp = fileOpen(PATH_SDC_FILE, FA_READ);
     if (resp)return resp;
 
     crc1 = 0;
     resp = bi_cmd_file_crc(tst_file_len, &crc1);
     if (resp)return resp;
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
 
     for (i = 0; i < retry; i++) {
-        resp = bi_cmd_file_open(PATH_SDC_FILE, FA_READ);
+        resp = fileOpen(PATH_SDC_FILE, FA_READ);
         if (resp)return resp;
 
         crc2 = 0;
         resp = bi_cmd_file_crc(tst_file_len, &crc2);
         if (resp)return resp;
-        resp = bi_cmd_file_close();
+        resp = fileClose();
         if (resp)return resp;
         if (crc1 != crc2)return 1;
     }
@@ -240,11 +240,11 @@ u8 testSDC() {
 
         for (i = 0; i < retry; i++) {
 
-            resp = bi_cmd_file_open(PATH_SDC_FILE, FA_READ);
+            resp = fileOpen(PATH_SDC_FILE, FA_READ);
             if (resp)return resp;
-            resp = bi_cmd_file_read_mem(addr, tst_file_len);
+            resp = fileRead_mem(addr, tst_file_len);
             if (resp)return resp;
-            resp = bi_cmd_file_close();
+            resp = fileClose();
             if (resp)return resp;
 
             crc2 = 0;
@@ -255,23 +255,23 @@ u8 testSDC() {
 
     for (u = 0; u < 8; u++) {
 
-        resp = bi_cmd_file_open(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
+        resp = fileOpen(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
         if (resp)return resp;
 
-        resp = bi_cmd_file_write_mem(ADDR_PRG, tst_file_len);
+        resp = fileWrite_mem(ADDR_PRG, tst_file_len);
         if (resp)return resp;
 
-        resp = bi_cmd_file_close();
+        resp = fileClose();
         if (resp)return resp;
 
-        resp = bi_cmd_file_open(PATH_TESTFILE, FA_READ);
+        resp = fileOpen(PATH_TESTFILE, FA_READ);
         if (resp)return resp;
 
         crc2 = 0;
         resp = bi_cmd_file_crc(tst_file_len, &crc2);
         if (resp)return resp;
 
-        resp = bi_cmd_file_close();
+        resp = fileClose();
         if (resp)return resp;
 
         if (crc1 != crc2)return 5;
@@ -291,23 +291,23 @@ u8 testSDC_spd() {
     gRepaint();
 
 
-    resp = bi_cmd_file_open(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
-    resp = bi_cmd_file_write_mem(ADDR_PRG, SIZE_SRM);
+    resp = fileWrite_mem(ADDR_PRG, SIZE_SRM);
     if (resp)return resp;
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
 
-    resp = bi_cmd_file_open(PATH_TESTFILE, FA_READ);
+    resp = fileOpen(PATH_TESTFILE, FA_READ);
     if (resp)return resp;
 
     time = bi_get_ticks();
-    resp = bi_cmd_file_read_mem(ADDR_PRG, SIZE_SRM);
+    resp = fileRead_mem(ADDR_PRG, SIZE_SRM);
     if (resp)return resp;
     time = bi_get_ticks() - time;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     testPrintSpeed(time, SIZE_SRM);
@@ -316,15 +316,15 @@ u8 testSDC_spd() {
     gConsPrint("SD WR speed... ");
     gRepaint();
 
-    resp = bi_cmd_file_open(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(PATH_TESTFILE, FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
 
     time = bi_get_ticks();
-    resp = bi_cmd_file_write_mem(ADDR_PRG, SIZE_SRM);
+    resp = fileWrite_mem(ADDR_PRG, SIZE_SRM);
     if (resp)return resp;
     time = bi_get_ticks() - time;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     testPrintSpeed(time, SIZE_SRM);

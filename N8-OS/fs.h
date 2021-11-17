@@ -21,6 +21,9 @@ u8 fileOpenSync(u8 *dirname, u8 *fname, u8 *ext, u8 mode);
 void fatMakeSyncPath(u8 *path, u8 *dirname, u8 *fname, u8 *ext);
 void fatAppenIdx(u8 *path, u8 idx);
 u8 fileGetInfo(u8 *path, FileInfo *inf);
+u8 fileSize(u8 *path, u32 *size);
+u8 fileSetPtr(u32 addr);
+u8 fileDel(u8 *path);
 
 #endif	/* FS_H */
 

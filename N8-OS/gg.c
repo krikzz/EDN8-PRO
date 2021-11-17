@@ -178,22 +178,22 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt) {
             fatMakeSyncPath(src, PATH_CHEATS, game, "txt");
         }
 
-        resp = bi_file_get_size(src, &fsize);
+        resp = fileSize(src, &fsize);
         if (resp != 0 && resp != FAT_NO_FILE)break;
 
         if (resp == 0) {//if file exist
 
             if (fsize > MAX_GG_FSIZE)fsize = MAX_GG_FSIZE;
 
-            resp = bi_cmd_file_open(src, FA_READ);
+            resp = fileOpen(src, FA_READ);
             if (resp)break;
 
             mem_set(buff, 0, MAX_GG_FSIZE);
 
-            resp = bi_cmd_file_read(buff, fsize);
+            resp = fileRead(buff, fsize);
             if (resp)break;
 
-            resp = bi_cmd_file_close();
+            resp = fileClose();
             if (resp)break;
 
         } else {
@@ -231,19 +231,19 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
 
     if (empty) {
 
-        resp = bi_cmd_file_del(buff);
+        resp = fileDel(buff);
         if (resp == FAT_NO_FILE)resp = 0;
 
     } else {
 
-        resp = bi_cmd_file_open(buff, FA_WRITE | FA_OPEN_ALWAYS);
+        resp = fileOpen(buff, FA_WRITE | FA_OPEN_ALWAYS);
 
         if (resp == 0) {
-            resp = bi_cmd_file_write(gg_txt, sizeof (CheatText));
+            resp = fileWrite(gg_txt, sizeof (CheatText));
         }
 
         if (resp == 0) {
-            resp = bi_cmd_file_close();
+            resp = fileClose();
         }
     }
 

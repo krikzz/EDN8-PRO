@@ -121,11 +121,11 @@ void edRun() {
 u8 edMapRoutLoad() {
 
     u8 resp;
-    resp = bi_cmd_file_open(PATH_MAPROUT, FA_READ);
+    resp = fileOpen(PATH_MAPROUT, FA_READ);
     if (resp)return resp;
-    resp = bi_cmd_file_read(maprout, 256);
+    resp = fileRead(maprout, 256);
     if (resp)return resp;
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
 
@@ -138,13 +138,13 @@ u8 edRegisteryLoad() {
     u16 crc;
     //mem_set(registery, 0, sizeof (Registery));
 
-    resp = bi_cmd_file_open(PATH_REGISTERY, FA_READ);
+    resp = fileOpen(PATH_REGISTERY, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read(registery, sizeof (Registery));
+    resp = fileRead(registery, sizeof (Registery));
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     crc = crcFast(registery, sizeof (Registery) - 2);
@@ -177,15 +177,15 @@ u8 edRegisterySave() {
 
     u8 resp;
 
-    resp = bi_cmd_file_open(PATH_REGISTERY, FA_WRITE | FA_OPEN_ALWAYS);
+    resp = fileOpen(PATH_REGISTERY, FA_WRITE | FA_OPEN_ALWAYS);
     if (resp)return resp;
 
     registery->crc = crcFast(registery, sizeof (Registery) - 2);
 
-    resp = bi_cmd_file_write(registery, sizeof (Registery));
+    resp = fileWrite(registery, sizeof (Registery));
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -354,21 +354,21 @@ u8 edStartGame(u8 usb_mode) {
 
     } else {
 
-        resp = bi_cmd_file_open(registery->cur_game.path, FA_READ);
+        resp = fileOpen(registery->cur_game.path, FA_READ);
         if (resp)return resp;
 
-        resp = bi_cmd_file_set_ptr(cur_game->dat_base);
+        resp = fileSetPtr(cur_game->dat_base);
         if (resp)return resp;
 
-        resp = bi_cmd_file_read_mem(ADDR_PRG, cur_game->prg_size);
+        resp = fileRead_mem(ADDR_PRG, cur_game->prg_size);
         if (resp)return resp;
 
         if (!cur_game->chr_ram) {
-            resp = bi_cmd_file_read_mem(ADDR_CHR, cur_game->chr_size);
+            resp = fileRead_mem(ADDR_CHR, cur_game->chr_size);
             if (resp)return resp;
         }
 
-        resp = bi_cmd_file_close();
+        resp = fileClose();
         if (resp)return resp;
 
         if (cur_game->prg_save) {
@@ -528,13 +528,13 @@ u8 edLoadFdsBios() {
         0x00
     };
 
-    resp = bi_cmd_file_open(PATH_FDS_BIOS, FA_READ);
+    resp = fileOpen(PATH_FDS_BIOS, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read_mem(ADDR_FDS_BIOS, 8192);
+    resp = fileRead_mem(ADDR_FDS_BIOS, 8192);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     for (i = 0; fix[i] != 0; i += len + 3) {

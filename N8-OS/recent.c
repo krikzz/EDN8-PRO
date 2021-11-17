@@ -126,13 +126,13 @@ u8 app_recentAdd(u8 *path) {
     mem_set(recent->slot[0].path, 0, MAX_PATH_SIZE);
     str_copy(path, recent->slot[0].path);
 
-    resp = bi_cmd_file_open(PATH_RECENT, FA_WRITE | FA_OPEN_ALWAYS);
+    resp = fileOpen(PATH_RECENT, FA_WRITE | FA_OPEN_ALWAYS);
     if (resp)return resp;
 
-    resp = bi_cmd_file_write(recent, sizeof (Recent));
+    resp = fileWrite(recent, sizeof (Recent));
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
@@ -150,7 +150,7 @@ u8 recentLoad(Recent *recent, u8 shift) {
 
     //mem_set(recent, 0, sizeof (Recent));
 
-    resp = bi_file_get_size(PATH_RECENT, &size);
+    resp = fileSize(PATH_RECENT, &size);
     if (resp == FAT_NO_FILE)return 0;
 
     size = min(size, sizeof (Recent));
@@ -163,13 +163,13 @@ u8 recentLoad(Recent *recent, u8 shift) {
         size -= sizeof (RecentSlot);
     }
 
-    resp = bi_cmd_file_open(PATH_RECENT, FA_READ);
+    resp = fileOpen(PATH_RECENT, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_file_read(recent, size);
+    resp = fileRead(recent, size);
     if (resp)return resp;
 
-    resp = bi_cmd_file_close();
+    resp = fileClose();
     if (resp)return resp;
 
     return 0;
