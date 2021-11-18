@@ -111,7 +111,7 @@ module map_090
 	assign chr_map[3] = chr_bank[ppu_addr[12:10]][8:0];
 	
 	wire [8:0]chr_4k_std = {chr_bank[{ppu_addr[12], 2'd0}][6:0], ppu_addr[11:10]};
-	wire [8:0]chr_4k_mmc = mmc_latch == 0 ? chr_4k_std : 
+	wire [8:0]chr_4k_mmc = mmc_latch[ppu_addr[12]] == 0 ? chr_4k_std : 
 	{chr_bank[{ppu_addr[12], 2'd0}+2][6:0], ppu_addr[11:10]};
 	
 	wire chr_a18 = !reg_D003[5] ? reg_D003[0] : chr_map[chr_mode][8];
@@ -181,7 +181,7 @@ module map_090
 	wire ppu_12_pe = ppu_12_st == 'b01111111;
 	wire m2_pe 		= m2_st 		== 'b01111111;
 	
-	reg mmc_latch;
+	reg [1:0]mmc_latch;
 	reg [7:0]ppu_oe_st;
 	reg [7:0]ppu_12_st;
 	reg [7:0]m2_st;
@@ -193,13 +193,15 @@ module map_090
 		ppu_12_st <= {ppu_12_st[6:0], ppu_addr[12]};
 		m2_st		 <= {m2_st[6:0], m2};
 		
+		//mmc_latch[ppu_addr[12]]
+		
 		//mmc4-like chr switch
 		if(ppu_oe_ne)
 		case({ppu_addr[13:3], 3'd0})
-			'h0FD8:mmc_latch <= 0;
-			'h1FD8:mmc_latch <= 0;
-			'h0FE8:mmc_latch <= 1;
-			'h1FE8:mmc_latch <= 1;
+			'h0FD8:mmc_latch[0] <= 0;
+			'h1FD8:mmc_latch[1] <= 0;
+			'h0FE8:mmc_latch[0] <= 1;
+			'h1FE8:mmc_latch[1] <= 1;
 		endcase
 		
 		

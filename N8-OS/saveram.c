@@ -76,27 +76,6 @@ u8 srmBackupSS(u8 bank) {
     return 0;
 }
 
-u8 srmSSrpoint(u8 bank) {
-
-    u8 *src, *dst;
-    u8 resp;
-
-    if (bank == 0x99)return 0;
-
-    src = malloc(MAX_PATH_SIZE);
-    dst = malloc(MAX_PATH_SIZE);
-
-    srmGetPathSS(src, bank);
-    srmGetPathSS(dst, 0x99);
-
-    resp = fileCopy(src, dst);
-    free(MAX_PATH_SIZE * 2);
-    if (resp == FAT_NO_FILE)return 0;
-    if (resp)return resp;
-
-    return 0;
-}
-
 u8 srmRestoreSS(u8 bank) {
 
     u8 resp;
@@ -121,6 +100,27 @@ u8 srmRestoreSS(u8 bank) {
     if (resp)return resp;
 
     resp = fileClose();
+    if (resp)return resp;
+
+    return 0;
+}
+
+u8 srmSSrpoint(u8 bank) {
+
+    u8 *src, *dst;
+    u8 resp;
+
+    if (bank == 0x99)return 0;
+
+    src = malloc(MAX_PATH_SIZE);
+    dst = malloc(MAX_PATH_SIZE);
+
+    srmGetPathSS(src, bank);
+    srmGetPathSS(dst, 0x99);
+
+    resp = fileCopy(src, dst);
+    free(MAX_PATH_SIZE * 2);
+    if (resp == FAT_NO_FILE)return 0;
     if (resp)return resp;
 
     return 0;

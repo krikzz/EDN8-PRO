@@ -1,4 +1,4 @@
-EDN8-V2.12 ???
+EDN8-V2.12  18.11.2021
 1) Fix for MMC5
 2) Fixed cart button hook for in-game menu
 3) Fix for mapper 90

@@ -59,6 +59,7 @@ u8 fileCopy(u8 *src, u8 *dst) {
     return 0;
 }
 
+/*
 u8 fileOpenSync(u8 *dirname, u8 *fname, u8 *ext, u8 mode) {
 
     u8 resp;
@@ -71,6 +72,7 @@ u8 fileOpenSync(u8 *dirname, u8 *fname, u8 *ext, u8 mode) {
 
     return resp;
 }
+*/
 
 void fatMakeSyncPath(u8 *path, u8 *dirname, u8 *fname, u8 *ext) {
 
