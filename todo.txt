@@ -59,3 +59,4 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 добавить в ио ядро коекакие функции для ускорения работы с диском (fileAvaiable etc)?
 сделать функцию стейт рековери включеной по умолчанию
 посмотреть ромы 198 в 05_dbg
+функция fileCopy поставить bi_file_get_size перед fileOpen
