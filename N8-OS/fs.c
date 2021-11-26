@@ -47,10 +47,10 @@ u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode) {
     u8 resp;
     u32 size;
 
-    resp = fileOpen(src, FA_READ);
-    if (resp)return resp;
-
     resp = bi_file_get_size(src, &size);
+    if (resp)return resp;
+    
+    resp = fileOpen(src, FA_READ);
     if (resp)return resp;
 
     if (size > SIZE_FBUFF)return ERR_FBUFF_SIZE;
