@@ -27,6 +27,7 @@ u8 *str_extract_fname(u8 *str);
 u8 *str_extract_ext(u8 *str);
 u8* str_append_date(u8 *dst, u16 date);
 u8* str_append_time(u8 *dst, u16 time);
+u16 str_last_index_of(u8 *str, u8 val);
 void mem_set(void *dst, u8 val, u16 len);
 void mem_copy(void *src, void *dst, u16 len);
 u8 mem_cmp(void *src, void *dst, u16 len);

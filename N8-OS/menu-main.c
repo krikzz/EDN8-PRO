@@ -67,7 +67,7 @@ u8 app_mainMenu() {
         }
 
         if (box.selector == MM_CHEATS) {
-            resp = ggEdit(0, registery->cur_game.path);
+            resp = ggEdit(0, registry->cur_game.path);
             if (resp)return resp;
         }
 
@@ -118,8 +118,8 @@ u8 mmOptions() {
     InfoBox box;
     u8 * arg[OP_SIZE];
     u8 * val[OP_SIZE];
-    u8 swap_ab = registery->options.swap_ab;
-    Options *opt = &registery->options;
+    u8 swap_ab = registry->options.swap_ab;
+    Options *opt = &registry->options;
 
     static u8 * off_on[] = {"OFF", "ON "};
 
@@ -195,8 +195,8 @@ u8 mmOptions() {
     }
 
     if (changed) {
-        registery->options.swap_ab = swap_ab;
-        return edRegisterySave();
+        registry->options.swap_ab = swap_ab;
+        return edRegistrySave();
     }
 
     return 0;
@@ -239,7 +239,7 @@ void mmHotKeySetup() {
         HK_SIZE
     };
 
-    Options *opt = &registery->options;
+    Options *opt = &registry->options;
     ListBox box;
     u8 * items[HK_SIZE]; // = {"Set Save-State HotKey", "Set Load-State HotKey", 0};
 
@@ -430,7 +430,7 @@ void mmAbout() {
     gConsPrint("START      : Run last game");
     gConsPrint("SELECT     : Main menu");
 
-    if (!registery->options.swap_ab) {
+    if (!registry->options.swap_ab) {
         gConsPrint("B          : File menu");
         gConsPrint("A          : Back");
     } else {
@@ -519,6 +519,10 @@ void mmDeviceInfo() {
     str_append_num(val[DI_OS_VER], sys_inf->os_ver >> 8);
     str_append(val[DI_OS_VER], ".");
     str_append_hex8(val[DI_OS_VER], sys_inf->os_ver);
+#ifdef OS_BETA
+    str_append(val[DI_OS_VER], " Beta-");
+    str_append_num(val[DI_OS_VER], OS_BETA);
+#endif
 
     str_append_date(val[DI_OS_DATE], sys_inf->os_bld_date);
 

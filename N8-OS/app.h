@@ -10,6 +10,7 @@
 
 #define APP_CFG (BNK_OS_BASE + 4)
 #define APP_GG  (BNK_OS_BASE + 5)
+#define APP_SSE (BNK_OS_BASE + 5) //save state exporter
 #define APP_NSF (BNK_OS_BASE + 6)
 #define APP_UPD (BNK_OS_BASE + 6)
 #define APP_GUI (BNK_OS_BASE + 6)

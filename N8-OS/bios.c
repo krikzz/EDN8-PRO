@@ -298,6 +298,13 @@ u8 bi_cmd_file_del(u8 *path) {
     return bi_check_status();
 }
 
+u8 bi_cmd_dir_make(u8 *path) {
+    
+    bi_cmd_tx(CMD_F_DIR_MK);
+    bi_tx_string(path);
+    return bi_check_status();
+}
+
 u8 bi_cmd_fpg_init_sdc(u8 *path) {
 
     u32 size;

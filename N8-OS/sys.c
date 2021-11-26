@@ -123,7 +123,7 @@ u8 sysJoyRead() {
 
     joy = sysJoyRead_raw();
 
-    if (registery->options.swap_ab) {
+    if (registry->options.swap_ab) {
 
         tmp = joy;
         joy &= ~(JOY_B | JOY_A);

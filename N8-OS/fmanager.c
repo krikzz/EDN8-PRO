@@ -173,10 +173,10 @@ u8 app_fmanager() {
         }
 
         if (joy == JOY_SEL) {
-            u8 sort = registery->options.sort_files;
+            u8 sort = registry->options.sort_files;
             resp = mainMenu();
             if (resp)return resp;
-            if (sort != registery->options.sort_files)fm->load_dir = 1;
+            if (sort != registry->options.sort_files)fm->load_dir = 1;
         }
     }
 
@@ -393,7 +393,7 @@ u8 fmLoadDir() {
     u8 resp;
 
     fm_page->cur_page = 0xffff; //force page update
-    resp = bi_cmd_dir_load(fm->path, registery->options.sort_files);
+    resp = bi_cmd_dir_load(fm->path, registry->options.sort_files);
     if (resp)return resp;
 
     bi_cmd_dir_get_size(&fm->dir_size);

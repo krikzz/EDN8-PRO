@@ -189,6 +189,7 @@ void app_guiDrawListBox(ListBox *box) {
     u8 i;
     u8 joy;
     u8 sel_dpd = box->selector & SEL_DPD;
+    u8 sel_skip = box->selector == SEL_JSKIP;
 
     box->selector &= ~SEL_DPD;
 
@@ -222,6 +223,11 @@ void app_guiDrawListBox(ListBox *box) {
 
         gRepaint();
 
+        if (sel_skip) {
+            box->act = ACT_EXIT;
+            return;
+        }
+        
         joy = sysJoyWait();
 
         if (joy == JOY_A) {

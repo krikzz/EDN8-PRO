@@ -2,6 +2,14 @@
 !!!We recommend backup your old EDN8 folder before than install OS update!!!
 ****************************************************************************
 
+EDN8-V2.13  ???
+1) Changes in structure of save-state folder*
+
+
+*Changes was made to prevent save/load state slowdown due the storing a large amount of files in save-state folder.
+Now each game has own subfolder with save slots files inside.
+
+****************************************************************************
 
 EDN8-V2.12  18.11.2021
 1) Fix for MMC5

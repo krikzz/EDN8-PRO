@@ -80,7 +80,7 @@ void usbSelectGame() {
 
 
     if (resp == 0) {
-        bi_cmd_usb_wr(&registery->cur_game.rom_inf.mapper, 2);
+        bi_cmd_usb_wr(&registry->cur_game.rom_inf.mapper, 2);
     }
 }
 

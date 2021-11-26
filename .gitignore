@@ -3,6 +3,7 @@
 *.drc
 *.deb
 *.qws
+*.exe.config
 iceCube*.log
 accel_uc.log
 db

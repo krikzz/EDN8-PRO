@@ -16,6 +16,7 @@
         <itemPath>gui.h</itemPath>
         <itemPath>rom-config.h</itemPath>
         <itemPath>saveram.h</itemPath>
+        <itemPath>ss_export.h</itemPath>
         <itemPath>std.h</itemPath>
         <itemPath>sys.h</itemPath>
         <itemPath>types.h</itemPath>
@@ -43,6 +44,7 @@
       <itemPath>rtc.c</itemPath>
       <itemPath>saveram.c</itemPath>
       <itemPath>ss.s</itemPath>
+      <itemPath>ss_export.c</itemPath>
       <itemPath>std.c</itemPath>
       <itemPath>sys.c</itemPath>
       <itemPath>tst.c</itemPath>

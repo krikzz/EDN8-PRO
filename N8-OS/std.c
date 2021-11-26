@@ -191,6 +191,17 @@ u8* str_append_time(u8 *dst, u16 time) {
     return str_append_hex8(dst, decToBcd((time & 0x1F) * 2));
 }
 
+u16 str_last_index_of(u8 *str, u8 val) {
+
+    u16 i;
+    u16 idx = 0;
+    for (i = 0; str[i] != 0; i++) {
+        if (str[i] == val)idx = i;
+    }
+
+    return idx;
+}
+
 void mem_set(void *dst, u8 val, u16 len) {
 
     static u8 *ds;
@@ -290,3 +301,4 @@ u8 decToBcd(u8 val) {
 u8 bcdToDec(u8 val) {
     return (val >> 4) * 10 + (val & 15);
 }
+

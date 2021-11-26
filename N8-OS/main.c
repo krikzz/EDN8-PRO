@@ -116,7 +116,7 @@ void printError(u8 code) {
     ppuON();
     gCleanScreen();
 
-    if (code == FAT_NO_FILE && str_cmp_len(PATH_DEF_GAME, registery->cur_game.path, 0)) {
+    if (code == FAT_NO_FILE && str_cmp_len(PATH_DEF_GAME, registry->cur_game.path, 0)) {
         code = ERR_GAME_NOT_SEL;
     }
 

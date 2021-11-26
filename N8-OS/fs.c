@@ -2,7 +2,21 @@
 #include "everdrive.h"
 
 u8 fileOpen(u8 *path, u8 mode) {
-    return bi_cmd_file_open(path, mode);
+
+    u8 resp;
+
+    resp = bi_cmd_file_open(path, mode & ~FS_MAKEPATH);
+
+    if (resp == FAT_NO_PATH && (mode & FS_MAKEPATH)) {
+        u16 sptr = str_last_index_of(path, '/');
+        path[sptr] = 0;
+        resp = dirMake(path);
+        path[sptr] = '/';
+        if (resp)return resp;
+        resp = bi_cmd_file_open(path, mode & ~FS_MAKEPATH);
+    }
+
+    return resp;
 }
 
 u8 fileRead_mem(u32 dst, u32 len) {
@@ -28,7 +42,7 @@ u8 fileClose() {
     return bi_cmd_file_close();
 }
 
-u8 fileCopy(u8 *src, u8 *dst) {
+u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode) {
 
     u8 resp;
     u32 size;
@@ -47,7 +61,7 @@ u8 fileCopy(u8 *src, u8 *dst) {
     resp = fileClose();
     if (resp)return resp;
 
-    resp = fileOpen(dst, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(dst, dst_mode);//FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
 
     resp = fileWrite_mem(ADDR_FBUFF, size);
@@ -131,4 +145,9 @@ u8 fileSetPtr(u32 addr) {
 
 u8 fileDel(u8 *path) {
     return bi_cmd_file_del(path);
+}
+
+u8 dirMake(u8 *path) {
+
+    return bi_cmd_dir_make(path);
 }

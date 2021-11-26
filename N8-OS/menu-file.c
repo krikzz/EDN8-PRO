@@ -85,7 +85,7 @@ u8 fimeTextMenu(u8 *path) {
     }
 
     if (box.selector == TXT_LOAD) {
-        resp = ggEdit(path, registery->cur_game.path);
+        resp = ggEdit(path, registry->cur_game.path);
         if (resp)return resp;
     }
 
@@ -441,7 +441,7 @@ u8 fileSrmMenu(u8 *path) {
         gRepaint();
         resp = srmFileToMem(path, ADDR_SRM, SIZE_SRM);
         if (resp)return resp;
-        registery->ram_backup_req = 1;
+        registry->ram_backup_req = 1;
         resp = edBramBackup();
         if (resp)return resp;
         fmForceUpdate();

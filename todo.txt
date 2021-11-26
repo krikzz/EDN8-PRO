@@ -62,3 +62,4 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 функция fileCopy поставить bi_file_get_size перед fileOpen
 не работает мапер 90 на нт мини. попробовать его потестить на разных клонах
 поменять структуру сейв стейт папки чтобы снять дисковую нагрузку
+доработать дма контроллер чтобы не отключался рендеринг если нет доступа в chr

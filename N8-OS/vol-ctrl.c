@@ -97,7 +97,7 @@ void app_volOptions() {
     InfoBox box;
     u8 * arg[VOL_TBL_SIZE];
     u8 * val[VOL_TBL_SIZE];
-    u8 *opt = registery->options.vol_tbl;
+    u8 *opt = registry->options.vol_tbl;
     u8 *buff; //[64]; //replace to malloc if VOL_TBL_SIZE will rise
     u8 i;
     u8 joy;
@@ -215,8 +215,8 @@ u8 volGetPreset(u8 *src) {
 
 void app_volSetDefaults() {
 
-    mem_set(registery->options.vol_tbl, 100, sizeof (registery->options.vol_tbl));
-    mem_copy(vol_presets[0].vol, registery->options.vol_tbl, VOL_TBL_SIZE);
+    mem_set(registry->options.vol_tbl, 100, sizeof (registry->options.vol_tbl));
+    mem_copy(vol_presets[0].vol, registry->options.vol_tbl, VOL_TBL_SIZE);
 }
 
 u8 app_volGetMasterVol(u8 map_idx) {
@@ -227,7 +227,7 @@ u8 app_volGetMasterVol(u8 map_idx) {
     if (map_idx == 26)map_idx = 24; //VRC6 variation
 
     for (i = 0; i < VOL_TBL_SIZE; i++) {
-        if (snd_map[i].map_idx == map_idx)vol = registery->options.vol_tbl[i];
+        if (snd_map[i].map_idx == map_idx)vol = registry->options.vol_tbl[i];
     }
 
     vol = vol * 128 / 100;

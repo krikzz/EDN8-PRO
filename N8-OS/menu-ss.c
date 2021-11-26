@@ -59,17 +59,17 @@ void app_inGameMenu() {
     ss_bank_hex = decToBcd(ses_cfg->ss_bank);
 
     //quick ss section
-    if (ss_src != 0x00 && ss_src == registery->options.ss_key_load) {
+    if (ss_src != 0x00 && ss_src == registry->options.ss_key_load) {
         ppuOFF();
         resp = srmRestoreSS(ss_bank_hex);
         if (resp)printError(resp);
         ss_return();
     }
 
-    if (ss_src != 0x00 && ss_src == registery->options.ss_key_save) {
+    if (ss_src != 0x00 && ss_src == registry->options.ss_key_save) {
         ppuOFF();
 
-        if (registery->options.ss_recover) {
+        if (registry->options.ss_recover) {
             srmSSrpoint(ss_bank_hex);
         }
 
@@ -100,7 +100,7 @@ void app_inGameMenu() {
 
 
         str_append(buff, "Slot: ");
-        if (registery->options.ss_recover && ss_bank_hex == 0x99) {
+        if (registry->options.ss_recover && ss_bank_hex == 0x99) {
             str_append(buff, "RC");
         } else {
             str_append_hex8(buff, ss_bank_hex);
@@ -146,7 +146,7 @@ void app_inGameMenu() {
 
     if (box.selector == SS_SAVE) {
 
-        if (registery->options.ss_recover) {
+        if (registry->options.ss_recover) {
             srmSSrpoint(ss_bank_hex);
         }
 

@@ -22,6 +22,7 @@
 #include "rom-config.h"
 #include "var.h"
 #include "fs.h"
+#include "ss_export.h"
 
 
 #define CART_ID_PRO     0x17
@@ -56,8 +57,10 @@ typedef struct {
     Options options;
     u8 vram_bug_msg;
     u8 ram_backup_req;
+    u8 ss_export_done;
+    u16 regi_ver;
     u16 crc;
-} Registery;
+} Registry;
 
 typedef struct {
     SysInfoIO mcu;
@@ -77,7 +80,7 @@ typedef struct {
     MapConfig cfg;
 } SessionCFG;
 
-extern Registery *registery;
+extern Registry *registry;
 extern SysInfo *sys_inf;
 extern SessionCFG *ses_cfg;
 
@@ -87,7 +90,7 @@ u8 edSelectGame(u8 *path, u8 recent_add);
 void edGetMapConfig(RomInfo *inf, MapConfig *cfg);
 u8 edApplyOptions(MapConfig *cfg);
 u8 edStartGame(u8 usb_mode);
-u8 edRegisterySave();
+u8 edRegistrySave();
 void edGetMapPath(u8 map_pack, u8 *path);
 u8 edBramBackup();
 void edRebootGame();

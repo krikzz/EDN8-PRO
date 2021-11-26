@@ -11,6 +11,7 @@
 #define ACT_EXIT        0xFF
 #define ACT_OPEN        0xFE
 #define SEL_OFF         0xff
+#define SEL_JSKIP       0xfe
 #define SEL_DPD         0x80
 
 typedef struct {

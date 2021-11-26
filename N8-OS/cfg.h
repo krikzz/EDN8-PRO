@@ -11,13 +11,15 @@
 #include "bios.h"
 
 
-#define OS_VER          0x0212
+#define OS_VER          0x0213
+#define OS_BETA         1
 
+#define REGI_VER        1       //can be used for registry reset forcing
 
 #define PATH_OS         "EDN8/nesos.nes"
 #define PATH_MAP        "EDN8/MAPS"
 #define PATH_MAPROUT    "EDN8/MAPROUT.BIN"
-#define PATH_REGISTERY  "EDN8/registery.bin"
+#define PATH_REGISTRY   "EDN8/registery.bin"
 #define PATH_SAVE_DIR   "EDN8/SAVE"
 #define PATH_SNAP_DIR   "EDN8/SNAP"
 #define PATH_CHEATS     "EDN8/CHEATS"

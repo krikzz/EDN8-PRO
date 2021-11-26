@@ -4,8 +4,8 @@
 
 
 u8 edMapRoutLoad();
-u8 edRegisteryLoad();
-u8 edRegisteryReset();
+u8 edRegistryLoad();
+u8 edRegistryReset();
 u8 edLoadSysyInfo();
 void bootloader(u8 *boot_flag);
 u8 edVramBugHandler();
@@ -13,7 +13,7 @@ u8 edLoadFdsBios();
 u8 edBramBackup();
 u8 edBramRestore();
 
-Registery *registery;
+Registry *registry;
 SysInfo *sys_inf;
 SessionCFG *ses_cfg;
 
@@ -29,7 +29,7 @@ u8 edInit(u8 sst_mode) {
     guiInit();
 
 
-    registery = malloc(sizeof (Registery));
+    registry = malloc(sizeof (Registry));
     sys_inf = malloc(sizeof (SysInfo));
     maprout = malloc(256);
     ses_cfg = malloc(sizeof (SessionCFG)); //this memory allocated in OS memory area. It resets to 0x00 only at cold boot.
@@ -51,9 +51,9 @@ u8 edInit(u8 sst_mode) {
     resp = edMapRoutLoad();
     if (resp)return resp;
 
-    resp = edRegisteryLoad();
+    resp = edRegistryLoad();
     if (resp == ERR_REGI_CRC || resp == FAT_NO_FILE) {
-        resp = edRegisteryReset();
+        resp = edRegistryReset();
         printError(ERR_REGI_CRC);
     }
     if (resp)return resp;
@@ -66,8 +66,8 @@ u8 edInit(u8 sst_mode) {
 
     if (sys_inf->mcu.ram_rst) {
         bi_cmd_mem_set(RAM_NULL, ADDR_SRM, SIZE_SRM);
-        registery->ram_backup_req = 0;
-        resp = edRegisterySave();
+        registry->ram_backup_req = 0;
+        resp = edRegistrySave();
         if (resp)return resp;
         rtcReset();
         printError(ERR_BAT_RDY);
@@ -81,9 +81,12 @@ u8 edInit(u8 sst_mode) {
     resp = edBramBackup();
     if (resp)return resp;
 
+    resp = ssExport();
+    if (resp)return resp;
+
     if (ses_cfg->hot_start == 0) {
         ses_cfg->hot_start = 1; //should be in the end
-        if (registery->options.autostart) {
+        if (registry->options.autostart) {
             edStartGame(0);
         }
     }
@@ -132,57 +135,62 @@ u8 edMapRoutLoad() {
     return 0;
 }
 
-u8 edRegisteryLoad() {
+u8 edRegistryLoad() {
 
     u8 resp;
     u16 crc;
     //mem_set(registery, 0, sizeof (Registery));
 
-    resp = fileOpen(PATH_REGISTERY, FA_READ);
+    resp = fileOpen(PATH_REGISTRY, FA_READ);
     if (resp)return resp;
 
-    resp = fileRead(registery, sizeof (Registery));
+    resp = fileRead(registry, sizeof (Registry));
     if (resp)return resp;
 
     resp = fileClose();
     if (resp)return resp;
 
-    crc = crcFast(registery, sizeof (Registery) - 2);
-    if (crc != registery->crc)return ERR_REGI_CRC;
+    crc = crcFast(registry, sizeof (Registry) - 2);
+    if (crc != registry->crc)return ERR_REGI_CRC;
 
+    if (registry->regi_ver != REGI_VER) {
+        return ERR_REGI_CRC;
+    }
+    
     return 0;
 }
 
-u8 edRegisteryReset() {
+u8 edRegistryReset() {
 
-    mem_set(registery, 0, sizeof (Registery));
+    mem_set(registry, 0, sizeof (Registry));
 
-    registery->options.cheats = 1;
-    registery->options.sort_files = 1;
-    registery->options.ss_key_menu = JOY_STA | JOY_D;
-    registery->options.ss_key_save = SS_COMBO_OFF;
-    registery->options.ss_key_load = SS_COMBO_OFF;
-    registery->options.ss_mode = 1;
-    registery->options.fds_auto_swp = 1;
+    registry->options.cheats = 1;
+    registry->options.sort_files = 1;
+    registry->options.ss_key_menu = JOY_STA | JOY_D;
+    registry->options.ss_key_save = SS_COMBO_OFF;
+    registry->options.ss_key_load = SS_COMBO_OFF;
+    registry->options.ss_mode = 1;
+    registry->options.fds_auto_swp = 1;
 
     volSetDefaults();
 
-    str_copy(PATH_DEF_GAME, registery->cur_game.path);
-    registery->cur_game.rom_inf.supported = 1;
+    str_copy(PATH_DEF_GAME, registry->cur_game.path);
+    registry->cur_game.rom_inf.supported = 1;
 
-    return edRegisterySave();
+    registry->regi_ver = REGI_VER;
+    return edRegistrySave();
 }
 
-u8 edRegisterySave() {
+u8 edRegistrySave() {
 
     u8 resp;
 
-    resp = fileOpen(PATH_REGISTERY, FA_WRITE | FA_OPEN_ALWAYS);
+    resp = fileOpen(PATH_REGISTRY, FA_WRITE | FA_OPEN_ALWAYS);
     if (resp)return resp;
 
-    registery->crc = crcFast(registery, sizeof (Registery) - 2);
+    registry->crc = crcFast(registry, sizeof (Registry) - 2);
 
-    resp = fileWrite(registery, sizeof (Registery));
+    resp = fileWrite(registry, sizeof (Registry));
     if (resp)return resp;
 
     resp = fileClose();
@@ -205,18 +213,18 @@ u8 edSelectGame(u8 *path, u8 recent_add) {
     //if (resp)return resp;
 
 
-    mem_set(&registery->cur_game, 0, sizeof (Game));
+    mem_set(&registry->cur_game, 0, sizeof (Game));
 
-    resp = getRomInfo(&registery->cur_game.rom_inf, path);
+    resp = getRomInfo(&registry->cur_game.rom_inf, path);
     if (resp)return resp;
 
-    if (registery->cur_game.rom_inf.usb_game) {
+    if (registry->cur_game.rom_inf.usb_game) {
         path += 4; //skip "USB:" identificator
     }
 
-    str_copy(path, registery->cur_game.path);
+    str_copy(path, registry->cur_game.path);
 
-    resp = edRegisterySave();
+    resp = edRegistrySave();
     if (resp)return resp;
 
     //resp = srmRestore();
@@ -232,7 +240,7 @@ u8 edSelectGame(u8 *path, u8 recent_add) {
         sys_inf->mcu.game_ctr++;
     }
 
-    if (!registery->cur_game.rom_inf.usb_game) {
+    if (!registry->cur_game.rom_inf.usb_game) {
         gCleanScreen();
         gRepaint();
     }
@@ -285,10 +293,10 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
 u8 edApplyOptions(MapConfig *cfg) {
 
     u8 resp;
-    Options *opt = &registery->options;
+    Options *opt = &registry->options;
 
     if (opt->cheats) {
-        resp = ggLoadCodes(&cfg->gg, registery->cur_game.path);
+        resp = ggLoadCodes(&cfg->gg, registry->cur_game.path);
         if (resp)return resp;
         cfg->map_ctrl |= MAP_CTRL_GG_ON;
     }
@@ -300,9 +308,9 @@ u8 edApplyOptions(MapConfig *cfg) {
     if (opt->ss_mode) {
 
 
-        cfg->ss_key_save = registery->options.ss_key_save;
-        cfg->ss_key_load = registery->options.ss_key_load;
-        cfg->ss_key_menu = registery->options.ss_key_menu;
+        cfg->ss_key_save = registry->options.ss_key_save;
+        cfg->ss_key_load = registry->options.ss_key_load;
+        cfg->ss_key_menu = registry->options.ss_key_menu;
 
         if (cfg->map_idx != MAP_IDX_FDS)cfg->map_ctrl |= MAP_CTRL_SS_BTN;
         cfg->map_ctrl |= MAP_CTRL_SS_ON;
@@ -314,7 +322,7 @@ u8 edApplyOptions(MapConfig *cfg) {
          */
     }
 
-    if (opt->fds_auto_swp && registery->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
+    if (opt->fds_auto_swp && registry->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
         cfg->map_cfg |= MCFG_FDS_ASW;
     }
 
@@ -327,10 +335,10 @@ u8 edStartGame(u8 usb_mode) {
     u8 resp;
     u16 i;
     MapConfig *cfg = &ses_cfg->cfg;
-    RomInfo *cur_game = &registery->cur_game.rom_inf;
+    RomInfo *cur_game = &registry->cur_game.rom_inf;
 
     //if (registery->cur_game.path[0] == 0)return ERR_GAME_NOT_SEL;
-    if (registery->cur_game.rom_inf.supported == 0 && !usb_mode)return ERR_MAP_NOT_SUPP;
+    if (registry->cur_game.rom_inf.supported == 0 && !usb_mode)return ERR_MAP_NOT_SUPP;
     if (cur_game->usb_game && !usb_mode)return ERR_USB_GAME;
 
     if (cur_game->prg_size > SIZE_MAX_PRG)return ERR_ROM_SIZE;
@@ -354,7 +362,7 @@ u8 edStartGame(u8 usb_mode) {
 
     } else {
 
-        resp = fileOpen(registery->cur_game.path, FA_READ);
+        resp = fileOpen(registry->cur_game.path, FA_READ);
         if (resp)return resp;
 
         resp = fileSetPtr(cur_game->dat_base);
@@ -480,10 +488,10 @@ u8 edVramBugHandler() {
     };
 
 
-    if (sysVramBug() != 0 && registery->vram_bug_msg == 0) {
+    if (sysVramBug() != 0 && registry->vram_bug_msg == 0) {
 
-        registery->vram_bug_msg = 1;
-        resp = edRegisterySave();
+        registry->vram_bug_msg = 1;
+        resp = edRegistrySave();
         if (resp)return resp;
 
         gCleanScreen();
@@ -497,9 +505,9 @@ u8 edVramBugHandler() {
 
     }
 
-    if (sysVramBug() == 0 && registery->vram_bug_msg != 0) {
-        registery->vram_bug_msg = 0;
-        resp = edRegisterySave();
+    if (sysVramBug() == 0 && registry->vram_bug_msg != 0) {
+        registry->vram_bug_msg = 0;
+        resp = edRegistrySave();
         if (resp)return resp;
     }
 
@@ -550,10 +558,10 @@ u8 edLoadFdsBios() {
 u8 edBramBackup() {
 
     u8 resp;
-    if (!registery->ram_backup_req)return 0;
+    if (!registry->ram_backup_req)return 0;
 
     //for loaded via usb games skip save types which going to write back to the rom file
-    if (registery->cur_game.rom_inf.usb_game == 0) {
+    if (registry->cur_game.rom_inf.usb_game == 0) {
 
         resp = srmBackupFDS();
         if (resp)return resp;
@@ -568,18 +576,18 @@ u8 edBramBackup() {
     resp = srmBackup();
     if (resp)return resp;
 
-    registery->ram_backup_req = 0;
-    return edRegisterySave();
+    registry->ram_backup_req = 0;
+    return edRegistrySave();
 }
 
 u8 edBramRestore() {
 
     u8 resp;
-    if (registery->ram_backup_req)return 0;
+    if (registry->ram_backup_req)return 0;
 
     resp = srmRestore();
     if (resp)return resp;
 
-    registery->ram_backup_req = 1;
-    return edRegisterySave();
+    registry->ram_backup_req = 1;
+    return edRegistrySave();
 }

@@ -275,6 +275,7 @@ u8 bi_cmd_file_info(u8 *path, FileInfo *inf);
 u8 bi_cmd_file_set_ptr(u32 addr);
 u8 bi_file_get_size(u8 *path, u32 *size);
 u8 bi_cmd_file_del(u8 *path);
+u8 bi_cmd_dir_make(u8 *path);
 
 
 
