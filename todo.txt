@@ -63,3 +63,7 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 посмотреть ромы 198 в 05_dbg
 не работает мапер 90 на нт мини. попробовать его потестить на разных клонах
 доработать дма контроллер чтобы не отключался рендеринг если нет доступа в chr
+
+n8 pro I have tested over 900 nes roms. All the official and unofficial games work great with certain roms and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
+
+Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
