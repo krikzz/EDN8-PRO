@@ -435,16 +435,16 @@ joy_read:
     pha
     lda #$01
     sta JOY_PORT1
-    nop
     lda #$00
     sta JOY_PORT1
-    nop
     ldx #8
 @0:
     asl VAR_JOY_BUF
     lda JOY_PORT1
-    and #1
-    ora VAR_JOY_BUF
+    and #3
+    beq @1
+    lda #1
+@1: ora VAR_JOY_BUF
     sta VAR_JOY_BUF
     dex 
     bne @0
