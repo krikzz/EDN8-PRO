@@ -43,11 +43,31 @@ module top(
 
 	
 	assign exp[0] = 1'bz;
-	assign exp[9:1] = 9'hzz;
+	assign exp[2] = 1'bz;
+	assign exp[5] = 1'bz;
+	assign exp[6] = 1'bz;
+	assign exp[7] = 1'bz;
+	assign exp[9] = 1'bz;
 	assign xio[2:0] = 3'bzzz;
 	assign boot_on = 0;
 
-	
+	//----------------------------------------------------
+	// EPSM Addressing
+	//----------------------------------------------------    
+    
+	// $C00x, $e00x
+	//assign exp[1] = cpu_rw;
+	//assign exp[3] = prg_ce; 
+	//assign exp[4] = prg_addr[1];
+	//assign exp[7] = prg_addr[13];
+	//assign exp[8] = prg_addr[14];
+	 
+	// $401c-$401f
+    assign exp[1] = !(!cpu_rw & prg_ce & cpu_addr[14] & cpu_addr[13:2]==3'b00000000111);
+    assign exp[3] = 0; 
+    assign exp[4] = prg_addr[1];
+    assign exp[7] = prg_addr[0];
+    assign exp[8] = m3;
 
 	
 	`include "sys_cfg_in.v"
