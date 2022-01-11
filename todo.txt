@@ -67,3 +67,15 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 n8 pro I have tested over 900 nes roms. All the official and unofficial games work great with certain roms and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
 
 Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
+почему то срабатывали комбинации быстрых сохранений когда играли на вдвоем в s.c.a.t. (вперед+старт) и в кризис форс
+
+I need your help with something. N8pro has supported mapper245 for a long time, but it doesn't actually support it.
+Mapper245 is used for the Chinese version of dq4 in China
+
+добавить exp порт?
+https://github.com/krikzz/EDN8-PRO/pull/3/commits/42d9ea18f74d6ca12cf87975f1a9fbce28553447
+https://github.com/Perkka2/EPSM
+https://github.com/krikzz/EDN8-PRO/pull/2
+обновить структуру папок ос как в гба
+вынести бутлоадер за пределы ос
+подвинуть немного светодиоды от края платы
