@@ -1,4 +1,4 @@
-project name: EDN8-M19-REV.F3
+project name: EDN8-M19-REV.N2
 hard gold plated pads
 
 layers order:
