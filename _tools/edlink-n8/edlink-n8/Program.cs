@@ -141,6 +141,24 @@ namespace edlink_n8
                     map_path = args[i];
                     continue;
                 }
+
+                if (s.StartsWith("-memwr"))
+                {
+                    cmd_memWrite(args[i + 1], args[i + 2]);
+                    i += 2;
+                }
+
+                if (s.StartsWith("-memrd"))
+                {
+                    cmd_memRead(args[i + 1], args[i + 2], args[i + 3]);
+                    i += 3;
+                }
+
+                if (s.StartsWith("-fpginit"))
+                {
+                    edio.fpgInit(File.ReadAllBytes(args[i + 1]), null);
+                    i += 1;
+                }
             }
 
 
@@ -154,6 +172,8 @@ namespace edlink_n8
 
         }
 
+       
+     
 
         static void loadROM(string rom_path, string map_path)
         {
@@ -253,6 +273,49 @@ namespace edlink_n8
             edio.flaWR(addr, data, 0, data.Length);
 
             Console.WriteLine("ok");
+        }
+
+
+        static void cmd_memWrite(string path, string addr_str)
+        {
+            int addr = 0;
+            Console.Write("Memory write...");
+
+            addr = getNum(addr_str);
+
+            byte[] data = File.ReadAllBytes(path);
+            edio.memWR(addr, data, 0, data.Length);
+
+            Console.WriteLine("ok");
+        }
+
+        static void cmd_memRead(string path, string addr_str, string len_str)
+        {
+            int addr;
+            int len;
+            Console.Write("Memory read...");
+
+            addr = getNum(addr_str);
+            len = getNum(len_str);
+
+            byte[] data = new byte[len];
+            edio.memRD(addr, data, 0, data.Length);
+            File.WriteAllBytes(path, data);
+
+            Console.WriteLine("ok");
+        }
+        static int getNum(string num)
+        {
+
+            if (num.ToLower().Contains("0x"))
+            {
+                return Convert.ToInt32(num, 16);
+            }
+            else
+            {
+                return Convert.ToInt32(num);
+            }
+
         }
 
     }
