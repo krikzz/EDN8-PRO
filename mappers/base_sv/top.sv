@@ -1,59 +1,169 @@
 
-`include "defs.v"
+//`include "defs.v"
 
 module top(
-	inout [7:0]cpu_dat,
-	input [14:0]cpu_addr,
-	input cpu_ce, cpu_rw, m2,
+
+	inout  [7:0]cpu_dat,
+	input  [14:0]cpu_addr,
+	input  cpu_ce, cpu_rw, m2,
 	output cpu_irq,
 	output cpu_dir, cpu_ex,
 	
-	inout [7:0]ppu_dat,
-	input [13:0]ppu_addr,
-	input ppu_oe, ppu_we, ppu_a13n,
+	inout  [7:0]ppu_dat,
+	input  [13:0]ppu_addr,
+	input  ppu_oe, ppu_we, ppu_a13n,
 	output ppu_ciram_ce, ppu_ciram_a10,
 	output ppu_dir, ppu_ex,
 	
-	inout [7:0]prg_dat,
-	output [22:0]prg_addr,
+	inout  [7:0]prg_dat,
+	output [21:0]prg_addr,
 	output prg_ce, prg_oe, prg_we, prg_ub, prg_lb,
 	
-	inout [7:0]chr_dat,
-	output [22:0]chr_addr,
+	inout  [7:0]chr_dat,
+	output [21:0]chr_addr,
 	output chr_ce, chr_oe, chr_we, chr_ub, chr_lb,
 
 	output srm_ce, srm_oe, srm_we,
 	
 	output spi_miso,
-	input spi_mosi, spi_clk, spi_ss,
+	input  spi_mosi, spi_clk, spi_ss,
 	
-	input clk, fds_sw, mcu_busy,
+	input  clk, fds_sw, mcu_busy,
 	output led, pwm, fifo_rxf, boot_on,
-	inout [3:0]gpio,
-	inout [9:0]exp,
+	inout  [3:0]gpio,
+	inout  [9:0]exp_io,
 	output [2:0]xio,
-	input rx,
+	input  rx,
 	output tx
 );
 
+		
+	assign exp_io[0] 		= 1'bz;
+	assign exp_io[9:1] 	= 9'hzz;
+	assign xio[2:0] 	= 3'bzzz;
+	assign boot_on 	= 0;
+//**************************************************************************************** bus ctrl
+		
+	MemCtrl prg;
+	MemCtrl chr;
+	MemCtrl srm;
 	
-	//add: prg_dat, chr_dat, prg_addr[21], chr_addr[21], fifo_rxf, mcu_busy, gpio[3], exp
-	//rem: map_on, gpio_3, core_io
+	MapOut mao;
+	MapIn  mai;
+	CpuBus cpu;
+	PpuBus ppu;
+	PiBus  pi;
+	DmaBus dma;
 	
-
+	assign prg_dat		= prg.oe | srm.oe ? 8'hzz : srm.ce ? srm.dati[7:0] : prg.dati[7:0];
+	assign prg_addr	= srm.ce ? srm.addr[21:0] : prg.addr[21:0];
 	
-	assign exp[0] = 1'bz;
-	assign exp[9:1] = 9'hzz;
-	assign xio[2:0] = 3'bzzz;
-	assign boot_on = 0;
-
+	assign prg_ce 		= !prg.ce;
+	assign prg_oe 		= !prg.oe;
+	assign prg_we 		= !prg.we;
+	assign prg_lb		=  prg.addr[22];
+	assign prg_ub		= !prg.addr[22];
 	
-
+	assign chr_addr	= chr.addr[21:0];
+	assign chr_ce 		= !chr.ce;
+	assign chr_oe 		= !chr.oe;
+	assign chr_we 		= !chr.we;
+	assign chr_lb		=  chr.addr[22];
+	assign chr_ub		= !chr.addr[22];
 	
+	assign srm_ce 		= srm.ce;
+	assign srm_oe 		= !srm.oe;
+	assign srm_we 		= !srm.we;
+	
+	
+//**************************************************************************************** map out	
+	//async_wr
+	//prg_mask_off
+	//chr_mask_off
+	//srm_mask_off
+	
+	assign ppu_ciram_a10	= mao.ciram_a10;
+	assign ppu_ciram_ce	= mao.ciram_ce;
+	assign cpu_irq			= !mao.irq;
+	assign pwm				= mao.pwm;
+	assign led 				= mao.led;
+	
+	//mir_4sc
+	//bus_conflicts
+	
+	assign cpu_dat			= mao.map_cpu_oe ? mao.map_cpu_do : 8'hzz;
+	assign ppu_dat			= mao.map_ppu_oe ? mao.map_ppu_do : 8'hzz;
+	
+	//sst_di
+	
+	assign prg 				= dma.req_prg ? dma.mem : mao.prg;
+	assign chr 				= dma.req_chr ? dma.mem : mao.chr;
+	assign srm 				= dma.req_srm ? dma.mem : mao.srm;
+//**************************************************************************************** map in
+	assign cpu.data[7:0]		= cpu_dat[7:0];
+	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
+	assign cpu.rw				= cpu_rw;
+	assign cpu.m2				= m2;
+	
+	assign ppu.data[7:0]		= ppu_dat[7:0];
+	assign ppu.addr[13:0]	= ppu_addr[13:0];
+	assign ppu.oe				= ppu_oe;
+	assign ppu.we				= ppu_we;
+	
+	assign mai.clk 			= clk;
+	assign mai.btn 			= !fds_sw;
+	assign mai.sys_rst 		= 0;
+	assign mai.map_rst 		= 0;
+	assign mai.os_act 		= 1;
+	assign mai.prg_do			= prg_dat;
+	assign mai.chr_do			= chr_dat;
+	assign mai.srm_do			= prg_dat;
+	assign mai.cpu				= cpu;
+	assign mai.ppu				= ppu;
+	//bit [7:0]sst_do;
+	//SSTBus sst;
+	
+//**************************************************************************************** mappers switch	
+	assign mao = map_out_255;
+	
+	MapOut map_out_255;
+	map_255 m255(mai, map_out_255);
+	
+//**************************************************************************************** pi
+	
+	wire [7:0]pi_di = 
+	dma.mem_req ? dma.pi_di : 
+	8'hff;
+	
+	pi_io pi_inst(
+		
+		.clk(clk),
+		.spi_clk(spi_clk),
+		.spi_ss(spi_ss),
+		.spi_mosi(spi_mosi),
+		.spi_miso(spi_miso),
+		.dati(pi_di),
+		.pi(pi)
+	);
+	
+	
+//**************************************************************************************** dma io	
+	dma_io dma_inst(
+		
+		.pi(pi),
+		.prg_do(prg_dat),
+		.chr_do(chr_dat),
+		.srm_do(prg_dat),
+		.dma(dma)
+	);
+//****************************************************************************************
+	
+	
+	/*
 	`include "sys_cfg_in.v"
 	
 	assign led = map_led | (sys_rst & map_rst & map_idx != 255);//ss_act
-//**************************************************************************************** bus ctrl		
+//**************************************************************************************** bus ctrl
 	wire eep_on, bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, prg_mem_oe, int_ciram_ce, int_ciram_a10;
 	wire [7:0]map_cpu_dout, map_ppu_dout, eep_ram_di;
 	
@@ -314,6 +424,6 @@ module ppu_ram
 		
 		
 	end
-
+*/
 endmodule
 
