@@ -57,7 +57,7 @@
 #define PAL_G2          0x11   //gray bgr, white txt
 #define PAL_G3          0x12   //gray bgr, yellow txt
 
-//io regs
+//base io regs
 #define REG_FIFO_DATA   *((u8 *)0x40F0) //fifo data register
 #define REG_FIFO_STAT   *((u8 *)0x40F1) //fifo status register. shows if fifo can be readed.
 #define REG_SST_ADDR    *((u8 *)0x40F2)

@@ -5,6 +5,7 @@ typedef struct{
 	bit [7:0]dati;
 	bit [22:0]addr;
 	bit ce, oe, we;
+	bit async_io;
 	
 }MemCtrl;
 
@@ -27,7 +28,7 @@ typedef struct{
 	bit [13:0]addr;
 	bit oe;
 	bit we;
-	
+
 }PpuBus;
 
 //********
@@ -84,3 +85,84 @@ typedef struct {
 }MapOut;
 
 //********
+
+typedef struct{
+	
+	//bit dst_prg;
+	//bit dst_chr;
+	//bit dst_srm;
+	//bit dst_sys;
+	
+	bit ce_prg;
+	bit ce_chr;
+	bit ce_srm;
+	bit ce_sys;
+	
+	bit ce_cfg;
+	bit ce_cfg_ggc;
+	bit ce_cfg_reg;
+	
+	bit ce_ss;
+	
+	bit ce_fifo;
+		
+}PiMap;
+
+//********
+
+typedef struct{
+
+	bit [7:0]dato;
+	bit [31:0]addr;
+	bit we;
+	bit oe;
+	bit act;		//async rw
+	PiMap map;
+	
+	bit clk;//remove me
+}PiBus;
+
+//********
+
+typedef struct{
+	
+	MemCtrl mem;
+	
+	bit [7:0]pi_di;
+	bit req_prg, req_chr, req_srm;
+	bit mem_req;
+	
+}DmaBus;
+
+//********
+
+typedef struct{
+	
+
+	bit [11:0]map_idx;
+	bit [9:0]prg_msk;
+	bit [9:0]chr_msk;
+	bit [10:0]srm_msk;
+	bit [7:0]master_vol;
+	bit [7:0]ss_key_save;
+	bit [7:0]ss_key_load;
+	bit [7:0]ss_key_menu;
+
+	bit mc_mir_h;
+	bit mc_mir_v;
+	bit mc_mir_4;
+	bit mc_mir_1;
+	bit mc_chr_ram;
+	bit mc_prg_ram_off;
+	bit [3:0]map_sub;
+
+	bit ct_rst_delay;
+	bit ct_ss_on;
+	bit ct_gg_on;
+	bit ct_ss_btn;
+	bit ct_fami;
+	bit ct_unlock;
+	
+	bit [18:0]srm_size;
+	
+}SysCfg;
