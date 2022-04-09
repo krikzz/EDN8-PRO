@@ -27,7 +27,6 @@ module dma_io(
 	assign dma.req_srm 		= pi.map.ce_srm;
 	assign dma.mem_req		= dma.req_prg | dma.req_chr | dma.req_srm;
 	
-	
 	assign dma.pi_di[7:0] 	= 
 	dma.req_prg ? prg_do[7:0] : 
 	dma.req_chr ? chr_do[7:0] : 

@@ -1,18 +1,11 @@
 
-`include "../base/defs.v"
 
-module map_255
-	(mai, mao);
-	
-	//`include "../base/bus_in.v"
-	//`include "../base/map_out.v"
-	//`include "../base/sys_cfg_in.v"
-	//`include "../base/ss_ctrl_in.v"
-	
-	
-	input  MapIn  mai;
-	output MapOut mao;
-	
+//this mapper used by the cart menu
+module map_255(
+	input  MapIn  mai,
+	output MapOut mao
+);
+
 	CpuBus cpu;
 	PpuBus ppu;
 	assign cpu = mai.cpu;
@@ -25,18 +18,30 @@ module map_255
 	assign mao.chr = chr;
 	assign mao.srm = srm;
 	
-	//output [`BW_MAP_OUT-1:0]map_out;
-	//input [`BW_SYS_CFG-1:0]sys_cfg;
 
-	assign mao.srm_mask_off 	= 1;
-	assign mao.chr_mask_off 	= 1;
-	assign mao.prg_mask_off 	= 1;
-	//assign sync_m2 		= 1;
-	assign mao.mir_4sc	= 1;//enable support for 4-screen mirroring. for activation should be enabled in sys_cfg also.
-	assign prg.oe 			= cpu.rw;
-	assign chr.oe 			= !ppu.oe;
+	assign mao.srm_mask_off = 1;
+	assign mao.chr_mask_off = 1;
+	assign mao.prg_mask_off = 1;
+	assign mao.mir_4sc		= 1;//make it better. use cfg.mc_mir_4 here for full controll at mapper side
 	
-	//assign chr_oe = !ppu.oe;
+	assign prg.oe 				= cpu.rw;
+	assign srm.oe 				= cpu.rw;
+	assign chr.oe 				= !ppu.oe;
+	
+	assign prg.dati			= cpu.data;
+	assign chr.dati			= ppu.data;
+	assign srm.dati			= cpu.data;
+	
+	wire int_cpu_oe;
+	wire int_ppu_oe;
+	wire [7:0]int_cpu_data;
+	wire [7:0]int_ppu_data;
+	
+	assign mao.map_cpu_oe	= int_cpu_oe | (srm.ce & srm.oe) | (prg.ce & prg.oe);
+	assign mao.map_cpu_do	= int_cpu_oe ? int_cpu_data : srm.ce ? mai.srm_do : mai.prg_do;
+	
+	assign mao.map_ppu_oe	= int_ppu_oe | (chr.ce & chr.oe);
+	assign mao.map_ppu_do	= int_ppu_oe ? int_ppu_data : mai.chr_do;
 	//*************************************************************
 	parameter REG_VRAM_CTRL		= 0;//4registers
 	parameter REG_TIMER			= 4;//2 registers
@@ -45,57 +50,55 @@ module map_255
 	
 	assign srm.ce = 0;
 	assign srm.we = 0;
+	//assign srm.addr[17:0] = prg.addr[17:0];
+	
 	
 	assign prg.ce = rom_area | ram_area | app_area;
 	assign prg.we = (ram_area | app_area) & !cpu.rw;
 	
-	assign chr.ce = !ppu.addr[13];
-	assign chr.we = !ppu.we & ppu_off;
-
-	
-	wire reg_area = {cpu.addr[15:8], 8'h00}  == 16'h4100;
-	wire ram_area = {cpu.addr[15:12], 12'd0} == 16'h5000;
-	wire app_area = {cpu.addr[15:13], 13'd0} == 16'h6000;
-	wire rom_area = cpu.addr[15];
-	
-	
-	
+	assign prg.addr[22:17] = 6'h3F;//system rom mapped to 0x7E0000
 	assign prg.addr[16:0] = 
 	ram_area ? {5'd0, cpu.addr[11:0]} :
 	app_area ? {app_bank[3:0], cpu.addr[12:0]} : 
 	{2'b11, cpu.addr[14:0]};
 	
-	assign prg.addr[22:17] = 6'h3F;//system rom mapped to 0x7E0000
 	
-	assign srm.addr[17:0] = prg.addr[17:0];
+	assign chr.ce = !ppu.addr[13];
+	assign chr.we = !ppu.we & ppu_off;
+
+	assign chr.addr[11:0]  	= ppu.addr[11:0];
+	assign chr.addr[13:12] 	= ppu_off ? {1'b0, ppu.addr[12]} : atr_do[3:2];
+	assign chr.addr[22:17] 	= ppu_off ? 6'h20 : 6'h3F;
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 = ppu.addr[10];
-	assign mao.ciram_ce 	= ppu_off & !int_vram_tst ? !ppu.addr[13] : !int_vram_ce;//ppu_off ? !ppu_addr[13] : 1;
-		
-	assign chr.addr[11:0]  = ppu.addr[11:0];
-	assign chr.addr[13:12] = ppu_off ? {1'b0, ppu.addr[12]} : atr_do[3:2];
-	assign chr.addr[22:17] = ppu_off ? 6'h20 : 6'h3F;
+	assign mao.ciram_a10 	= ppu.addr[10];
+	assign mao.ciram_ce 		= ppu_off & !int_vram_tst ? !ppu.addr[13] : !int_vram_ce;//ppu_off ? !ppu_addr[13] : 1;
 	
-	assign mao.map_cpu_do[7:0] = 
+	assign int_cpu_oe			= !cpu.m2 ? 0 : regs_oe;
+	assign int_ppu_oe 		= vram_oe_ppu & !ppu_off;
+	
+	assign int_cpu_data[7:0] = 
 	bnk_ce 		? app_bank[3:0] : 
 	timer_ce 	? timer_do[7:0] : 
 	vram_ce_cpu ? vram_do_cpu[7:0] : 
 	8'h00;
+
 	
 	
-	assign mao.map_cpu_oe	= !cpu.m2 ? 0 : regs_oe;
-	assign mao.map_ppu_oe 	= vram_oe_ppu & !ppu_off;
+	wire reg_area 			= {cpu.addr[15:8], 8'h00}  == 16'h4100;
+	wire ram_area 			= {cpu.addr[15:12], 12'd0} == 16'h5000;
+	wire app_area 			= {cpu.addr[15:13], 13'd0} == 16'h6000;
+	wire rom_area 			= cpu.addr[15];
 	
 
-	wire [7:0]reg_addr 		= cpu.addr[7:0];
-	wire regs_ce 				= reg_area & mai.os_act & !mai.sys_rst;
-	wire regs_oe 				= regs_ce & cpu.rw == 1;
-	wire regs_we 				= regs_ce & cpu.rw == 0;
+	wire [7:0]reg_addr	= cpu.addr[7:0];
+	wire regs_ce 			= reg_area & mai.os_act & !mai.sys_rst;
+	wire regs_oe 			= regs_ce & cpu.rw == 1;
+	wire regs_we 			= regs_ce & cpu.rw == 0;
 	
 
-	wire bnk_ce 				= regs_ce & reg_addr == REG_APP_BANK;
-	wire timer_ce 				= regs_ce & {reg_addr[7:1], 1'b0} == REG_TIMER;
+	wire bnk_ce 			= regs_ce & reg_addr == REG_APP_BANK;
+	wire timer_ce 			= regs_ce & {reg_addr[7:1], 1'b0} == REG_TIMER;
 	
 	
 	reg [3:0]app_bank;
@@ -144,7 +147,7 @@ module map_255
 		.cpu(cpu),
 		.ppu(ppu),
 		.cpu_do(vram_do_cpu),
-		.ppu_do(mao.map_ppu_do), 
+		.ppu_do(int_ppu_data), 
 		.vram_ce(vram_ce_cpu), 
 		.vram_oe_ppu(vram_oe_ppu), 
 		.atr_do(atr_do),
@@ -155,8 +158,6 @@ module map_255
 	
 	
 	endmodule
-
-
 
 //********************************************************************************* VRAM
 module vram(

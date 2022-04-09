@@ -40,8 +40,7 @@ module top(
 	output tx
 );
 
-	
-	
+
 	assign exp_io[0] 		= 1'bz;
 	assign exp_io[9:1] 	= 9'hzz;
 	assign xio[2:0] 		= 3'bzzz;
@@ -75,11 +74,10 @@ module top(
 	assign mai.cpu				= cpu;
 	assign mai.ppu				= ppu;
 //**************************************************************************************** map out	
-	MapOut map_out;
+	MapOut mao;
 	MemCtrl prg;
 	MemCtrl chr;
 	MemCtrl srm;
-	
 	
 	
 	assign prg_lb = prg.addr[22];
@@ -87,9 +85,9 @@ module top(
 	assign chr_lb = chr.addr[22];
 	assign chr_ub = !chr.addr[22];
 	
-	assign prg = dma.req_prg ? dma.mem : map_out.prg;
-	assign chr = dma.req_chr ? dma.mem : map_out.chr;
-	assign srm = dma.req_srm ? dma.mem : map_out.srm;
+	assign prg = dma.req_prg ? dma.mem : mao.prg;
+	assign chr = dma.req_chr ? dma.mem : mao.chr;
+	assign srm = dma.req_srm ? dma.mem : mao.srm;
 	
 	assign prg_addr[21:0] 	= srm.ce ? srm.addr : prg.addr;
 	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
@@ -105,32 +103,15 @@ module top(
 	assign srm_oe 				= !srm.oe;
 	assign srm_we 				= !srm.we;
 	
-	assign int_ciram_ce 		= map_out.ciram_ce;
-	assign int_ciram_a10 	= map_out.ciram_a10;
-	assign cpu_irq				= !map_out.irq;
-	assign mir_4sc				= map_out.mir_4sc;
-	assign bus_conflicts		= map_out.bus_conflicts;
-	
-	assign map_cpu_oe			= map_out.map_cpu_oe;
-	assign map_ppu_oe			= map_out.map_ppu_oe;
-	assign map_cpu_dout		= map_out.map_cpu_do;
-	assign map_ppu_dout		= map_out.map_ppu_do;
+	assign cpu_irq				= !mao.irq;
 	
 	
-	assign led 					= map_out.led | (mai.sys_rst & mai.map_rst & cfg.map_idx != 255);//ss_act
+	assign led 					= mao.led | (mai.sys_rst & mai.map_rst & cfg.map_idx != 255);//ss_act
+
+//**************************************************************************************** bus ctrl
 	
-	
-//**************************************************************************************** bus ctrl		
-	wire eep_on, bus_conflicts, map_led, mem_dma, mir_4sc, map_ppu_oe, map_cpu_oe, prg_mem_oe, int_ciram_ce, int_ciram_a10;
-	wire [7:0]map_cpu_dout, map_ppu_dout, eep_ram_di;
-	
-	
-	wire [7:0]cpu_dat_int = bus_conf_act ? (cpu_dat[7:0] & prg_dat[7:0]) : cpu_dat[7:0];
-	wire bus_conf_act = bus_conflicts & !prg_ce & !cpu_rw;
-	
-	wire m3 = m[8] & m2;//m2 with delayed rising edge. required for mem async write operations and some other stuff
-	reg [8:0]m;	
-	always @(posedge clk)m[8:0] <= {m[7:0], m2};
+	wire [7:0]cpu_dat_int 	= bus_conf_act ? (cpu_dat[7:0] & prg_dat[7:0]) : cpu_dat[7:0];
+	wire bus_conf_act 		= mao.bus_conflicts & !prg_ce & !cpu_rw;
 //**************************************************************************************** data bus driver
 	wire apu_area 		= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;
 	wire cart_space 	= (!cpu_ce | cpu_addr[14]) & !apu_area;
@@ -139,92 +120,65 @@ module top(
 	assign cpu_dat[7:0] = 
 	cpu_dir == 0 	? 8'hzz : 
 	io_oe_cp 		? io_dout_cp[7:0] : 
-	ss_oe_cpu 		? ss_do[7:0] :
-	map_cpu_oe 		? map_cpu_dout[7:0] : 
-	gg_oe 			? gg_do[7:0] : 
-	(!prg_ce | srm_ce) & !prg_oe ? prg_dat[7:0] : 
+	ss_oe_cp 		? ss_do[7:0] :
+	gg_oe 			? gg_do[7:0] ://priority was changed
+	mao.map_cpu_oe	? mao.map_cpu_do[7:0] : 
 	{!cpu_ce, cpu_addr[14:8]};//open bus
 	
-	//assign cpu_dir = cart_space & cpu_rw & m3 ? 1 : 0;// cpu_bus_oe;
 	assign cpu_dir = cart_space & cpu_rw & cpu.m2 ? 1 : 0;// cpu_bus_oe;
-	assign cpu_ex  = 0;//mem_dma ? 1 : 0;
+	assign cpu_ex  = 0;
 	
 	
 	//ppu
 	assign ppu_dat[7:0] = 
-	ppu_dir == 0 		? 8'hzz : 
-	dma.req_chr			? 8'h00 : 
-	map_ppu_oe 			? map_ppu_dout[7:0] :
-	ppu_iram_oe 		? ppu_ram_do[7:0] : 
-	!chr_ce & !chr_oe ? chr_dat[7:0] : 
+	ppu_dir == 0 	? 8'hzz : 
+	dma.req_chr		? 8'h00 : 
+	mao.map_ppu_oe	? mao.map_ppu_do[7:0] :
+	ppu_iram_oe 	? ppu_iram_do[7:0] : 
 	8'hff;
 	
 	assign ppu_dir = !ppu_oe & ppu_ciram_ce ? 1 : 0;
-	assign ppu_ex = 0;//mem_dma ? 1 : 0;
-//**************************************************************************************** memory driver
+	assign ppu_ex 	= 0;
 
+	
 	assign prg_dat[7:0] = 
-	(!prg_oe & !prg_ce) | (!srm_oe & srm_ce) ? 8'hzz ://make me better
-	dma.req_prg ? prg.dati : //make me better
-	dma.req_srm ? srm.dati : //make me better
-	eep_on  ? eep_ram_di[7:0] : 
-	map_cpu_oe ? map_cpu_dout[7:0] : cpu_dat[7:0];
-	
-	assign chr_dat[7:0] = 
-	!chr_oe ? 8'hzz :
-	dma.req_chr ? chr.dati : //make me better
-	map_ppu_oe ? map_ppu_dout[7:0] : ppu_dat[7:0];
+	(!prg_oe & !prg_ce) | (!srm_oe & srm_ce)	? 8'hzz :
+	srm_ce ? srm.dati : 
+	prg.dati;
 
-	
-	//assign prg_oe = prg_mem_oe & !bus_conf_act;
-	//assign srm_oe = prg_mem_oe;
+	assign chr_dat[7:0] = 
+	!chr_oe & !chr_ce ? 8'hzz :
+	chr.dati;
 //**************************************************************************************** vram driver
-	assign ppu_ciram_a10 = !mir_4sc_act ? int_ciram_a10 : ppu_addr[10];
-	assign ppu_ciram_ce =  !mir_4sc_act ? int_ciram_ce  : !(!int_ciram_ce & ppu_addr[11] == 0);
-	wire mir_4sc_act = cfg.mc_mir_4 & mir_4sc;
-	wire ppu_iram_ce = mir_4sc_act & !int_ciram_ce & ppu_addr[11] == 1;
-	wire ppu_iram_oe = ppu_iram_ce & !ppu_oe;
-	wire [7:0]ppu_ram_do;
 	
-	ppu_ram ppu_ram_inst(
+	wire ppu_iram_oe;
+	wire [7:0]ppu_iram_do;
+	
+	ppu_vram_ctrl ppu_vram_ctrl_inst(
 
 		.clk(mai.clk),
-		.din(ppu_dat),
-		.addr(ppu_addr[10:0]),
-		.ce(ppu_iram_ce),
-		.oe(!ppu_oe),
-		.we(!ppu_we),
-		.dout(ppu_ram_do)
+		.cpu(cpu),
+		.ppu(ppu),
+		.map_ciram_a10(mao.ciram_a10),
+		.map_ciram_ce(mao.ciram_ce),
+		.mir_4s(cfg.mc_mir_4 & mao.mir_4sc),
+		
+		.ppu_ciram_a10(ppu_ciram_a10),
+		.ppu_ciram_ce(ppu_ciram_ce),
+		.ppu_iram_oe(ppu_iram_oe),
+		.ppu_iram_do(ppu_iram_do)
 	);
-//**************************************************************************************** system mappers
+
+//**************************************************************************************** mappers
 	
 	
-	assign map_out = 
+	assign mao = 
 	map_out_255;
 	
 	MapOut map_out_255;
 	map_255 m255(mai, map_out_255);
 	
-	/*
-	wire [`BW_MAP_OUT-1:0]map_out_ = 
-	os_act 	? map_out_255_ : 
-	map_out_hub;	
-	
-	
-	
-	wire [`BW_MAP_OUT-1:0]map_out_255_;
-	
-	
 
-	wire [`BW_MAP_OUT-1:0]map_out_hub;
-	map_hub hub_inst(
-	
-		.mai(mai),
-		.sys_cfg(sys_cfg),
-		.bus(bus),
-		.map_out(map_out_hub),
-		.ss_ctrl(ss_ctrl)
-	);*/
 
 //**************************************************************************************** peripheral interface	
 	PiBus pi;
@@ -318,7 +272,7 @@ module top(
 
 //**************************************************************************************** save state controller	
 	wire [`BW_SS_CTRL-1:0]ss_ctrl;
-	wire ss_oe_cpu, ss_oe_pi, ss_act;
+	wire ss_oe_cp, ss_oe_pi, ss_act;
 	wire [7:0]ss_do;
 	wire [7:0]ss_rdat;// = map_out_hub[7:0]; fix me
 
@@ -331,7 +285,7 @@ module top(
 		.ss_ctrl(ss_ctrl),
 		.ss_di(ss_rdat),
 		.ss_do(ss_do),// mkae me better. use separate do for pi and cpu
-		.ss_oe_cpu(ss_oe_cpu),
+		.ss_oe_cpu(ss_oe_cp),
 		.ss_oe_pi(ss_oe_pi),
 		.ss_act(ss_act)
 	);
@@ -424,6 +378,44 @@ module map_rst_ctrl(
 	
 endmodule
 //*********************************************************************************
+module ppu_vram_ctrl(
+
+	input clk,
+	input CpuBus cpu,
+	input PpuBus ppu,
+	input map_ciram_a10,
+	input map_ciram_ce,
+	input mir_4s,
+	
+	output ppu_ciram_a10,
+	output ppu_ciram_ce,
+	output ppu_iram_oe,
+	output [7:0]ppu_iram_do
+);
+
+	//wire mir_4sc_act = cfg.mc_mir_4 & mir_4sc;
+	
+	assign ppu_ciram_a10 = !mir_4s ? map_ciram_a10 : ppu.addr[10];
+	assign ppu_ciram_ce =  !mir_4s ? map_ciram_ce  : !(!map_ciram_ce & ppu.addr[11] == 0);
+	
+	assign ppu_iram_oe = ppu_iram_ce & !ppu.oe;
+	
+	wire ppu_iram_ce = mir_4s & !map_ciram_ce & ppu.addr[11] == 1;
+	
+	ppu_ram ppu_ram_inst(
+
+		.clk(clk),
+		.din(ppu.data),
+		.addr(ppu.addr[10:0]),
+		.ce(ppu_iram_ce),
+		.oe(!ppu.oe),
+		.we(!ppu.we),
+		.dout(ppu_iram_do)
+	);
+	
+endmodule
+
+
 module ppu_ram(
 
 	input  clk,

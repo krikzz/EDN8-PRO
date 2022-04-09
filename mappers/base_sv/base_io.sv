@@ -35,7 +35,7 @@ module base_io(
 	assign dout_cp[7:0] = 
 	fifo_data_ce ? fifo_do_a[7:0] : 
 	fifo_stat_ce ? fifo_status[7:0] : 
-	baio_stat_ce ? stat_do[7:0] :
+	baio_stat_ce ? baio_status[7:0] :
 	8'hff;
 	
 	
@@ -51,11 +51,11 @@ module base_io(
 	wire baio_stat_ce 	= io_ce_cp & reg_addr[7:0] == REG_STATUS;
 	
 //****************************************************************************************************************** base io status
-	wire [7:0]stat_do;
+	wire [7:0]baio_status;
 	wire stat_oe = baio_stat_ce & cpu.rw == 1;
 	wire stat_we = baio_stat_ce & cpu.rw == 0;
 	
-	assign stat_do[7:0] = {4'hA, strobe, fpg_cfg_pend, mcu_cmd_pend, cfg.ct_unlock};
+	assign baio_status[7:0] = {4'hA, strobe, fpg_cfg_pend, mcu_cmd_pend, unlock_st};
 	
 	
 	wire ce = cpu.addr[15:0] == 16'h40ff;
@@ -65,6 +65,7 @@ module base_io(
 	
 	reg [1:0]mcu_busy_st;
 	reg mcu_cmd_pend, fpg_cfg_pend, strobe;
+	reg unlock_st;
 	
 	always @(negedge cpu.m2)
 	begin
@@ -85,6 +86,7 @@ module base_io(
 		end
 		
 		mcu_busy_st[1:0] 	<= {mcu_busy_st[0], mcu_busy};
+		unlock_st			<= cfg.ct_unlock;
 		
 	end
 //****************************************************************************************************************** fifo	
