@@ -8,6 +8,9 @@ module map_hub(
 );
 
 	
+	assign mao = map_out_nom;
 	
+	MapOut map_out_nom;
+	map_nom mnom(mai, map_out_nom);
 	
 endmodule

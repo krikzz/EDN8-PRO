@@ -4,82 +4,82 @@
 
 u8 tst() {
 
-/*
-    while (1) {
+    /*
+        while (1) {
 
-        gCleanScreen();
+            gCleanScreen();
 
-        asm("lda #$01");
-        asm("ldx #$00");
-        asm("sta $4016");
-        asm("stx $4016");
+            asm("lda #$01");
+            asm("ldx #$00");
+            asm("sta $4016");
+            asm("stx $4016");
 
-        asm("nop");
-        asm("lda $4016");
-        asm("ldx $4016");
-        asm("ldy $4016");
-        asm("sta 127");
-        asm("stx 126");
-        asm("sty 125");
+            asm("nop");
+            asm("lda $4016");
+            asm("ldx $4016");
+            asm("ldy $4016");
+            asm("sta 127");
+            asm("stx 126");
+            asm("sty 125");
 
-        gConsPrint("joy_val: ");
-        gAppendHex8(*(u8 *) 127 & 3);
-        gAppendHex8(*(u8 *) 126 & 3);
-        gAppendHex8(*(u8 *) 125 & 3);
+            gConsPrint("joy_val: ");
+            gAppendHex8(*(u8 *) 127 & 3);
+            gAppendHex8(*(u8 *) 126 & 3);
+            gAppendHex8(*(u8 *) 125 & 3);
 
-        gRepaint();
-        usbListener();
+            gRepaint();
+            usbListener();
 
-    }*/
+        }*/
 
     return 0;
 }
 
 void testJoy() {
-/*
-    u8 joy_key[4];
-    u8 joy_inf[16];
-    u8 i, u;
+    /*
+        u8 joy_key[4];
+        u8 joy_inf[16];
+        u8 i, u;
 
-    while (1) {
+        while (1) {
 
-        gCleanScreen();
+            gCleanScreen();
 
-        JOY_PORT1 = 1;
-        JOY_PORT1 = 0;
+            JOY_PORT1 = 1;
+            JOY_PORT1 = 0;
 
-        for (u = 0; u < 4; u++) {
+            for (u = 0; u < 4; u++) {
 
-            joy_key[u] = 0;
-            for (i = 0; i < 8; i++) {
-                joy_key[u] <<= 1;
-                joy_key[u] |= JOY_PORT1 & 1;
+                joy_key[u] = 0;
+                for (i = 0; i < 8; i++) {
+                    joy_key[u] <<= 1;
+                    joy_key[u] |= JOY_PORT1 & 1;
+                }
             }
-        }
 
-        for (u = 0; u < 16; u++) {
+            for (u = 0; u < 16; u++) {
 
-            joy_inf[u^1] = 0;
-            for (i = 0; i < 8; i++) {
-                joy_inf[u^1] <<= 1;
-                joy_inf[u^1] |= JOY_PORT1 & 1;
+                joy_inf[u^1] = 0;
+                for (i = 0; i < 8; i++) {
+                    joy_inf[u^1] <<= 1;
+                    joy_inf[u^1] |= JOY_PORT1 & 1;
+                }
+                joy_inf[u^1] ^= 0xff;
             }
-            joy_inf[u^1] ^= 0xff;
-        }
 
 
-        gConsPrint("joy_key: ");
-        gAppendHex(joy_key, 4);
+            gConsPrint("joy_key: ");
+            gAppendHex(joy_key, 4);
 
-        gConsPrint("joy_inf: ");
-        gAppendHex(joy_inf + 0, 8);
-        gConsPrint("joy_inf: ");
-        gAppendHex(joy_inf + 8, 8);
+            gConsPrint("joy_inf: ");
+            gAppendHex(joy_inf + 0, 8);
+            gConsPrint("joy_inf: ");
+            gAppendHex(joy_inf + 8, 8);
 
-        gRepaint();
-        usbListener();
+            gRepaint();
+            usbListener();
 
-    }*/
+        }*/
 
 }
 
@@ -97,8 +97,6 @@ int main() {
     //tst();
     //testJoy();
     //printError(ERR_BAT_RDY);
-
-
     edRun();
 
     while (1);

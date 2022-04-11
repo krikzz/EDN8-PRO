@@ -57,12 +57,19 @@ module base_io(
 	reg [1:0]mcu_busy_st;
 	reg mcu_cmd_pend, fpg_cfg_pend, strobe;
 	reg unlock_st;
+	reg strobe_act;
 	
 	always @(negedge cpu.m2)
 	begin
 	
 		if(stat_oe)
 		begin
+			strobe_act		<= 1;
+		end
+			else
+		if(strobe_act)
+		begin
+			strobe_act		<= 0;
 			strobe 			<= !strobe;
 		end
 		

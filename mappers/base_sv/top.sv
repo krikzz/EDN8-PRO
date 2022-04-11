@@ -79,21 +79,20 @@ module top(
 	MemCtrl srm;
 	
 	
-	assign prg_lb = prg.addr[22];
-	assign prg_ub = !prg.addr[22];
-	assign chr_lb = chr.addr[22];
-	assign chr_ub = !chr.addr[22];
+	assign prg 					= dma.req_prg ? dma.mem : mao.prg;
+	assign chr 					= dma.req_chr ? dma.mem : mao.chr;
+	assign srm 					= dma.req_srm ? dma.mem : mao.srm;
 	
-	assign prg = dma.req_prg ? dma.mem : mao.prg;
-	assign chr = dma.req_chr ? dma.mem : mao.chr;
-	assign srm = dma.req_srm ? dma.mem : mao.srm;
-	
-	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk : prg_addr_msk;
+	assign prg_lb 				= prg_addr_msk[22];
+	assign prg_ub 				= !prg_addr_msk[22];
+	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk[17:0] : prg_addr_msk[21:0];
 	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
 	assign prg_oe 				= !(prg.oe | bcf_act);
 	assign prg_we 				= !prg.we;
 	
-	assign chr_addr[21:0] 	= chr_addr_msk;
+	assign chr_lb 				= chr_addr_msk[22];
+	assign chr_ub 				= !chr_addr_msk[22];
+	assign chr_addr[21:0] 	= chr_addr_msk[21:0];
 	assign chr_ce 				= !chr.ce;
 	assign chr_oe 				= !chr.oe;
 	assign chr_we 				= !chr.we;
@@ -119,8 +118,8 @@ module top(
 	wire chr_ram				= !dma.req_chr & !mai.map_rst & (mao.chr_xram | cfg.chr_ram);//save state engine expects chr ram to be mapped at upper 4M
 	wire srm_off				= !dma.req_srm & !mai.map_rst & cfg.prg_ram_off;
 //**************************************************************************************** data bus drivers
-	wire apu_space		= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;
-	wire cart_space 	= (!cpu_ce | cpu_addr[14]) & !apu_space;
+	wire apu_space				= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;
+	wire cart_space 			= (!cpu_ce | cpu_addr[14]) & !apu_space;
 	
 	//cpu data bus
 	assign cpu_dat[7:0] = 
@@ -182,11 +181,23 @@ module top(
 //**************************************************************************************** mappers
 	
 	assign mao = 
-	map_out_255;
+	mai.map_rst | mai.sst.act ? map_out_255 :
+	map_out_game;
 	
+	
+	//system mapper
 	MapOut map_out_255;
 	map_255 m255(mai, map_out_255);
-
+	
+	
+	
+	//game mappers
+	MapOut map_out_game;
+	map_hub(
+		.mai(mai),
+		.mao(map_out_game)
+	);
+	
 //**************************************************************************************** peripheral interface	
 	PiBus pi;
 	

@@ -13,16 +13,15 @@ module pi_io_map(
 	assign map.ce_chr 	= pi_dst == 1 & pi_exec;//8M chr ram
 	assign map.ce_srm 	= pi_dst == 2 & pi_exec;//8M battery ram
 	
-	assign map.ce_sys 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 0;//64K system registers
-	assign map.ce_fifo 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 1;//64K fifo. do not use next 64k
+	assign map.ce_sys 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 0;//64K 0x1800000 system registers
+	assign map.ce_fifo 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 1;//64K 0x1810000 fifo. do not use next 64k
 
 	
 //******** system registers
-	assign map.ce_ggc		= map.ce_sys & pi.addr[15:5]  == 0;//32B cheat codes
-	assign map.ce_cfg 	= map.ce_sys & pi.addr[15:4]  == 2;//16B mapper configuration
-	assign map.ce_sst		= map.ce_sys & pi.addr[15:13] == 1;//8K  save state data
+	assign map.ce_ggc		= map.ce_sys & pi.addr[15:5]  == 0;//32B 0x1800000 cheat codes
+	assign map.ce_cfg 	= map.ce_sys & pi.addr[15:4]  == 2;//16B 0x1800020 mapper configuration
+	assign map.ce_sst		= map.ce_sys & pi.addr[15:13] == 1;//8K  0x1802000 save state data
 	
-
 endmodule
 
 //********************************************************************************* pi io

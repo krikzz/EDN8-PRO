@@ -46,7 +46,7 @@ typedef struct {
 	
 	SysCfg cfg;
 	//bit [7:0]sst_do;
-	//SSTBus sst;
+	SSTBus sst;
 	
 	CpuBus cpu;
 	PpuBus ppu;
@@ -162,4 +162,22 @@ typedef struct{
 	bit [18:0]srm_size;
 	
 }SysCfg;
+
+
+typedef struct{
+
+	bit [10:0]addr;
+	bit act;
+	bit we;
+	bit ce_reg;
+	bit ce_snif_ppu;
+	bit ce_snif_oam;
+	bit ce_mem;
+	
+	bit ce_map;
+	bit we_map;
+	
+	bit [7:0]dato;
+	
+}SSTBus;
 
