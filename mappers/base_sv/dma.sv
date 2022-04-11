@@ -1,5 +1,6 @@
 
 
+//on-board mcu has access to the cart memory via dma controller.
 module dma_io(
 		
 	input PiBus pi,

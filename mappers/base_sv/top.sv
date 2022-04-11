@@ -46,6 +46,7 @@ module top(
 	assign xio[2:0] 		= 3'bzzz;
 	assign boot_on 		= 0;
 	
+
 	SysCfg cfg;
 	DmaBus dma;
 //**************************************************************************************** map in
@@ -53,7 +54,7 @@ module top(
 	CpuBus cpu;
 	PpuBus ppu;
 	
-	assign cpu.data[7:0]		= cpu_dat[7:0];
+	assign cpu.data[7:0]		= bcf_act ? cpu_data_bcf[7:0] : cpu_dat[7:0];
 	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
 	assign cpu.rw				= cpu_rw;
 	assign cpu.m2				= m2;
@@ -65,9 +66,7 @@ module top(
 	
 	assign mai.clk 			= clk;
 	assign mai.fds_sw 		= !fds_sw;
-	//assign mai.sys_rst 		= sys_rst;
 	assign mai.map_rst 		= cfg.map_idx == 255 | !cfg.ct_unlock | map_rst_req;
-	assign mai.os_act 		= mai.map_rst | ss_act;
 	assign mai.prg_do			= prg_dat;
 	assign mai.chr_do			= chr_dat;
 	assign mai.srm_do			= prg_dat;
@@ -89,39 +88,46 @@ module top(
 	assign chr = dma.req_chr ? dma.mem : mao.chr;
 	assign srm = dma.req_srm ? dma.mem : mao.srm;
 	
-	assign prg_addr[21:0] 	= srm.ce ? srm.addr : prg.addr;
+	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk : prg_addr_msk;
 	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
-	assign prg_oe 				= !(prg.oe | bus_conf_act);//make it better
+	assign prg_oe 				= !(prg.oe | bcf_act);
 	assign prg_we 				= !prg.we;
 	
-	assign chr_addr[21:0] 	= chr.addr;
+	assign chr_addr[21:0] 	= chr_addr_msk;
 	assign chr_ce 				= !chr.ce;
 	assign chr_oe 				= !chr.oe;
 	assign chr_we 				= !chr.we;
 	
-	assign srm_ce 				= srm.ce & !dma.req_prg & (cpu.m2 | srm.async_io);
+	assign srm_ce 				= srm.ce & !dma.req_prg & (cpu.m2 | srm.async_io) & !srm_off;
 	assign srm_oe 				= !srm.oe;
 	assign srm_we 				= !srm.we;
 	
 	assign cpu_irq				= !mao.irq;
 	
-	
 	assign led 					= mao.led | (mai.sys_rst & mai.map_rst & cfg.map_idx != 255);//ss_act
-
-//**************************************************************************************** bus ctrl
 	
-	wire [7:0]cpu_dat_int 	= bus_conf_act ? (cpu_dat[7:0] & prg_dat[7:0]) : cpu_dat[7:0];
-	wire bus_conf_act 		= mao.bus_conflicts & !prg_ce & !cpu_rw;
-//**************************************************************************************** data bus driver
-	wire apu_area 		= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;
-	wire cart_space 	= (!cpu_ce | cpu_addr[14]) & !apu_area;
 	
-	//cpu
+	
+	wire [22:0]prg_addr_msk = (prg.addr & prg_msk);
+	wire [22:0]chr_addr_msk = (chr.addr & chr_msk) | {chr_ram, 22'd0};
+	wire [22:0]srm_addr_msk = (srm.addr & srm_msk);
+	
+	wire [22:0]prg_msk		=  mao.prg_mask_off | dma.req_prg ? 'h7FFFFF : {cfg.prg_msk[9:0], 13'd8191};
+	wire [22:0]chr_msk		=  mao.chr_mask_off | dma.req_chr ? 'h7FFFFF : {cfg.chr_msk[9:0], 13'd8191};
+	wire [22:0]srm_msk		=  mao.srm_mask_off | dma.req_srm ? 'h03FFFF : {cfg.srm_msk[10:0], 7'd127};
+	
+	wire chr_ram				= !dma.req_chr & !mai.map_rst & (mao.chr_xram | cfg.chr_ram);//save state engine expects chr ram to be mapped at upper 4M
+	wire srm_off				= !dma.req_srm & !mai.map_rst & cfg.prg_ram_off;
+//**************************************************************************************** data bus drivers
+	wire apu_space		= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;
+	wire cart_space 	= (!cpu_ce | cpu_addr[14]) & !apu_space;
+	
+	//cpu data bus
 	assign cpu_dat[7:0] = 
-	cpu_dir == 0 	? 8'hzz : 
-	io_oe_cp 		? io_dout_cp[7:0] : 
-	ss_oe_cp 		? ss_do[7:0] :
-	gg_oe 			? gg_do[7:0] ://priority was changed
+	cpu_dir == 0	? 8'hzz : 
+	bio_oe 			? bio_do[7:0] : 
+	sst_oe 			? sst_do[7:0] :
+	ggc_oe 			? ggc_do[7:0] ://priority was changed
 	mao.map_cpu_oe	? mao.map_cpu_do[7:0] : 
 	{!cpu_ce, cpu_addr[14:8]};//open bus
 	
@@ -129,7 +135,7 @@ module top(
 	assign cpu_ex  = 0;
 	
 	
-	//ppu
+	//ppu data bus
 	assign ppu_dat[7:0] = 
 	ppu_dir == 0 	? 8'hzz : 
 	dma.req_chr		? 8'h00 : 
@@ -140,17 +146,22 @@ module top(
 	assign ppu_dir = !ppu_oe & ppu_ciram_ce ? 1 : 0;
 	assign ppu_ex 	= 0;
 
-	
+	//prg mem data bus (rom + srm)
 	assign prg_dat[7:0] = 
 	(!prg_oe & !prg_ce) | (!srm_oe & srm_ce)	? 8'hzz :
 	srm_ce ? srm.dati : 
 	prg.dati;
 
+	//chr mem data bus
 	assign chr_dat[7:0] = 
 	!chr_oe & !chr_ce ? 8'hzz :
 	chr.dati;
-//**************************************************************************************** vram driver
 	
+	
+	//bus conflicts
+	wire bcf_act				= mao.bus_conflicts & !prg_ce & !cpu_rw;
+	wire [7:0]cpu_data_bcf	= cpu_dat[7:0] & prg_dat[7:0];
+//**************************************************************************************** vram driver
 	wire ppu_iram_oe;
 	wire [7:0]ppu_iram_do;
 	
@@ -161,32 +172,29 @@ module top(
 		.ppu(ppu),
 		.map_ciram_a10(mao.ciram_a10),
 		.map_ciram_ce(mao.ciram_ce),
-		.mir_4s(cfg.mc_mir_4 & mao.mir_4sc),
+		.mir_4s(cfg.mir_4 & mao.mir_4sc),
 		
 		.ppu_ciram_a10(ppu_ciram_a10),
 		.ppu_ciram_ce(ppu_ciram_ce),
 		.ppu_iram_oe(ppu_iram_oe),
 		.ppu_iram_do(ppu_iram_do)
 	);
-
 //**************************************************************************************** mappers
-	
 	
 	assign mao = 
 	map_out_255;
 	
 	MapOut map_out_255;
 	map_255 m255(mai, map_out_255);
-	
-
 
 //**************************************************************************************** peripheral interface	
 	PiBus pi;
 	
 	wire [7:0]pi_di = 
-	dma.mem_req ? dma.pi_di : 
-	ss_oe_pi 	? ss_do : 
-	io_oe_pi 	? io_dout_pi :
+	dma.mem_req 	? dma.pi_di :
+	pi.map.ce_fifo ? pi_di_bio :
+	pi.map.ce_cfg	? pi_di_cfg :
+	pi.map.ce_sst 	? sst_do :
 	8'hff;
 	
 	pi_io pi_io_inst(
@@ -200,9 +208,9 @@ module top(
 		.pi(pi)
 	);
 //**************************************************************************************** base io
-	wire io_oe_cp, io_oe_pi;
-	wire [7:0]io_dout_cp;
-	wire [7:0]io_dout_pi;	
+	wire bio_oe;
+	wire [7:0]bio_do;
+	wire [7:0]pi_di_bio;	
 	
 	base_io io_inst(
 	
@@ -210,22 +218,26 @@ module top(
 		.pi(pi),
 		.cpu(cpu),
 		.sys_rst(mai.sys_rst),
-		.os_act(mai.os_act),
 		.mcu_busy(mcu_busy),
-
-		.cfg(cfg),
-		.dout_pi(io_dout_pi),
-		.dout_cp(io_dout_cp),
-		.io_oe_pi(io_oe_pi),
-		.io_oe_cp(io_oe_cp),
+		.ct_unlock(cfg.ct_unlock),
+		
+		.dout_pi(pi_di_bio),
+		.dout_cp(bio_do),
+		.oe_cp(bio_oe),
 		.fifo_rxf_pi(fifo_rxf)
 		
 	);
+//****************************************************************************************  sys cfg	
+	wire [7:0]pi_di_cfg;
+	
+	sys_cfg sys_cfg_inst(
+	
+		.clk(mai.clk),
+		.pi(pi),
+		.pi_di(pi_di_cfg),
+		.cfg(cfg)
+	);		
 //**************************************************************************************** dma controller
-	
-	wire [7:0]pi_dat_dma = dma.pi_di;
-	wire dma_req = dma.mem_req;
-	
 	dma_io dma_io_inst(
 			
 		.pi(pi),
@@ -255,9 +267,9 @@ module top(
 		.rst_delay(cfg.ct_rst_delay),
 		.rst_req(map_rst_req)
 	);	
-//**************************************************************************************** gg	
-	wire [7:0]gg_do;
-	wire gg_oe;
+//**************************************************************************************** cheats	
+	wire [7:0]ggc_do;
+	wire ggc_oe;
 	
 `ifndef GG_OFF	
 	gg gg_inst
@@ -265,18 +277,18 @@ module top(
 		.bus(bus), 
 		.sys_cfg(sys_cfg),
 		.pi_bus(pi_bus), 
-		.gg_do(gg_do), 
-		.gg_oe(gg_oe)
+		.gg_do(ggc_do), 
+		.gg_oe(ggc_oe)
 	);
 `endif	
 
 //**************************************************************************************** save state controller	
 	wire [`BW_SS_CTRL-1:0]ss_ctrl;
-	wire ss_oe_cp, ss_oe_pi, ss_act;
-	wire [7:0]ss_do;
+	wire sst_oe, ss_oe_pi, ss_act;
+	wire [7:0]sst_do;
 	wire [7:0]ss_rdat;// = map_out_hub[7:0]; fix me
 
-`ifndef SS_OFF		
+`ifndef SS_OFF	
 	sst_controller ss_inst(
 	
 		.bus(bus),
@@ -284,21 +296,33 @@ module top(
 		.sys_cfg(sys_cfg),
 		.ss_ctrl(ss_ctrl),
 		.ss_di(ss_rdat),
-		.ss_do(ss_do),// mkae me better. use separate do for pi and cpu
-		.ss_oe_cpu(ss_oe_cp),
+		.ss_do(sst_do),// mkae me better. use separate do for pi and cpu
+		.ss_oe_cpu(sst_oe),
 		.ss_oe_pi(ss_oe_pi),
 		.ss_act(ss_act)
 	);
 `endif
 
+//**************************************************************************************** audio dac
+`ifndef SND_OFF
+	dac_ds dac_inst(
 
-
+		.clk(mai.clk),
+		.m2(cpu.m2),
+		.vol(mao.snd[15:4]),
+		.master_vol(scfg.master_vol),
+		.snd(pwm)
+	);
+`endif
+	
+//****************************************************************************************
 endmodule
 
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
 
-//*********************************************************************************
-//*********************************************************************************
-//*********************************************************************************
 module sys_rst_ctrl(
 
 	input  clk,
@@ -377,15 +401,15 @@ module map_rst_ctrl(
 	end
 	
 endmodule
-//*********************************************************************************
+//********************************************************************************* 4-screen mirroring vram
 module ppu_vram_ctrl(
 
-	input clk,
-	input CpuBus cpu,
-	input PpuBus ppu,
-	input map_ciram_a10,
-	input map_ciram_ce,
-	input mir_4s,
+	input  clk,
+	input  CpuBus cpu,
+	input  PpuBus ppu,
+	input  map_ciram_a10,
+	input  map_ciram_ce,
+	input  mir_4s,
 	
 	output ppu_ciram_a10,
 	output ppu_ciram_ce,
@@ -446,3 +470,48 @@ module ppu_ram(
 	end
 
 endmodule
+
+//********************************************************************************* audio dac
+
+module dac_ds(
+
+	input  clk, 
+	input  m2,
+	input  [DEPTH-1:0]vol,
+	input  [7:0]master_vol,
+	output reg snd
+);
+	
+	parameter DEPTH = 16;
+	
+
+	wire [DEPTH+1:0]delta;
+	wire [DEPTH+1:0]sigma;
+	
+
+	reg [DEPTH+1:0] sigma_st;	
+	reg [DEPTH-1:0] vol_mul;
+
+	assign	delta[DEPTH+1:0] = {2'b0, vol_mul[DEPTH-1:0]} + {sigma_st[DEPTH+1], sigma_st[DEPTH+1], {(DEPTH){1'b0}}};
+	assign	sigma[DEPTH+1:0] = delta[DEPTH+1:0] + sigma_st[DEPTH+1:0];
+
+	
+	reg mclk;
+	always @(negedge m2)
+	begin
+		mclk <= !mclk;
+	end
+	
+	always @(posedge mclk)
+	begin
+		vol_mul[DEPTH-1:0] <= (vol[DEPTH-1:0] * master_vol) / 128;
+	end
+	
+	
+	always @(posedge clk) 
+	begin
+		sigma_st[DEPTH+1:0] <= sigma[DEPTH+1:0];
+		snd <= sigma_st[DEPTH+1];
+	end
+	
+endmodule 

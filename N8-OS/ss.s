@@ -209,7 +209,7 @@ bc_chr:
     dex
     bne bc_chr
 ;************************************** bacup cart wram
-    jmp skip_exram_bc;this section moded to saveram.c due conflicts with FDS
+    jmp skip_exram_bc;this section moved to saveram.c due conflicts with FDS
     ldx #32 ;8K
     ldy #0
     set_ptr src, MEM_START

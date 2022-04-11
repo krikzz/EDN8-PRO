@@ -7,40 +7,31 @@ module base_io(
 	input PiBus pi,
 	input CpuBus cpu,
 	input sys_rst,
-	input os_act,
 	input mcu_busy,
+	input ct_unlock,
 	
-	output SysCfg cfg,
 	output [7:0]dout_pi,
 	output [7:0]dout_cp,
-	output io_oe_cp, io_oe_pi, fifo_rxf_pi
+	output oe_cp, 
+	output fifo_rxf_pi
 );
 	
-	assign dout_pi[7:0] = 
-	pi.map.ce_cfg_reg ? pi_di_cfg : //scfg[pi.addr[3:0]][7:0] :
-	pi_ce_fifo 			? fifo_do_b[7:0] : 
-	8'hff;
-
-
 //**************************************************************************64K for fifo
-//next 64k should not be used. last byte of read operations out of this area to prevent false fifo increment
-	wire pi_ce_fifo = pi.map.ce_sys & pi.addr[21:16] == 1;
-	
+
 
 	parameter REG_FIFO_DATA		= 8'hf0;
 	parameter REG_FIFO_STAT		= 8'hf1;
 	parameter REG_STATUS			= 8'hff;
 	
-
+	assign dout_pi[7:0] = fifo_do_b[7:0];
+	
 	assign dout_cp[7:0] = 
 	fifo_data_ce ? fifo_do_a[7:0] : 
 	fifo_stat_ce ? fifo_status[7:0] : 
 	baio_stat_ce ? baio_status[7:0] :
 	8'hff;
 	
-	
-	assign io_oe_cp 		= cpu.rw & (fifo_stat_ce | fifo_data_ce | baio_stat_ce);
-	assign io_oe_pi 		= pi.oe & (pi.map.ce_cfg_reg | pi_ce_fifo);
+	assign oe_cp 			= cpu.rw & (fifo_stat_ce | fifo_data_ce | baio_stat_ce);
 	
 	wire [7:0]reg_addr	= cpu.addr[7:0];
 	
@@ -86,14 +77,19 @@ module base_io(
 		end
 		
 		mcu_busy_st[1:0] 	<= {mcu_busy_st[0], mcu_busy};
-		unlock_st			<= cfg.ct_unlock;
+		unlock_st			<= ct_unlock;
 		
 	end
 //****************************************************************************************************************** fifo	
-	wire [7:0]fifo_status = {fifo_rxf_cp, fifo_rxf_pi, 6'd1};
 	
-	wire fifo_oe_pi = pi_ce_fifo & pi.oe & pi.act;
-	wire fifo_we_pi = pi_ce_fifo & pi.we & pi.act;
+	reg [7:0]fifo_status;
+	always @(negedge cpu.m2)
+	begin
+		fifo_status <= {fifo_rxf_cp, fifo_rxf_pi, 6'd1};
+	end
+	
+	wire fifo_oe_pi = pi.map.ce_fifo & pi.oe & pi.act;
+	wire fifo_we_pi = pi.map.ce_fifo & pi.we & pi.act;
 	
 	wire fifo_rxf_cp;
 	wire fifo_oe_cp = fifo_data_ce & cpu.rw == 1 & cpu.m2;
@@ -123,18 +119,7 @@ module base_io(
 		.fifo_empty(fifo_rxf_pi)
 	);
 	
-//******************************************************************************************************************  sys cfg	
-	wire [7:0]pi_di_cfg;
-	
-	sys_cfg sys_cfg_inst(
-	
-		.clk(clk),
-		.pi(pi),
-		.pi_di(pi_di_cfg),
-		.cfg(cfg)
-	);	
 
-	
 endmodule
 
 

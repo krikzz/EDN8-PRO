@@ -2,10 +2,12 @@
 
 //this mapper used by the cart menu
 module map_255(
+
 	input  MapIn  mai,
 	output MapOut mao
 );
 
+//************************************************************* standard mapper header
 	CpuBus cpu;
 	PpuBus ppu;
 	assign cpu = mai.cpu;
@@ -18,11 +20,11 @@ module map_255(
 	assign mao.chr = chr;
 	assign mao.srm = srm;
 	
-
+	
 	assign mao.srm_mask_off = 1;
 	assign mao.chr_mask_off = 1;
 	assign mao.prg_mask_off = 1;
-	assign mao.mir_4sc		= 1;//make it better. use cfg.mc_mir_4 here for full controll at mapper side
+	assign mao.mir_4sc		= 1;//enable support for 4-screen mirroring. for activation should be ensabled in cfg also
 	
 	assign prg.oe 				= cpu.rw;
 	assign srm.oe 				= cpu.rw;
@@ -42,15 +44,10 @@ module map_255(
 	
 	assign mao.map_ppu_oe	= int_ppu_oe | (chr.ce & chr.oe);
 	assign mao.map_ppu_do	= int_ppu_oe ? int_ppu_data : mai.chr_do;
-	//*************************************************************
+	//************************************************************* mapper implementation below
 	parameter REG_VRAM_CTRL		= 0;//4registers
 	parameter REG_TIMER			= 4;//2 registers
 	parameter REG_APP_BANK		= 6;
-	
-	
-	assign srm.ce = 0;
-	assign srm.we = 0;
-	//assign srm.addr[17:0] = prg.addr[17:0];
 	
 	
 	assign prg.ce = rom_area | ram_area | app_area;
@@ -84,7 +81,6 @@ module map_255(
 	8'h00;
 
 	
-	
 	wire reg_area 			= {cpu.addr[15:8], 8'h00}  == 16'h4100;
 	wire ram_area 			= {cpu.addr[15:12], 12'd0} == 16'h5000;
 	wire app_area 			= {cpu.addr[15:13], 13'd0} == 16'h6000;
@@ -92,7 +88,7 @@ module map_255(
 	
 
 	wire [7:0]reg_addr	= cpu.addr[7:0];
-	wire regs_ce 			= reg_area & mai.os_act & !mai.sys_rst;
+	wire regs_ce 			= reg_area;// & !mai.sys_rst & mai.os_act;
 	wire regs_oe 			= regs_ce & cpu.rw == 1;
 	wire regs_we 			= regs_ce & cpu.rw == 0;
 	
@@ -131,8 +127,6 @@ module map_255(
 		.timer_do(timer_do)
 	);
 
-	
-	
 //****************************************************************************************************************** VRAM
 
 	wire vram_ce_cpu = regs_ce & {reg_addr[7:2], 2'b00} == REG_VRAM_CTRL;//4 registers
@@ -155,8 +149,7 @@ module map_255(
 		.int_vram_tst(int_vram_tst)
 	);
 	
-	
-	
+
 	endmodule
 
 //********************************************************************************* VRAM

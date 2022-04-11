@@ -19,7 +19,8 @@ namespace map_refractor
                 //loadDir("D:/old-mappers/new");
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
-                loadDir("E:\\projects\\EDN8-PRO\\mappers");
+                //loadDir("E:\\projects\\EDN8-PRO\\mappers");
+                loadDir("C:\\Users\\igor\\Desktop\\mappers");
             }
             catch(Exception x)
             {
@@ -61,12 +62,12 @@ namespace map_refractor
                  "map_cfg[7]", "cfg_chr_ram",
                  "map_cfg[0]", "cfg_mir_v"
              };*/
-
+            /*
             string[] targets =
             {
                 "[22", "[22",
                 "[21", "[21"
-            };
+            };*/
 
             /*
             string[] targets =
@@ -74,6 +75,11 @@ namespace map_refractor
                 "assign mask_off = 0;", "",
                 "assign mask_off = 1;", "",
             };*/
+
+            string[] targets =
+            {
+                "chr_xram", "chr_xram",
+            };
 
             if (!path.EndsWith(".v")) return;
 
@@ -83,7 +89,7 @@ namespace map_refractor
             {
                 if (!code.Contains(targets[i]))continue;
 
-                code = code.Replace(targets[i], targets[i + 1]);
+               // code = code.Replace(targets[i], targets[i + 1]);
                 Console.WriteLine("refract: " + path + ": "+ targets[i]);
             }
 

@@ -7,35 +7,26 @@ module pi_io_map(
 	output PiMap map
 );
 
-	wire pi_exec				= pi.oe | pi.we;
-	wire [1:0]pi_dst 			= pi.addr[24:23];
-	assign map.ce_prg 		= pi_dst == 0 & pi_exec;//8M area
-	assign map.ce_chr 		= pi_dst == 1 & pi_exec;//8M area
-	assign map.ce_srm 		= pi_dst == 2 & pi_exec;//8M area
-	assign map.ce_sys 		= pi_dst == 3 & pi_exec;//8M area
+	wire pi_exec			= pi.oe | pi.we;
+	wire [1:0]pi_dst 		= pi.addr[24:23];
+	assign map.ce_prg 	= pi_dst == 0 & pi_exec;//8M prg ram
+	assign map.ce_chr 	= pi_dst == 1 & pi_exec;//8M chr ram
+	assign map.ce_srm 	= pi_dst == 2 & pi_exec;//8M battery ram
 	
-	//assign map.ce_prg 	= pi.act & map.dst_prg;
-	//assign map.ce_chr 	= pi.act & map.dst_chr;//8M area
-	//assign map.ce_srm 	= pi.act & map.dst_srm;//8M area
-	//assign map.ce_sys 	= pi.act & map.dst_sys;//8M area
+	assign map.ce_sys 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 0;//64K system registers
+	assign map.ce_fifo 	= pi_dst == 3 & pi_exec & pi.addr[21:16] == 1;//64K fifo. do not use next 64k
+
 	
-//******** 64K for system registers
-	wire pi_ce_regs			= map.ce_sys  & pi.addr[21:16] == 0;
+//******** system registers
+	assign map.ce_ggc		= map.ce_sys & pi.addr[15:5]  == 0;//32B cheat codes
+	assign map.ce_cfg 	= map.ce_sys & pi.addr[15:4]  == 2;//16B mapper configuration
+	assign map.ce_sst		= map.ce_sys & pi.addr[15:13] == 1;//8K  save state data
 	
-	assign map.ce_cfg 	 	= pi_ce_regs & pi.addr[15:8] == 0;//256B
-	assign map.ce_cfg_ggc 	= map.ce_cfg & pi.addr[7:5] == 0;//32B cheat codes
-	assign map.ce_cfg_reg 	= map.ce_cfg & pi.addr[7:5] == 1 & pi.addr[4] == 0;//16B mapper configuration
-	
-	assign map.ce_ss 		 	= pi_ce_regs & pi.addr[15:13] == 1;//8K
-	
-//******** 64K for fifo	
-	
-	assign map.ce_fifo 	 	= map.ce_sys & pi.addr[21:16] == 1;
-	
+
 endmodule
 
 //********************************************************************************* pi io
-module pi_io(
+module pi_io(//mcu to fpga serial interface
 	
 	input clk,
 	
@@ -48,7 +39,6 @@ module pi_io(
 	output PiBus pi
 	
 );
-	assign pi.clk = spi_clk;//remove me
 
 	parameter CMD_MEM_WR	= 8'hA0;
 	parameter CMD_MEM_RD	= 8'hA1;
