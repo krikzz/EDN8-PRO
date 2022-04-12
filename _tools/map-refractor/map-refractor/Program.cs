@@ -78,7 +78,7 @@ namespace map_refractor
 
             string[] targets =
             {
-                "chr_xram", "chr_xram",
+                "ss_bank256", "",
             };
 
             if (!path.EndsWith(".v")) return;

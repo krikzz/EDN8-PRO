@@ -61,7 +61,7 @@ typedef struct {
 	bit chr_mask_off;
 	bit srm_mask_off;
 	bit mir_4sc;
-	bit bus_conflicts;
+	bit bus_cf;
 	
 	bit ciram_a10;
 	bit ciram_ce;
@@ -168,14 +168,14 @@ typedef struct{
 
 	bit [10:0]addr;
 	bit act;
-	bit we;
-	bit ce_reg;
+	
+	bit ce_reg;//mapper regs
 	bit ce_snif_ppu;
 	bit ce_snif_oam;
-	bit ce_mem;
+	bit ce_mem;//mapper internal memory
 	
-	bit ce_map;
-	bit we_map;
+	bit we_reg;
+	bit we_mem;
 	
 	bit [7:0]dato;
 	

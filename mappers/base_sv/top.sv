@@ -54,7 +54,7 @@ module top(
 	CpuBus cpu;
 	PpuBus ppu;
 	
-	assign cpu.data[7:0]		= bcf_act ? cpu_data_bcf[7:0] : cpu_dat[7:0];
+	assign cpu.data[7:0]		= bus_cf_act ? cpu_data_bcf[7:0] : cpu_dat[7:0];
 	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
 	assign cpu.rw				= cpu_rw;
 	assign cpu.m2				= m2;
@@ -72,6 +72,7 @@ module top(
 	assign mai.srm_do			= prg_dat;
 	assign mai.cpu				= cpu;
 	assign mai.ppu				= ppu;
+	assign mai.cfg				= cfg;
 //**************************************************************************************** map out	
 	MapOut mao;
 	MemCtrl prg;
@@ -87,7 +88,7 @@ module top(
 	assign prg_ub 				= !prg_addr_msk[22];
 	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk[17:0] : prg_addr_msk[21:0];
 	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
-	assign prg_oe 				= !(prg.oe | bcf_act);
+	assign prg_oe 				= !(prg.oe | bus_cf_act);
 	assign prg_we 				= !prg.we;
 	
 	assign chr_lb 				= chr_addr_msk[22];
@@ -158,7 +159,7 @@ module top(
 	
 	
 	//bus conflicts
-	wire bcf_act				= mao.bus_conflicts & !prg_ce & !cpu_rw;
+	wire bus_cf_act			= mao.bus_cf & !prg_ce & !cpu_rw;
 	wire [7:0]cpu_data_bcf	= cpu_dat[7:0] & prg_dat[7:0];
 //**************************************************************************************** vram driver
 	wire ppu_iram_oe;
