@@ -237,6 +237,8 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/dma.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/pi.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/base_io.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/sys_cfg.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/sst.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/ggc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/structs.sv
 set_global_assignment -name SDC_FILE ../base_sv/clocks.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/defs.sv

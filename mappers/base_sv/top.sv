@@ -58,6 +58,7 @@ module top(
 	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
 	assign cpu.rw				= cpu_rw;
 	assign cpu.m2				= m2;
+	assign cpu.m3				= m2_st[5:0] == 6'b011111;//used if block cloced by clk instead of m2. (mmc3)
 	
 	assign ppu.data[7:0]		= ppu_dat[7:0];
 	assign ppu.addr[13:0]	= ppu_addr[13:0];
@@ -73,6 +74,12 @@ module top(
 	assign mai.cpu				= cpu;
 	assign mai.ppu				= ppu;
 	assign mai.cfg				= cfg;
+	
+	reg [5:0]m2_st;
+	always @(posedge mai.clk)
+	begin
+		m2_st[5:0]	<= {m2_st[4:0], cpu.m2};
+	end
 //**************************************************************************************** map out	
 	MapOut mao;
 	MemCtrl prg;
@@ -107,7 +114,6 @@ module top(
 	assign led 					= mao.led | (mai.sys_rst & mai.map_rst & cfg.map_idx != 255);//ss_act
 	
 	
-	
 	wire [22:0]prg_addr_msk = (prg.addr & prg_msk);
 	wire [22:0]chr_addr_msk = (chr.addr & chr_msk) | {chr_ram, 22'd0};
 	wire [22:0]srm_addr_msk = (srm.addr & srm_msk);
@@ -125,9 +131,9 @@ module top(
 	//cpu data bus
 	assign cpu_dat[7:0] = 
 	cpu_dir == 0	? 8'hzz : 
-	bio_oe 			? bio_do[7:0] : 
-	sst_oe 			? sst_do[7:0] :
-	ggc_oe 			? ggc_do[7:0] ://priority was changed
+	bio_ce_cpu		? bio_do[7:0] : 
+	sst_ce_cpu		? sst_do[7:0] :
+	ggc_ce_cpu		? ggc_do[7:0] ://priority was changed
 	mao.map_cpu_oe	? mao.map_cpu_do[7:0] : 
 	{!cpu_ce, cpu_addr[14:8]};//open bus
 	
@@ -220,7 +226,7 @@ module top(
 		.pi(pi)
 	);
 //**************************************************************************************** base io
-	wire bio_oe;
+	wire bio_ce_cpu;
 	wire [7:0]bio_do;
 	wire [7:0]pi_di_bio;	
 	
@@ -235,9 +241,8 @@ module top(
 		
 		.dout_pi(pi_di_bio),
 		.dout_cp(bio_do),
-		.oe_cp(bio_oe),
+		.bio_ce_cpu(bio_ce_cpu),
 		.fifo_rxf_pi(fifo_rxf)
-		
 	);
 //****************************************************************************************  sys cfg	
 	wire [7:0]pi_di_cfg;
@@ -281,40 +286,45 @@ module top(
 	);	
 //**************************************************************************************** cheats	
 	wire [7:0]ggc_do;
-	wire ggc_oe;
+	wire ggc_ce_cpu;
 	
-`ifndef GG_OFF	
-	gg gg_inst
-	(
-		.bus(bus), 
-		.sys_cfg(sys_cfg),
-		.pi_bus(pi_bus), 
-		.gg_do(ggc_do), 
-		.gg_oe(ggc_oe)
+`ifndef GGC_OFF
+	ggc ggc_inst(
+	
+		.clk(mai.clk),
+		.pi(pi),
+		.cpu(cpu),
+		.cheats_on(cfg.ct_gg_on & !mai.map_rst & !mai.sst.act),
+		.prg_do(mai.prg_do[7:0]),
+		
+		.ggc_do(ggc_do[7:0]),
+		.ggc_ce_cpu(ggc_ce_cpu)
+	
 	);
 `endif	
 
 //**************************************************************************************** save state controller	
-	wire [`BW_SS_CTRL-1:0]ss_ctrl;
-	wire sst_oe, ss_oe_pi, ss_act;
+	wire sst_ce_cpu;
 	wire [7:0]sst_do;
-	wire [7:0]ss_rdat;// = map_out_hub[7:0]; fix me
-
-`ifndef SS_OFF	
-	sst_controller ss_inst(
 	
-		.bus(bus),
-		.pi_bus(pi_bus),
-		.sys_cfg(sys_cfg),
-		.ss_ctrl(ss_ctrl),
-		.ss_di(ss_rdat),
-		.ss_do(sst_do),// mkae me better. use separate do for pi and cpu
-		.ss_oe_cpu(sst_oe),
-		.ss_oe_pi(ss_oe_pi),
-		.ss_act(ss_act)
+`ifndef SST_OFF	
+	sst_controller sst_inst(
+	
+		.clk(mai.clk),
+		.pi(pi),
+		.cpu(cpu),
+		.cfg(cfg),
+		.map_rst(mai.map_rst),
+		.sys_rst(mai.sys_rst),
+		.fds_sw(mai.fds_sw),
+		.sst_di(map_out_game.sst_di),
+			
+		.sst(mai.sst),
+		.sst_do(sst_do),
+		.sst_ce_cpu(sst_ce_cpu)
 	);
 `endif
-
+	
 //**************************************************************************************** audio dac
 `ifndef SND_OFF
 	dac_ds dac_inst(
@@ -322,11 +332,10 @@ module top(
 		.clk(mai.clk),
 		.m2(cpu.m2),
 		.vol(mao.snd[15:4]),
-		.master_vol(scfg.master_vol),
+		.master_vol(cfg.master_vol),
 		.snd(pwm)
 	);
 `endif
-	
 //****************************************************************************************
 endmodule
 

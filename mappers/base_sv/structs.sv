@@ -17,6 +17,7 @@ typedef struct{
 	bit [15:0]addr;
 	bit rw;
 	bit m2;
+	bit m3;
 	
 }CpuBus;
 
@@ -45,9 +46,7 @@ typedef struct {
 	bit [7:0]srm_do;//bram data out
 	
 	SysCfg cfg;
-	//bit [7:0]sst_do;
 	SSTBus sst;
-	
 	CpuBus cpu;
 	PpuBus ppu;
 	
@@ -164,15 +163,12 @@ typedef struct{
 }SysCfg;
 
 
+//save state stuff
 typedef struct{
 
-	bit [10:0]addr;
+	bit [12:0]addr;
 	bit act;
-	
-	bit ce_reg;//mapper regs
-	bit ce_snif_ppu;
-	bit ce_snif_oam;
-	bit ce_mem;//mapper internal memory
+	bit we;
 	
 	bit we_reg;
 	bit we_mem;

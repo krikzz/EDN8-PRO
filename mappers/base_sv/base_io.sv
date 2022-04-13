@@ -12,7 +12,7 @@ module base_io(
 	
 	output [7:0]dout_pi,
 	output [7:0]dout_cp,
-	output oe_cp, 
+	output bio_ce_cpu, 
 	output fifo_rxf_pi
 );
 	
@@ -31,7 +31,7 @@ module base_io(
 	baio_stat_ce ? baio_status[7:0] :
 	8'hff;
 	
-	assign oe_cp 			= cpu.rw & (fifo_stat_ce | fifo_data_ce | baio_stat_ce);
+	assign bio_ce_cpu 	= (fifo_stat_ce | fifo_data_ce | baio_stat_ce);
 	
 	wire [7:0]reg_addr	= cpu.addr[7:0];
 	

@@ -210,18 +210,37 @@ namespace edlink_n8
                 if (i == 128) Console.WriteLine("");
                 if (i % 256 == 0) Console.WriteLine("");
 
+                Console.ForegroundColor = ConsoleColor.White;
+
+                if (i >= 128 + 0 && i < 128 + 32)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                }
+
                 if (i >= 128 + 32 && i < 128 + 64)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-
                 }
-                else
+
+                if (i >= 128 + 64 && i < 256)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                 }
 
                 Console.WriteLine("" + BitConverter.ToString(ss, i, 8) + "  " + BitConverter.ToString(ss, i + 8, 8));
             }
+
+            /*
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Mapper regs, ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("APU regs, ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("PPU pal, ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("PPU regs + sst request src");*/
+
+            Console.ForegroundColor = ConsoleColor.White;
 
         }
 

@@ -37,10 +37,10 @@ module map_004(
 	assign mao.map_ppu_oe	= int_ppu_oe | (chr.ce & chr.oe);
 	assign mao.map_ppu_do	= int_ppu_oe ? int_ppu_data : mai.chr_do;
 //************************************************************* configuration
-	assign mao.srm_mask_off = 0;
-	assign mao.chr_mask_off = 0;
 	assign mao.prg_mask_off = 0;
-	assign mao.mir_4sc		= 1;//enable support for 4-screen mirroring. for activation should be ensabled in cfg also
+	assign mao.chr_mask_off = 0;
+	assign mao.srm_mask_off = 0;
+	assign mao.mir_4sc		= 1;//enable support for 4-screen mirroring. for activation should be ensabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* mapper output assignments
 	assign srm.ce				= pin_ram_ce;
@@ -58,13 +58,22 @@ module map_004(
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
 	assign chr.addr[9:0]		= ppu.addr[9:0];
-	assign chr.addr[17:10]	= cfg.chr_ram ? pin_chr_addr[14:10] : pin_chr_addr[17:10];//ines 2.0 reuired to support 32k ram
+	assign chr.addr[17:10]	= cfg.chr_ram ? pin_chr_addr[14:10] : pin_chr_addr[17:10];//ines 2.0 requires 32k ram support
 	
 	//A10-Vmir, A11-Hmir
 	assign mao.ciram_a10 	= pin_cir_a10;
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= pin_irq;
+//************************************************************* save state regs read
+	assign mao.sst_di[7:0] = 
+	sst_ce_irq 				? sst_do_irq : //addr 16-23 for irq
+	sst.addr[7:3] == 0   ? r8001[sst.addr[2:0]]:
+	sst.addr[7:0] == 8   ? r8000 : 
+	sst.addr[7:0] == 9   ? rA000 : 
+	sst.addr[7:0] == 10  ? rA001 : 
+	sst.addr[7:0] == 127 ? cfg.map_idx :
+	8'hff;
 //************************************************************* mapper-controlled pin
 	wire pin_ram_ce;
 	wire pin_ram_we;
@@ -95,6 +104,7 @@ module map_004(
 	ppu.addr[11:10] == 2 ? r8001[4][7:0] : 
    r8001[5][7:0];
 	
+	wire decode_en 		= cpu.m3 & !cpu.rw;
 	wire [3:0]reg_addr	= {cpu.addr[15:13], cpu.addr[0]};
 	
 	wire prg_mod 			= r8000[6];
@@ -110,12 +120,15 @@ module map_004(
 	
 	
 	always @(posedge mai.clk)
-	if(sst.act & decode_en)
+	if(sst.act)
 	begin
-		if(sst.we_reg & sst.addr[7:3] == 0)r8001[sst.addr[2:0]] <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 8)r8000 	<= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 9)rA000 	<= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 10)rA001	<= sst.dato;
+		if(decode_en)
+		begin
+			if(sst.we_reg & sst.addr[7:3] == 0)r8001[sst.addr[2:0]] <= sst.dato;
+			if(sst.we_reg & sst.addr[7:0] == 8)r8000 	<= sst.dato;
+			if(sst.we_reg & sst.addr[7:0] == 9)rA000 	<= sst.dato;
+			if(sst.we_reg & sst.addr[7:0] == 10)rA001	<= sst.dato;
+		end
 	end
 		else
 	if(mai.map_rst)
@@ -145,6 +158,9 @@ module map_004(
 	
 
 //************************************************************* irq	
+	wire sst_ce_irq;
+	wire [7:0]sst_do_irq;
+	
 	irq_mmc3 irq_inst(
 		
 		.clk(mai.clk),
@@ -155,17 +171,12 @@ module map_004(
 		.ppu_a12(ppu.addr[12]),
 		.map_rst(mai.map_rst),
 		.mmc3a(mai.cfg.map_sub == 4),
-		.irq(pin_irq)
+		.irq(pin_irq),
+		
+		.sst(sst),
+		.sst_ce(sst_ce_irq),
+		.sst_do(sst_do_irq)
 	);
-//************************************************************* decode
-	wire decode_en 	= m2_st[5:0] == 'b011111 & !cpu.rw;
-	
-	reg [7:0]m2_st;
-	
-	always @(posedge mai.clk)
-	begin
-		m2_st[7:0] 		<= {m2_st[6:0], cpu.m2};
-	end
 	
 endmodule
 
@@ -180,9 +191,23 @@ module irq_mmc3(
 	input map_rst,
 	input mmc3a,
 	
-	output reg irq,
+	output irq,
+	
+	input  SSTBus sst,
+	output sst_ce,
 	output [7:0]sst_do
 );
+	
+	assign sst_ce = sst.addr[7:0] >= 16 & sst.addr[7:0] <= 19;
+	assign sst_do = 
+	sst.addr[7:0] == 16 ? reload_val : 
+	sst.addr[7:0] == 17 ? irq_on : //irq_on should be saved befor irq_pend
+	sst.addr[7:0] == 18 ? irq_ctr : 
+	sst.addr[7:0] == 19 ? {reload_req, irq_pend} :
+	8'hff;
+	
+	
+	assign irq 				= irq_pend;
 	
 	
 	wire [7:0]ctr_next	= irq_ctr == 0 ? reload_val : irq_ctr - 1;
@@ -190,13 +215,24 @@ module irq_mmc3(
 	
 	reg [7:0]reload_val;
 	reg [7:0]irq_ctr;
-	reg irq_on, reload_req;
+	reg irq_on, reload_req, irq_pend;
 
 	always @(posedge clk)
+	if(sst.act)
+	begin
+		if(decode_en)
+		begin
+			if(sst.we_reg & sst.addr[7:0] == 16)reload_val 	<= sst.dato;
+			if(sst.we_reg & sst.addr[7:0] == 17)irq_on 		<= sst.dato[0];
+			if(sst.we_reg & sst.addr[7:0] == 18)irq_ctr		<= sst.dato;
+			if(sst.we_reg & sst.addr[7:0] == 19){reload_req, irq_pend} <= sst.dato;
+		end
+	end
+		else
 	if(map_rst)
 	begin
 		irq_on 	<= 0;
-		irq		<= 0;
+		irq_pend	<= 0;
 	end
 		else
 	begin
@@ -224,12 +260,12 @@ module irq_mmc3(
 	
 		if(!irq_on)
 		begin
-			irq <= 0;
+			irq_pend <= 0;
 		end
 			else
 		if(a12_edge & irq_trigger)
 		begin
-			irq <= 1;
+			irq_pend <= 1;
 		end
 		
 	end
