@@ -1,5 +1,5 @@
-
-module map_nom(
+ 
+module map_000(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -70,12 +70,6 @@ module map_nom(
 
 //************************************************************* mapper implementation below
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
-	
-	reg [20:0]ctr;
-	always @(negedge cpu.m2)
-	begin
-		ctr <= ctr + 1;
-	end
+
 	
 endmodule

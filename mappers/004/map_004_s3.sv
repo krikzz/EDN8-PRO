@@ -1,5 +1,5 @@
 
-module map_004(//MMC3
+module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -159,7 +159,7 @@ module map_004(//MMC3
 	wire sst_ce_irq;
 	wire [7:0]sst_do_irq;
 	
-	irq_mmc3 irq_mmc_inst(
+	irq_acc irq_acc_inst(
 		
 		.clk(mai.clk),
 		.decode_en(decode_en),
@@ -168,7 +168,6 @@ module map_004(//MMC3
 		.reg_addr(reg_addr),
 		.ppu_a12(ppu.addr[12]),
 		.map_rst(mai.map_rst),
-		.mmc3a(mai.cfg.map_sub == 4),
 		.irq(pin_irq),
 		
 		.sst(sst),

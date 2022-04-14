@@ -65,7 +65,7 @@ typedef struct {
 	bit ciram_a10;
 	bit ciram_ce;
 	bit irq;
-	bit chr_xram;//for mapper with chr ram+rom
+	bit chr_xram_ce;//for mapper with chr ram+rom
 	bit led;
 	bit [15:0]snd;
 	

@@ -122,7 +122,7 @@ module top(
 	wire [22:0]chr_msk		=  mao.chr_mask_off | dma.req_chr ? 'h7FFFFF : {cfg.chr_msk[9:0], 13'd8191};
 	wire [22:0]srm_msk		=  mao.srm_mask_off | dma.req_srm ? 'h03FFFF : {cfg.srm_msk[10:0], 7'd127};
 	
-	wire chr_ram				= !dma.req_chr & !mai.map_rst & (mao.chr_xram | cfg.chr_ram);//save state engine expects chr ram to be mapped at upper 4M
+	wire chr_ram				= !dma.req_chr & !mai.map_rst & (mao.chr_xram_ce | cfg.chr_ram);//save state engine expects chr ram to be mapped at upper 4M
 	wire srm_off				= !dma.req_srm & !mai.map_rst & cfg.prg_ram_off;
 //**************************************************************************************** data bus drivers
 	wire apu_space				= {!cpu_ce, cpu_addr[14:5], 5'd0} == 16'h4000;

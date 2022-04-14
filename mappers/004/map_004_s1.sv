@@ -1,5 +1,5 @@
 
-module map_004(//MMC3
+module map_004_s1(//MMC6
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -44,8 +44,8 @@ module map_004(//MMC3
 //************************************************************* mapper output assignments
 	assign srm.ce				= pin_ram_ce;
 	assign srm.oe				= cpu.rw;
-	assign srm.we				= pin_ram_we;
-	assign srm.addr[12:0]	= cpu.addr[12:0];
+	assign srm.we				= !cpu.rw;
+	assign srm.addr[9:0]		= cpu.addr[9:0];
 	
 	assign prg.ce				= pin_rom_ce;
 	assign prg.oe 				= cpu.rw;
@@ -74,15 +74,13 @@ module map_004(//MMC3
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pin
 	wire pin_ram_ce;
-	wire pin_ram_we;
 	wire pin_rom_ce;
 	wire pin_cir_a10;
 	wire pin_irq;
 	wire [18:13]pin_prg_addr;
 	wire [17:10]pin_chr_addr;
 //************************************************************* mapper implementation below
-	assign pin_ram_ce 	= {cpu.addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;// & (!ram_we_off | cpu.rw);
-	assign pin_ram_we 	= !cpu.rw & !ram_we_off;
+	assign pin_ram_ce 	= {cpu.addr[15:12], 12'd0} == 16'h7000 & ram_ce_on;
 	assign pin_rom_ce 	= cpu.addr[15];
 	
 	assign pin_cir_a10 	= !mir_mod ? ppu.addr[10] : ppu.addr[11];
@@ -106,11 +104,10 @@ module map_004(//MMC3
 	wire decode_en 		= cpu.m3 & !cpu.rw;
 	wire [3:0]reg_addr	= {cpu.addr[15:13], cpu.addr[0]};
 	
+	wire ram_ce_on 		= rA001[5];
 	wire prg_mod 			= r8000[6];
 	wire chr_mod 			= r8000[7];
 	wire mir_mod 			= rA000[0];
-	wire ram_we_off 		= rA001[6];
-	wire ram_ce_on 		= rA001[7];
 	
 	reg [7:0]r8000;
 	reg [7:0]r8001[8];
@@ -155,11 +152,12 @@ module map_004(//MMC3
 		4'hB:rA001[7:0] 					<= cpu.data[7:0];
 	endcase
 	
-//************************************************************* irq
+
+//************************************************************* irq	
 	wire sst_ce_irq;
 	wire [7:0]sst_do_irq;
 	
-	irq_mmc3 irq_mmc_inst(
+	irq_mmc3 irq_inst(
 		
 		.clk(mai.clk),
 		.decode_en(decode_en),
@@ -168,7 +166,7 @@ module map_004(//MMC3
 		.reg_addr(reg_addr),
 		.ppu_a12(ppu.addr[12]),
 		.map_rst(mai.map_rst),
-		.mmc3a(mai.cfg.map_sub == 4),
+		.mmc3a(0),
 		.irq(pin_irq),
 		
 		.sst(sst),
