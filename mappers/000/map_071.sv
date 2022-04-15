@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_071(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -42,18 +42,20 @@ module map_nom(
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
-	assign mao.sst_di[7:0] = 
+	assign mao.sst_di[7:0] =
+	sst.addr[7:0] == 0 	? {mirror_mode, mir_control_on, prg_bank[3:0]} :	
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
-	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
-	assign srm.oe				= cpu.rw;
-	assign srm.we				= !cpu.rw;
+	assign srm.ce				= 0;
+	assign srm.oe				= 0;
+	assign srm.we				= 0;
 	assign srm.addr[12:0]	= cpu.addr[12:0];
 	
 	assign prg.ce				= cpu.addr[15];
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
-	assign prg.addr[14:0]	= cpu.addr[14:0];
+	assign prg.addr[13:0]	= cpu.addr[13:0];
+	assign prg.addr[17:14] 	= !cpu.addr[14] ? prg_bank[3:0] : 4'b1111;
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
@@ -62,18 +64,40 @@ module map_nom(
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
+	assign mao.ciram_a10 	= mir_control_on ? mirror_mode  : cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= 0;
-//************************************************************* mapper implementation
+//************************************************************* mapper implementation	
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
-	
-	reg [20:0]ctr;
+	reg [3:0]prg_bank;
+	reg mir_control_on;
+	reg mirror_mode;
+
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0){mirror_mode, mir_control_on, prg_bank[3:0]} <= sst.dato;
+	end
+		else
+	if(mai.map_rst)
+	begin
+		mir_control_on <= 0;
+	end
+		else
+	begin
+	
+		if(!cpu.rw & cpu.addr[15:14] == 2'b11)
+		begin
+			prg_bank[3:0] 	<= cpu.data[3:0];
+		end
+		
+		if(!cpu.rw & cpu.addr[15:12] == 4'b1001)
+		begin
+			mir_control_on <= 1;
+			mirror_mode 	<= cpu.data[4];
+		end
+	
 	end
 	
 endmodule

@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_003( //CNROM
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -40,11 +40,12 @@ module map_nom(
 	assign mao.chr_mask_off = 0;
 	assign mao.srm_mask_off = 0;
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
-	assign mao.bus_cf 		= 0;//bus conflicts
+	assign mao.bus_cf 		= cfg.map_sub == 2;//bus conflicts
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] = 
+	sst.addr[7:0] == 0 ? {4'd0, ppu_bank[3:0]} : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
-//************************************************************* mapper-controlled pins
+//************************************************************* mapper-controlled pin
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
 	assign srm.oe				= cpu.rw;
 	assign srm.we				= !cpu.rw;
@@ -59,6 +60,7 @@ module map_nom(
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
 	assign chr.addr[12:0]	= ppu.addr[12:0];
+	assign chr.addr[16:13]	= ppu_bank[3:0];
 
 	
 	//A10-Vmir, A11-Hmir
@@ -68,12 +70,17 @@ module map_nom(
 	assign mao.irq				= 0;
 //************************************************************* mapper implementation
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
+	reg [3:0]ppu_bank;
 	
-	reg [20:0]ctr;
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0)ppu_bank[3:0] <= sst.dato[3:0];
 	end
+		else
+	begin
+		if(cpu.addr[15] & !cpu.rw)ppu_bank[3:0] <= cpu.data[3:0];
+	end
+
 	
 endmodule

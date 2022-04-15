@@ -55,11 +55,18 @@ module sys_cfg(
 	assign pi_di[7:0] = scfg[pi.addr[3:0]];
 	
 	reg [7:0]scfg[16];
+	reg cfg_we;
 	
 	always @(posedge clk)
-	if(pi.act & pi.we & pi.map.ce_cfg)
 	begin
-		scfg[pi.addr[3:0]][7:0] <= pi.dato[7:0];
+		
+		cfg_we <= pi.act & pi.we & pi.map.ce_cfg;
+		
+		if(cfg_we)
+		begin
+			scfg[pi.addr[3:0]][7:0] <= pi.dato[7:0];
+		end
+		
 	end
 	
 

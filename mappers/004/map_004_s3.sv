@@ -41,29 +41,6 @@ module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 	assign mao.srm_mask_off = 0;
 	assign mao.mir_4sc		= 1;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
-//************************************************************* mapper output assignments
-	assign srm.ce				= pin_ram_ce;
-	assign srm.oe				= cpu.rw;
-	assign srm.we				= pin_ram_we;
-	assign srm.addr[12:0]	= cpu.addr[12:0];
-	
-	assign prg.ce				= pin_rom_ce;
-	assign prg.oe 				= cpu.rw;
-	assign prg.we				= 0;
-	assign prg.addr[12:0]	= cpu.addr[12:0];
-	assign prg.addr[18:13]	= pin_prg_addr[18:13];
-	
-	assign chr.ce 				= mao.ciram_ce;
-	assign chr.oe 				= !ppu.oe;
-	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
-	assign chr.addr[9:0]		= ppu.addr[9:0];
-	assign chr.addr[17:10]	= pin_chr_addr[17:10];
-	
-	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= pin_cir_a10;
-	assign mao.ciram_ce 		= !ppu.addr[13];
-	
-	assign mao.irq				= pin_irq;
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] = 
 	sst_ce_irq 				? sst_do_irq : //addr 16-23 for irq
@@ -72,28 +49,34 @@ module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 	sst.addr[7:0] == 9   ? rA000 : 
 	sst.addr[7:0] == 10  ? rA001 : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
-//************************************************************* mapper-controlled pin
-	wire pin_ram_ce;
-	wire pin_ram_we;
-	wire pin_rom_ce;
-	wire pin_cir_a10;
-	wire pin_irq;
-	wire [18:13]pin_prg_addr;
-	wire [17:10]pin_chr_addr;
-//************************************************************* mapper implementation below
-	assign pin_ram_ce 	= {cpu.addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;// & (!ram_we_off | cpu.rw);
-	assign pin_ram_we 	= !cpu.rw & !ram_we_off;
-	assign pin_rom_ce 	= cpu.addr[15];
+//************************************************************* mapper-controlled pins
+	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000 & ram_ce_on;// & (!ram_we_off | cpu.rw);
+	assign srm.oe				= cpu.rw;
+	assign srm.we				= !cpu.rw & !ram_we_off;
+	assign srm.addr[12:0]	= cpu.addr[12:0];
 	
-	assign pin_cir_a10 	= !mir_mod ? ppu.addr[10] : ppu.addr[11];
-	
-	assign pin_prg_addr[18:13] =
+	assign prg.ce				= cpu.addr[15];
+	assign prg.oe 				= cpu.rw;
+	assign prg.we				= 0;
+	assign prg.addr[12:0]	= cpu.addr[12:0];
+	assign prg.addr[18:13]	= 
 	cpu.addr[14:13] == 0 ? (prg_mod == 0 ? r8001[6][5:0] : 6'b111110) :
 	cpu.addr[14:13] == 1 ? r8001[7][5:0] : 
 	cpu.addr[14:13] == 2 ? (prg_mod == 1 ? r8001[6][5:0] : 6'b111110) : 
 	6'b111111;
-
-	assign pin_chr_addr[17:10] = cfg.chr_ram ? chr_addr_int[14:10] : chr_addr_int[17:10];//ines 2.0 requires 32k ram support
+	
+	assign chr.ce 				= mao.ciram_ce;
+	assign chr.oe 				= !ppu.oe;
+	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
+	assign chr.addr[9:0]		= ppu.addr[9:0];
+	assign chr.addr[17:10]	= cfg.chr_ram ? chr_addr_int[14:10] : chr_addr_int[17:10];//ines 2.0 requires 32k ram support
+	
+	//A10-Vmir, A11-Hmir
+	assign mao.ciram_a10 	= !mir_mod ? ppu.addr[10] : ppu.addr[11];
+	assign mao.ciram_ce 		= !ppu.addr[13];
+	
+	assign mao.irq				= irq_pend;
+//************************************************************* mapper implementation below
 	
 	wire [17:10]chr_addr_int = 
 	ppu.addr[12:11] == {chr_mod, 1'b0} ? {r8001[0][7:1], ppu.addr[10]} :
@@ -156,6 +139,7 @@ module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 	endcase
 	
 //************************************************************* irq
+	wire irq_pend;
 	wire sst_ce_irq;
 	wire [7:0]sst_do_irq;
 	
@@ -168,7 +152,7 @@ module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 		.reg_addr(reg_addr),
 		.ppu_a12(ppu.addr[12]),
 		.map_rst(mai.map_rst),
-		.irq(pin_irq),
+		.irq(irq_pend),
 		
 		.sst(sst),
 		.sst_ce(sst_ce_irq),

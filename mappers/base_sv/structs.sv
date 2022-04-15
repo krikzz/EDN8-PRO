@@ -5,7 +5,7 @@ typedef struct{
 	bit [7:0]dati;
 	bit [22:0]addr;
 	bit ce, oe, we;
-	bit async_io;
+	bit async_io;//if prg/srm controlled not by cpu 
 	
 }MemCtrl;
 
@@ -38,15 +38,15 @@ typedef struct {
 	
 	bit clk;		//50Mhz clock
 	bit fds_sw;	//cart button
-	bit sys_rst;//cpu reset detectio
+	bit sys_rst;//cpu reset
 	bit map_rst;//mapper reset
 	
 	bit [7:0]prg_do;//prg rom data out
 	bit [7:0]chr_do;//chr rom data out
 	bit [7:0]srm_do;//bram data out
 	
-	SysCfg cfg;
-	SSTBus sst;
+	SysCfg cfg;//mapper and sys config
+	SSTBus sst;//save state control
 	CpuBus cpu;
 	PpuBus ppu;
 	

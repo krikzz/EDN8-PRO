@@ -5,7 +5,7 @@ module map_000(
 	output MapOut mao
 );
 //************************************************************* base header
-	CpuBus cpu;
+CpuBus cpu;
 	PpuBus ppu;
 	SysCfg cfg;
 	SSTBus sst;
@@ -41,7 +41,10 @@ module map_000(
 	assign mao.srm_mask_off = 0;
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
-//************************************************************* mapper output assignments
+//************************************************************* save state regs read
+	assign mao.sst_di[7:0] = 
+	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
+//************************************************************* mapper-controlled pins
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
 	assign srm.oe				= cpu.rw;
 	assign srm.we				= !cpu.rw;
@@ -63,13 +66,6 @@ module map_000(
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= 0;
-//************************************************************* save state regs read
-	assign mao.sst_di[7:0] = 
-	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
-//************************************************************* mapper-controlled pin
+//************************************************************* mapper implementation
 
-//************************************************************* mapper implementation below
-	
-
-	
 endmodule

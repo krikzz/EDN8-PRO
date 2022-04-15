@@ -78,7 +78,7 @@ namespace map_refractor
 
             string[] targets =
             {
-                "ss_bank256", "",
+                "srm_size", "",
             };
 
             if (!path.EndsWith(".v")) return;

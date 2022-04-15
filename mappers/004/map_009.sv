@@ -41,7 +41,16 @@ module map_009(//MMC2
 	assign mao.srm_mask_off = 0;
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
-//************************************************************* mapper output assignments
+//************************************************************* save state regs read
+	assign mao.sst_di[7:0] = 
+	sst.addr[7:0] == 0 	? prg_bank: 
+	sst.addr[7:0] == 1 	? chr_bank1: 
+	sst.addr[7:0] == 2 	? chr_bank2: 
+	sst.addr[7:0] == 3 	? chr_bank3: 
+	sst.addr[7:0] == 4 	? chr_bank4: 
+	sst.addr[7:0] == 5 	? {5'd0, clatch2, clatch1, mir_mode}: 
+	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
+//************************************************************* mapper-controlled pins
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
 	assign srm.oe				= cpu.rw;
 	assign srm.we				= !cpu.rw;
@@ -51,41 +60,24 @@ module map_009(//MMC2
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
 	assign prg.addr[12:0]	= cpu.addr[12:0];
-	assign prg.addr[17:13]	= pin_prg_addr[17:13];
+	assign prg.addr[17:13]	= cfg.map_idx == 9 ? map_prg09 : map_prg10;
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
 	assign chr.addr[11:0]	= ppu.addr[11:0];
-	assign chr.addr[16:12]	= pin_chr_addr[16:12];
+	assign chr.addr[16:12]	= !ppu.addr[12] ? (!clatch1 ? chr_bank1 : chr_bank2) : (!clatch2 ? chr_bank3 : chr_bank4);
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= pin_cir_a10;
+	assign mao.ciram_a10 	= !mir_mode ? ppu.addr[10] : ppu.addr[11];
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= 0;
-//************************************************************* save state regs read
-	assign mao.sst_di[7:0] = 
-	sst.addr[7:0] == 0 ? prg_bank: 
-	sst.addr[7:0] == 1 ? chr_bank1: 
-	sst.addr[7:0] == 2 ? chr_bank2: 
-	sst.addr[7:0] == 3 ? chr_bank3: 
-	sst.addr[7:0] == 4 ? chr_bank4: 
-	sst.addr[7:0] == 5 ? {5'd0, clatch2, clatch1, mir_mode}: 
-	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
-//************************************************************* mapper-controlled pin
-	wire pin_cir_a10;
-	wire [17:13]pin_prg_addr;
-	wire [16:12]pin_chr_addr;
 //************************************************************* mapper implementation below
-	assign pin_cir_a10 			= !mir_mode ? ppu.addr[10] : ppu.addr[11];
-	assign pin_prg_addr[17:13]	= cfg.map_idx == 9 ? map_prg09 : map_prg10;
-	assign pin_chr_addr[16:12] = !ppu.addr[12] ? (!clatch1 ? chr_bank1 : chr_bank2) : (!clatch2 ? chr_bank3 : chr_bank4);
 	
-	
-	wire [4:0]map_prg09 			= cpu.addr[14:13] == 0 ? {1'b1, prg_bank[3:0]} : {3'b111, cpu.addr[14:13]};
-	wire [4:0]map_prg10 			= cpu.addr[14] 	== 0 ? {prg_bank[3:0], cpu.addr[13]} : {3'b111, cpu.addr[14:13]};
+	wire [4:0]map_prg09 		= cpu.addr[14:13] == 0 ? {1'b1, prg_bank[3:0]} : {3'b111, cpu.addr[14:13]};
+	wire [4:0]map_prg10 		= cpu.addr[14] 	== 0 ? {prg_bank[3:0], cpu.addr[13]} : {3'b111, cpu.addr[14:13]};
 	
 	
 	reg [3:0]prg_bank;
