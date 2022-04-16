@@ -1,5 +1,5 @@
 
 
-	`define SST_OFF	//save state
-	`define GGC_OFF	//cheats engine
-	`define SND_OFF	//expansion sound if any exists
+	`define SST_ON	//save state
+	`define GGC_ON	//cheats engine
+	`define SND_ON	//expansion sound if any exists

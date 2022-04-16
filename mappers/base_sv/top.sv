@@ -327,6 +327,7 @@ module top(
 	
 //**************************************************************************************** audio dac
 `ifndef SND_OFF
+		
 	dac_ds dac_inst(
 
 		.clk(mai.clk),
@@ -525,14 +526,14 @@ module dac_ds(
 	
 	always @(posedge mclk)
 	begin
-		vol_mul[DEPTH-1:0] <= (vol[DEPTH-1:0] * master_vol) / 128;
+		vol_mul[DEPTH-1:0] 	<= (vol[DEPTH-1:0] * master_vol) / 128;
 	end
 	
 	
 	always @(posedge clk) 
 	begin
-		sigma_st[DEPTH+1:0] <= sigma[DEPTH+1:0];
-		snd <= sigma_st[DEPTH+1];
+		sigma_st[DEPTH+1:0] 	<= sigma[DEPTH+1:0];
+		snd	<= !sigma_st[DEPTH+1];//inverted
 	end
 	
 endmodule 
