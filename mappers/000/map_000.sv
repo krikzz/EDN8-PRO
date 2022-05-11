@@ -5,7 +5,7 @@ module map_000(
 	output MapOut mao
 );
 //************************************************************* base header
-CpuBus cpu;
+	CpuBus cpu;
 	PpuBus ppu;
 	SysCfg cfg;
 	SSTBus sst;
