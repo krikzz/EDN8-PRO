@@ -107,9 +107,9 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
     } else {
         mapPack20(inf);
     }
-    
-    if(inf->mapper == 157){
-        inf->srm_size = inf->srm_size == 0 ? 256 : 512;//for games with dual eeprom
+
+    if (inf->mapper == 157) {
+        inf->srm_size = inf->srm_size == 0 ? 256 : 512; //for games with dual eeprom
     }
 
     if (inf->map_pack == 0xff && inf->mapper != 0xff)inf->supported = 0;
@@ -267,7 +267,7 @@ void romConfigNES20(RomInfo *inf, u8 *ines) {
     } else {
 
         inf->chr_ram = 0;
-        
+
         if ((ines[9] & 0xF0) == 0xF0) {
             inf->chr_size = 1 << (ines[5] >> 2) * ((ines[5] & 3) + 1);
         } else {
