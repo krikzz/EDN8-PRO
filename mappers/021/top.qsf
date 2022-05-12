@@ -230,7 +230,11 @@ set_location_assignment PIN_C1 -to exp_io[1]
 set_location_assignment PIN_C2 -to exp_io[0]
 set_global_assignment -name SYSTEMVERILOG_FILE map_hub.sv
 set_global_assignment -name SYSTEMVERILOG_FILE map_021.sv
+set_global_assignment -name SYSTEMVERILOG_FILE map_024.sv
+set_global_assignment -name SYSTEMVERILOG_FILE map_073.sv
+set_global_assignment -name SYSTEMVERILOG_FILE map_075.sv
 set_global_assignment -name SYSTEMVERILOG_FILE irq_vrc.sv
+set_global_assignment -name SYSTEMVERILOG_FILE snd_vrc6.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/top.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_255.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_nom.sv

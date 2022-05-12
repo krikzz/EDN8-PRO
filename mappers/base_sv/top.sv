@@ -332,7 +332,7 @@ module top(
 
 		.clk(mai.clk),
 		.m2(cpu.m2),
-		.vol(mao.snd[15:4]),
+		.vol(mao.snd[15:0]),
 		.master_vol(cfg.master_vol),
 		.snd(pwm)
 	);

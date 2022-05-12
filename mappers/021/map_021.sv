@@ -83,7 +83,7 @@ module map_021(
 	assign mao.ciram_a10 	= mir_mode[1] & vrc4 ? mir_mode[0] : !mir_mode[0] ? ppu.addr[10] : ppu.addr[11];
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
-	assign mao.irq				= irq_out & vrc4;
+	assign mao.irq				= irq_pend & vrc4;
 //************************************************************* mapper implementation
 	assign int_cpu_oe 		= cpu.rw & vrc2_latch_ce;
 	assign int_cpu_data 		= {cpu.addr[15:9], vrc2_latch};
@@ -183,7 +183,7 @@ module map_021(
 	end
 	
 	
-	wire irq_out;
+	wire irq_pend;
 	wire [7:0]irq_ss;
 	
 	irq_vrc irq_vrc_inst(
@@ -194,18 +194,9 @@ module map_021(
 		.map_idx(cfg.map_idx),
 		.map_rst(mai.map_rst),
 		
-		.irq(irq_out),
+		.irq(irq_pend),
 		.ss_dout(irq_ss),
 	);
 	
-	/*
-	irq_vrc(
-		.bus(bus),
-		.ss_ctrl(ss_ctrl),
-		.ss_dout(irq_ss),
-		.reg_addr(reg_addr),
-		.map_idx(map_idx),
-		.irq(irq_out)
-	);*/
 	
 endmodule
