@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_232(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -43,17 +43,20 @@ module map_nom(
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] =
+	sst.addr[7:0] == 0 	? prg_bank : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
-	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
-	assign srm.oe				= cpu.rw;
-	assign srm.we				= !cpu.rw;
+	assign srm.ce				= 0;
+	assign srm.oe				= 0;
+	assign srm.we				= 0;
 	assign srm.addr[12:0]	= cpu.addr[12:0];
 	
 	assign prg.ce				= cpu.addr[15];
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
-	assign prg.addr[14:0]	= cpu.addr[14:0];
+	assign prg.addr[13:0]	= cpu.addr[13:0];
+	assign prg.addr[15:14] 	= !cpu.addr[14] ? prg_bank[1:0] : 2'b11;
+	assign prg.addr[17:16] 	= cfg.map_sub == 1 ? {prg_bank[2], prg_bank[3]} : prg_bank[3:2];
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
@@ -66,14 +69,34 @@ module map_nom(
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= 0;
-//************************************************************* mapper implementation
+//************************************************************* mapper implementation	
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
+	reg [3:0]prg_bank;
 	
-	reg [20:0]ctr;
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0)prg_bank <= sst.dato;
 	end
+		else
+	if(mai.map_rst)
+	begin
+		prg_bank <= 0;
+	end
+		else
+	if(!cpu.rw & cpu.addr[15])
+	begin
+	
+		if(!cpu.addr[14])
+		begin
+			prg_bank[3:2] <= cpu.data[4:3];
+		end
+			else
+		begin
+			prg_bank[1:0] <= cpu.data[1:0];
+		end
+		
+	end
+
 	
 endmodule

@@ -1,22 +1,19 @@
 
+module snd_n163(
+	
+	input  CpuBus cpu,
+	input	 map_rst,
+	
+	output [7:0]dout,
+	output reg [7:0]vol
+);
 
-`include "../base/defs.v"
-
-module snd_n163
-(bus, vol, dout);
-	
-	`include "../base/bus_in.v"
-	
-	output reg [7:0]vol;
-	output [7:0]dout;
-	
-	
 	assign dout = dout_cpu;
 	
-	wire [7:0]reg_addr = {cpu_addr[15:11], 3'b000};
+	wire [7:0]reg_addr = {cpu.addr[15:11], 3'b000};
 	
-	wire ram_we = reg_addr == 8'h48 & !cpu_rw & !map_rst;
-	wire ram_oe = reg_addr == 8'h48 & cpu_rw;
+	wire ram_we = reg_addr == 8'h48 & !cpu.rw & !map_rst;
+	wire ram_oe = reg_addr == 8'h48 & cpu.rw;
 
 	
 	wire [7:0]dout_cpu = snd_ram[ram_addr_cpu];
@@ -44,31 +41,34 @@ module snd_n163
 	
 	
 	
-	always @(negedge m2)
+	always @(negedge cpu.m2)
 	if(map_rst)
 	begin
-		active_chan <= 7;
-		ram_addr_snd <= {1'b1, active_chan[2:0],3'b000};
-		vol <= 0;
-		snd_we <= 0;
-		state <= 15;
+		active_chan 	<= 7;
+		ram_addr_snd 	<= {1'b1, active_chan[2:0],3'b000};
+		vol 				<= 0;
+		snd_we 			<= 0;
+		state 			<= 15;
 	end
 		else
 	begin
 	
-		if(!cpu_rw & reg_addr == 8'hF8)
+		if(!cpu.rw & reg_addr == 8'hF8)
 		begin
-			ram_addr_cpu[6:0] <= cpu_dat[6:0];
-			auto_inc <= cpu_dat[7];
+			ram_addr_cpu[6:0] <= cpu.data[6:0];
+			auto_inc 			<= cpu.data[7];
 		end
 		
-		if(reg_addr == 8'h48 & auto_inc)ram_addr_cpu <= ram_addr_cpu + 1;
+		if(reg_addr == 8'h48 & auto_inc)
+		begin
+			ram_addr_cpu 		<= ram_addr_cpu + 1;
+		end
 	
 		
 		state <= state == 14 ? 0 : state + 1;
 		
 		
-		if(ram_we)snd_ram[ram_addr_cpu] <= cpu_dat;
+		if(ram_we)snd_ram[ram_addr_cpu] <= cpu.data;
 			else
 		if(snd_we)snd_ram[ram_addr_snd] <= snd_dat;
 		

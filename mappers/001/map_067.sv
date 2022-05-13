@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_067(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -43,37 +43,78 @@ module map_nom(
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] =
+	sst.addr[7:2] == 0 	? chr_reg[sst.addr[1:0]] : 
+	sst.addr[7:0] == 4 	? prg_reg : 
+	sst.addr[7:0] == 5 	? irq_ctr[15:8] : 
+	sst.addr[7:0] == 6 	? irq_ctr[7:0] : 
+	sst.addr[7:0] == 7 	? {irq_pend, irq_on, mirror_mode[1:0]} : 	
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
-	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
-	assign srm.oe				= cpu.rw;
-	assign srm.we				= !cpu.rw;
+	assign srm.ce				= 0;
+	assign srm.oe				= 0;
+	assign srm.we				= 0;
 	assign srm.addr[12:0]	= cpu.addr[12:0];
 	
 	assign prg.ce				= cpu.addr[15];
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
-	assign prg.addr[14:0]	= cpu.addr[14:0];
+	assign prg.addr[13:0]	= cpu.addr[13:0];
+	assign prg.addr[16:14] 	= cpu.addr[14] ? 3'b111 : prg_reg[2:0];
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
-	assign chr.addr[12:0]	= ppu.addr[12:0];
+	assign chr.addr[10:0]	= ppu.addr[10:0];
+	assign chr.addr[16:11] 	= chr_bank[5:0];
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
+	assign mao.ciram_a10 	=  mirror_mode[1] ? mirror_mode[0] : !mirror_mode[0] ? ppu.addr[10] : ppu.addr[11];
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
-	assign mao.irq				= 0;
+	assign mao.irq				= irq_pend;
 //************************************************************* mapper implementation
+		
+	wire [5:0]chr_bank = chr_reg[ppu.addr[12:11]];
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
 	
-	reg [20:0]ctr;
+	reg [5:0]chr_reg[4];
+	reg [2:0]prg_reg;
+	reg [15:0]irq_ctr;
+	reg [1:0]mirror_mode;
+	reg irq_on;
+	reg irq_pend;
+
+	
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:2] == 0)chr_reg[sst.addr[1:0]] <= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 4)prg_reg <= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 5)irq_ctr[15:8] <= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 6)irq_ctr[7:0] <= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 7){irq_pend, irq_on, mirror_mode[1:0]} <= sst.dato;
 	end
+		else
+	begin
+		
+		if(irq_on)
+		begin
+			irq_ctr <= irq_ctr - 1;
+			if(irq_ctr == 0){irq_on, irq_pend} <= 2'b01;
+		end
+		
+		if(cpu.addr[15] & !cpu.rw)
+		begin
+			if(cpu.addr[14] == 0)chr_reg[cpu.addr[13:12]] 	<= cpu.data;
+			if(cpu.addr[14:12] == 4)irq_ctr[15:0] 				<= {irq_ctr[7:0], cpu.data[7:0]};
+			if(cpu.addr[14:12] == 5){irq_pend, irq_on} 		<= {1'b0, cpu.data[4]};
+			if(cpu.addr[14:12] == 6)mirror_mode[1:0] 			<= cpu.data[1:0];
+			if(cpu.addr[14:12] == 7)prg_reg[2:0] 				<= cpu.data[2:0];
+		end
+		
+	
+	end
+
 	
 endmodule

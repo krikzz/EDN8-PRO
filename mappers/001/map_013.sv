@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_013(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -37,12 +37,13 @@ module map_nom(
 	assign mao.map_ppu_do	= int_ppu_oe ? int_ppu_data : mai.chr_do;
 //************************************************************* configuration
 	assign mao.prg_mask_off = 0;
-	assign mao.chr_mask_off = 0;
+	assign mao.chr_mask_off = 1;
 	assign mao.srm_mask_off = 0;
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
-	assign mao.sst_di[7:0] =
+	assign mao.sst_di[7:0] = 
+	sst.addr[7:0] == 0 	? chr_bank[1:0] : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
@@ -58,7 +59,8 @@ module map_nom(
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
-	assign chr.addr[12:0]	= ppu.addr[12:0];
+	assign chr.addr[11:0]	= ppu.addr[11:0];
+	assign chr.addr[13:12] 	= ppu.addr[12] ? chr_bank[1:0] : 0;
 
 	
 	//A10-Vmir, A11-Hmir
@@ -67,13 +69,19 @@ module map_nom(
 	
 	assign mao.irq				= 0;
 //************************************************************* mapper implementation
+
+	reg [1:0]chr_bank;
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
-	
-	reg [20:0]ctr;
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0)chr_bank[1:0] <= sst.dato[1:0];
 	end
+		else
+	if(cpu.addr[15] & !cpu.rw)
+	begin
+		chr_bank[1:0] <= cpu.data[1:0];
+	end
+
 	
 endmodule

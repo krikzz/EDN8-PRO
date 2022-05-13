@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_034(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -43,6 +43,9 @@ module map_nom(
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] =
+	sst.addr[7:0] == 0 ? prg_reg : 
+	sst.addr[7:0] == 1 ? chr0 : 
+	sst.addr[7:0] == 2 ? chr1 : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
@@ -54,11 +57,14 @@ module map_nom(
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
 	assign prg.addr[14:0]	= cpu.addr[14:0];
+	assign prg.addr[18:15] 	= !cpu.addr[15] ? 0 : prg_reg[3:0];
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
-	assign chr.addr[12:0]	= ppu.addr[12:0];
+	assign chr.addr[11:0]	= ppu.addr[11:0];
+	assign chr.addr[12] 		= cfg.chr_ram ? ppu.addr[12] : chr_reg[0];
+	assign chr.addr[16:13] 	= chr_reg[4:1];
 
 	
 	//A10-Vmir, A11-Hmir
@@ -68,12 +74,38 @@ module map_nom(
 	assign mao.irq				= 0;
 //************************************************************* mapper implementation
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
+	reg [3:0]prg_reg;
+	reg [4:0]chr0;
+	reg [4:0]chr1;
 	
-	reg [20:0]ctr;
+	wire [4:0]chr_reg = !ppu.addr[12] ? chr0[4:0] : chr1[4:0];
+	
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0)prg_reg 	<= sst.dato[1:0];
+		if(sst.we_reg & sst.addr[7:0] == 1)chr0 		<= sst.dato[1:0];
+		if(sst.we_reg & sst.addr[7:0] == 2)chr1 		<= sst.dato[1:0];
 	end
+		else
+	if(mai.map_rst)
+	begin
+		prg_reg <= 0;
+	end
+		else
+	if(cfg.chr_ram == 1 & cpu.addr[15] == 1 & !cpu.rw)
+	begin
+		prg_reg[3:0] <= cpu.data[3:0];
+	end
+		else
+	if(cfg.chr_ram == 0 & cpu.addr[15] == 0 & !cpu.rw)
+	begin
+		if(cpu.addr[14:0] == 15'h7FFD)prg_reg[3:0] 	<= cpu.data[3:0];
+			else
+		if(cpu.addr[14:0] == 15'h7FFE)chr0[4:0] 		<= cpu.data[4:0];
+			else
+		if(cpu.addr[14:0] == 15'h7FFF)chr1[4:0] 		<= cpu.data[4:0];
+	end
+
 	
 endmodule

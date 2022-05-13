@@ -1,12 +1,14 @@
 
-`include "../base/defs.v"
 
-module snd_mmc5
-(bus, vol);
-
-	`include "../base/bus_in.v"
+module snd_mmc5(
 	
-	output [9:0]vol;
+	input  CpuBus cpu,
+	input  map_rst,
+	output [9:0]vol
+);
+	
+	assign vol[9:0] = {snd_p1, 4'd0} + {snd_p2, 4'd0} + pcm;
+	
 	
 	reg l_clk;
 	reg e_clk;
@@ -15,54 +17,87 @@ module snd_mmc5
 	reg [15:0]frame_ctr;
 	
 	
-	always @(negedge m2)
-	if(map_rst)cfg <= 0;
+	always @(negedge cpu.m2)
+	if(map_rst)
+	begin
+		cfg <= 0;
+	end
 		else
 	begin
 		
-		if(cpu_addr[14:0] == 15'h5011 & cpu_ce)pcm[7:0] <= cpu_dat[7:0];
+		if(cpu.addr[14:0] == 15'h5011 & !cpu.addr[15])pcm[7:0] <= cpu.data[7:0];
 		
-		if(cpu_addr[14:0] == 15'h5015 & cpu_ce)cfg[1:0] <= cpu_dat[1:0];
+		if(cpu.addr[14:0] == 15'h5015 & !cpu.addr[15])cfg[1:0] <= cpu.data[1:0];
 		
 		frame_ctr <= frame_ctr == 29828+1 ? 0 : frame_ctr + 1;
 		
-		if(frame_ctr == 7457)e_clk <= 1;
-		if(frame_ctr == 14912)e_clk <= 1;
-		if(frame_ctr == 22370)e_clk <= 1;
-		if(frame_ctr == 29828)e_clk <= 1;
+		if(frame_ctr == 7457)e_clk 	<= 1;
+		if(frame_ctr == 14912)e_clk 	<= 1;
+		if(frame_ctr == 22370)e_clk 	<= 1;
+		if(frame_ctr == 29828)e_clk 	<= 1;
 		
-		if(frame_ctr == 14912)l_clk <= 1;
-		if(frame_ctr == 29828)l_clk <= 1;
+		if(frame_ctr == 14912)l_clk 	<= 1;
+		if(frame_ctr == 29828)l_clk 	<= 1;
 		
-		if(e_clk)e_clk <= 0;
+		if(e_clk)e_clk	<= 0;
 		if(l_clk)l_clk <= 0;
+		
 	end
 	
-	wire puls_ce_1 = cpu_addr[14:2] == 13'h1400;
+	
+	wire puls_ce_1 = cpu.addr[14:2] == 13'h1400;
 	wire [3:0]snd_p1;
-	pulse pulse_1(cpu_dat, cpu_addr[1:0], cpu_rw, puls_ce_1, !m2, e_clk, e_clk, snd_p1, cfg[0], l_ctr_nz, 1);
 	
-	wire puls_ce_2 = cpu_addr[14:2] == 13'h1401;
+	pulse pulse_1(
+	
+		.cpu_dat(cpu.data),
+		.cpu_addr(cpu.addr[1:0]),
+		.cpu_rw(cpu.rw),
+		.reg_ce(puls_ce_1),
+		.cpu_clk(!cpu.m2),
+		.l_clk(e_clk),
+		.e_clk(e_clk),
+		.on(cfg[0]),
+		.snd(snd_p1)
+	);
+	
+	
+	wire puls_ce_2 = cpu.addr[14:2] == 13'h1401;
 	wire [3:0]snd_p2;
-	pulse pulse_2(cpu_dat, cpu_addr[1:0], cpu_rw, puls_ce_2, !m2, e_clk, e_clk, snd_p2, cfg[1], l_ctr_nz, 0);
-
-
 	
-	assign vol[9:0] = {snd_p1, 4'd0} + {snd_p2, 4'd0} + pcm;
+	pulse pulse_2(
+	
+		.cpu_dat(cpu.data),
+		.cpu_addr(cpu.addr[1:0]),
+		.cpu_rw(cpu.rw),
+		.reg_ce(puls_ce_2),
+		.cpu_clk(!cpu.m2),
+		.l_clk(e_clk),
+		.e_clk(e_clk),
+		.on(cfg[1]),
+		.snd(snd_p2)
+	);
 	
 endmodule
 
 
 
-module pulse
-(cpu_dat, cpu_addr, cpu_rw, reg_ce, cpu_clk, l_clk, e_clk, snd, on, l_ctr_nz, sube);
+module pulse(
 
-	input [7:0]cpu_dat;
-	input [1:0]cpu_addr;
-	input cpu_rw, reg_ce, cpu_clk, l_clk, e_clk;
-	output [3:0]snd;
-	input sube, on;
-	output l_ctr_nz;
+	input [7:0]cpu_dat,
+	input [1:0]cpu_addr,
+	input cpu_rw, 
+	input reg_ce, 
+	input cpu_clk, 
+	input l_clk,
+	input e_clk,
+	input on,
+	
+	output [3:0]snd
+);
+
+
+	
 	
 	reg [7:0]puls_cfg[4];
 	reg [7:0]len_ctr;
@@ -102,7 +137,6 @@ module pulse
 	wire regs_we2 = regs_we & cpu_addr == 2;
 	wire regs_we3 = regs_we & cpu_addr == 3;
 	
-	assign l_ctr_nz = len_ctr != 0;
 	reg swp_reload;
 	wire lock_len_reload = len_ctr != 0 & l_clk;
 	//sweep: freq inc/dec
@@ -136,22 +170,7 @@ module pulse
 		if(l_clk)
 		begin
 		
-			
 			if(len_ctr != 0 & !env_cfg[5])len_ctr <= len_ctr - 1;
-			
-			
-			
-			/*if(swp_reload)swp_pctr[2:0] <= swp_cfg[6:4];
-				else
-			if(swp_pctr != 0)swp_pctr <= swp_pctr - 1;
-				else
-			begin
-				swp_pctr[2:0] <= swp_cfg[6:4];
-				if(swp_cfg[7] & !regs_we & !swp_over) {swp_over, puls_cfg[3][2:0], puls_cfg[2][7:0]} <= 
-				swp_cfg[3] ? (timer - (timer >> swp_cfg[2:0])) - sube : timer + (timer >> swp_cfg[2:0]);
-			end
-			
-			if(swp_reload)swp_reload <= 0;*/
 		end		
 //***************************************************************************	envelope frame	
 		//envelope/linear ctr
@@ -188,7 +207,7 @@ module pulse
 	end
 	
 	
-	wire [4:0]l_ctr_in = cpu_dat[7:3];// puls_cfg[3][7:3];
+	wire [4:0]l_ctr_in = cpu_dat[7:3];
 	wire [7:0]len_ctr_val = 
 	l_ctr_in == 6'h01 ? 254 : 
 	l_ctr_in == 6'h0A ? 60 : 

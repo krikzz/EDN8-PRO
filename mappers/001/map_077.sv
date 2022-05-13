@@ -1,5 +1,5 @@
 
-module map_nom(
+module map_077(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -42,38 +42,56 @@ module map_nom(
 	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
-	assign mao.sst_di[7:0] =
+	assign mao.sst_di[7:0] = 
+	sst.addr[7:0] == 0 	? {chr_reg[3:0], prg_reg[3:0]} : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
-	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
-	assign srm.oe				= cpu.rw;
-	assign srm.we				= !cpu.rw;
+	assign srm.ce				= 0;
+	assign srm.oe				= 0;
+	assign srm.we				= 0;
 	assign srm.addr[12:0]	= cpu.addr[12:0];
 	
 	assign prg.ce				= cpu.addr[15];
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
 	assign prg.addr[14:0]	= cpu.addr[14:0];
+	assign prg.addr[18:15] 	= prg_reg[3:0];
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
-	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
-	assign chr.addr[12:0]	= ppu.addr[12:0];
+	assign chr.we 				= !ppu.we & chr_ram_ce;
+	assign chr.addr[10:0]	= ppu.addr[10:0];
+	assign chr.addr[14:11] 	= !chr_ram_ce ? chr_reg[3:0] : {2'b00, ppu.addr[12:11]};
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
-	assign mao.ciram_ce 		= !ppu.addr[13];
+	assign mao.ciram_a10 	= ppu.addr[10];
+	assign mao.ciram_ce 		= ppu.addr[13] == 1 & ppu.addr[11] == 1 ? 0 : 1;
 	
 	assign mao.irq				= 0;
+	assign mao.chr_xram_ce	= chr_ram_ce;
 //************************************************************* mapper implementation
+
+	wire nt_ram 		= ppu.addr[13] == 1 & ppu.addr[11] == 0; 
+	wire ch_ram 		= ppu.addr[13] == 0 & ppu.addr[12:11] != 0;
+	wire chr_ram_ce 	= nt_ram | ch_ram;
+		
 	
-	assign mao.led 			= ctr[20];//blinking led indicates unsupported mapper
+	reg [3:0]prg_reg;
+	reg [3:0]chr_reg;
 	
-	reg [20:0]ctr;
 	always @(negedge cpu.m2)
+	if(sst.act)
 	begin
-		ctr <= ctr + 1;
+		if(sst.we_reg & sst.addr[7:0] == 0){chr_reg[3:0], prg_reg[3:0]} <= sst.dato[7:0];
 	end
+		else
+	if(cpu.addr[15] & !cpu.rw)
+	begin
+		
+		prg_reg[3:0] <= cpu.data[3:0];
+		chr_reg[3:0] <= cpu.data[7:4];
 	
+	end
+
 endmodule

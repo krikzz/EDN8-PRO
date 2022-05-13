@@ -20,11 +20,11 @@ namespace map_refractor
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
                 //loadDir("E:\\projects\\EDN8-PRO\\mappers");
-                loadDir("C:\\Users\\igor\\Desktop\\mappers");
+                loadDir("C:\\Users\\igor\\Desktop\\005");
             }
-            catch(Exception x)
+            catch (Exception x)
             {
-                Console.WriteLine("ERROR: "+x.Message); 
+                Console.WriteLine("ERROR: " + x.Message);
             }
         }
 
@@ -36,7 +36,7 @@ namespace map_refractor
 
             string[] dirs = Directory.GetDirectories(path);
 
-            for(int i = 0;i < dirs.Length; i++)
+            for (int i = 0; i < dirs.Length; i++)
             {
                 loadDir(dirs[i]);
             }
@@ -50,50 +50,41 @@ namespace map_refractor
 
         }
 
+
         static void loadFile(string path)
         {
-            /*
-             string[] targets =
-             {
-                 "reg_idx", "ss_addr",
-                 "ss_active", "ss_act",
-                 "map_regs_we", "ss_we",
-                 "ss_din", "ss_rdat",
-                 "map_cfg[7]", "cfg_chr_ram",
-                 "map_cfg[0]", "cfg_mir_v"
-             };*/
-            /*
-            string[] targets =
-            {
-                "[22", "[22",
-                "[21", "[21"
-            };*/
-
-            /*
-            string[] targets =
-            {
-                "assign mask_off = 0;", "",
-                "assign mask_off = 1;", "",
-            };*/
 
             string[] targets =
             {
-                "srm_size", "",
+                "negedge m2", "negedge cpu.m2",
+                "ss_act", "sst.act",
+                "assign ss_rdat", "assign mao.sst_di",
+                "ss_we", "sst.we_reg",
+                "ss_addr", "sst.addr",
+                "cpu_addr", "cpu.addr",
+                "ppu_addr", "ppu.addr",
+                "(map_rst)", "(mai.map_rst)",
+                "cfg_map_idx", "cfg.map_idx",
+                "cpu_rw", "cpu.rw",
+                "cfg_chr_ram", "cfg.chr_ram",
+                //"map_sub", "cfg.map_sub",
+                //"map_idx", "cfg.map_idx",
+                "!cpu_ce", "cpu.addr[15]",
             };
 
             if (!path.EndsWith(".v")) return;
 
             string code = File.ReadAllText(path);
 
-            for(int i = 0; i < targets.Length; i += 2)
+            for (int i = 0; i < targets.Length; i += 2)
             {
-                if (!code.Contains(targets[i]))continue;
+                if (!code.Contains(targets[i])) continue;
 
-               // code = code.Replace(targets[i], targets[i + 1]);
-                Console.WriteLine("refract: " + path + ": "+ targets[i]);
+                code = code.Replace(targets[i], targets[i + 1]);
+                Console.WriteLine("refract: " + path + ": " + targets[i]);
             }
 
-            //File.WriteAllText(path, code);
+            File.WriteAllText(path, code);
 
             //Console.WriteLine("scan file: " + path);
         }
