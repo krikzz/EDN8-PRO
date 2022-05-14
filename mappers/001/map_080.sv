@@ -55,7 +55,7 @@ module map_080(
 	assign srm.ce				= {cpu.addr[15:8], 8'd0} == 16'h7F00 & ram_on;
 	assign srm.oe				= cpu.rw;
 	assign srm.we				= !cpu.rw;
-	assign srm.addr[12:0]	= cpu.addr[12:0];
+	assign srm.addr[6:0]		= cpu.addr[6:0];
 	
 	assign prg.ce				= cpu.addr[15];
 	assign prg.oe 				= cpu.rw;

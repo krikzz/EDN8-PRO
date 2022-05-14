@@ -1,5 +1,5 @@
 
-module map_024(
+module map_085(
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -44,14 +44,15 @@ module map_024(
 //************************************************************* save state regs read
 	assign mao.sst_di[7:0] =
 	{sst.addr[7:3], 3'd0} == 0 ? chr_reg[sst.addr[2:0]][7:0] :
-	sst.addr[7:0] == 16 ? prg_reg[0][7:0] :
-	sst.addr[7:0] == 17 ? prg_reg[1][7:0] :
-	sst.addr[7:0] == 18 ? {mir_mode[1:0]} :
-	sst.addr[7:0] == 32 ? irq_ss :
-	sst.addr[7:0] == 33 ? irq_ss :
-	sst.addr[7:0] == 34 ? irq_ss :
-	sst.addr[7:0] == 35 ? irq_ss :
-	sst.addr[7:0] == 36 ? irq_ss :
+	sst.addr[7:0] == 16 	? prg_reg[0][7:0] :
+	sst.addr[7:0] == 17 	? prg_reg[1][7:0] :
+	sst.addr[7:0] == 18 	? {audio_mute, mir_mode[1:0]} :
+	sst.addr[7:0] == 19 	? prg_reg[2][7:0] :
+	sst.addr[7:0] == 32 	? irq_ss :
+	sst.addr[7:0] == 33 	? irq_ss :
+	sst.addr[7:0] == 34 	? irq_ss :
+	sst.addr[7:0] == 35 	? irq_ss :
+	sst.addr[7:0] == 36 	? irq_ss :
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
 	assign srm.ce				= {cpu.addr[15:13], 13'd0} == 16'h6000;
@@ -63,68 +64,83 @@ module map_024(
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
 	assign prg.addr[12:0]	= cpu.addr[12:0];
-	assign prg.addr[20:13]	= 
-	{cpu.addr[15:13],13'd0} == 16'hc000 ? prg_reg[1][7:0] :
-	{cpu.addr[15:13],13'd0} == 16'he000 ? 8'hff :
-	{prg_reg[0][6:0], cpu.addr[13]};
+	assign prg.addr[20:13] 	=
+	cpu.addr[14:13] == 0 ? prg_reg[0] :
+	cpu.addr[14:13] == 1 ? prg_reg[1] :
+	cpu.addr[14:13] == 2 ? prg_reg[2] : 8'hFF;
 	
 	assign chr.ce 				= mao.ciram_ce;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
 	assign chr.addr[9:0]		= ppu.addr[9:0];
-	assign chr.addr[17:10] 	= chr_map[7:0];
+	assign chr.addr[17:10] 	= chr_reg[ppu.addr[12:10]][7:0];
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= mir_mode[1] ? mir_mode[0] : !mir_mode[0] ? ppu.addr[10] : ppu.addr[11];
+	assign mao.ciram_a10 	= 
+	mir_mode[1:0] == 0 ? ppu.addr[10] : 
+	mir_mode[1:0] == 1 ? ppu.addr[11] : 
+	mir_mode[1:0] == 2 ? 0 : 1;
+	
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= irq_pend;
-	assign mao.snd[15:0]		= {snd_vol[6:0], 9'd0};
+	assign mao.snd[15:0]		= {vol[10:0], 5'd0};
 //************************************************************* mapper implementation
-	wire [1:0]reg_map24 	= cpu.addr[3:2] == 0 ?  cpu.addr[1:0] : cpu.addr[3:2];
-	wire [1:0]reg_map26 	= cpu.addr[3:2] == 0 ? {cpu.addr[0], cpu.addr[1]} : {cpu.addr[2], cpu.addr[3]};
-	wire [1:0]reg_mapxx	= cfg.map_idx == 24 ? reg_map24[1:0] : reg_map26[1:0];
-	wire [15:0]reg_addr 	= {cpu.addr[15:12], 10'd0, reg_mapxx[1:0]};
 
-
-	wire [7:0]chr_map = chr_reg[ppu.addr[12:10]];
+	wire [15:0]reg_addr = {cpu.addr[15:5], cpu.addr[4] | cpu.addr[3], 1'b0, cpu.addr[2:0]};
 	
-
-	reg [7:0]prg_reg[2];
+	
+	reg [7:0]prg_reg[3];
 	reg [7:0]chr_reg[8];
 	reg [1:0]mir_mode;
-
+	reg audio_mute;
 	
+
 	always @(negedge cpu.m2)
 	if(sst.act)
 	begin
-		if(sst.we_reg & {sst.addr[7:3], 3'd0} == 0)chr_reg[sst.addr[2:0]][7:0] <= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 16)prg_reg[0][7:0] <= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 17)prg_reg[1][7:0] <= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 18){mir_mode[1:0]} <= sst.dato[1:0];
+		if(sst.we_reg & sst.addr[7:3] == 0)chr_reg[sst.addr[2:0]][7:0] <= sst.dato[7:0];
+		if(sst.we_reg & sst.addr == 16)prg_reg[0][7:0] 						<= sst.dato[7:0];
+		if(sst.we_reg & sst.addr == 17)prg_reg[1][7:0] 						<= sst.dato[7:0];
+		if(sst.we_reg & sst.addr == 18){audio_mute, mir_mode[1:0]} 		<= sst.dato[2:0];
+		if(sst.we_reg & sst.addr == 19)prg_reg[2][7:0] 						<= sst.dato[7:0];
 	end
 		else
 	if(mai.map_rst)
 	begin
-		prg_reg[1] 	<= 1;
-		prg_reg[0] 	<= 0;
-		mir_mode 	<= 0;
+		chr_reg[0] <= 0;
+		chr_reg[1] <= 1;
+		chr_reg[2] <= 2;
+		chr_reg[3] <= 3;
+		chr_reg[4] <= 4;
+		chr_reg[5] <= 5;
+		chr_reg[6] <= 6;
+		chr_reg[7] <= 7;
+		mir_mode <= 0;
+		audio_mute <= 1;
 	end
 		else
 	if(!cpu.rw)
-	begin
-
-		if({cpu.addr[15:12], 12'd0} == 16'h8000)prg_reg[0][7:0] 	<= cpu.data[7:0];
-		if({cpu.addr[15:12], 12'd0} == 16'hC000)prg_reg[1][7:0] 	<= cpu.data[7:0];
+	case(reg_addr[15:0])
+	
+		16'h8000:prg_reg[0] <= cpu.data[5:0];
+		16'h8010:prg_reg[1] <= cpu.data[5:0];
+		16'h9000:prg_reg[2] <= cpu.data[5:0];
 		
-		if(reg_addr[15:0] == 16'hB003)mir_mode[1:0] <= cpu.data[3:2];
+		16'hA000:chr_reg[0] <= cpu.data[7:0];
+		16'hA010:chr_reg[1] <= cpu.data[7:0];
+		16'hB000:chr_reg[2] <= cpu.data[7:0];
+		16'hB010:chr_reg[3] <= cpu.data[7:0];
 		
-		if({reg_addr[15:2], 2'd0} == 16'hD000)chr_reg[{1'b0, reg_addr[1:0]}][7:0] <= cpu.data[7:0];
-		if({reg_addr[15:2], 2'd0} == 16'hE000)chr_reg[{1'b1, reg_addr[1:0]}][7:0] <= cpu.data[7:0];
-
-	end
-
+		16'hC000:chr_reg[4] <= cpu.data[7:0];
+		16'hC010:chr_reg[5] <= cpu.data[7:0];
+		16'hD000:chr_reg[6] <= cpu.data[7:0];
+		16'hD010:chr_reg[7] <= cpu.data[7:0];
+		
+		16'hE000:{audio_mute, mir_mode[1:0]} <= {cpu.data[6], cpu.data[1:0]};
+		
+	endcase
 	
 	
 	wire irq_pend;
@@ -136,9 +152,9 @@ module map_024(
 		.cpu_m2(cpu.m2),
 		.cpu_rw(cpu.rw),
 		.map_rst(mai.map_rst),
-		.ce_latx(reg_addr == 16'hF000),
-		.ce_ctrl(reg_addr == 16'hF001),
-		.ce_ackn(reg_addr == 16'hF002),
+		.ce_latx(reg_addr == 16'hE010),
+		.ce_ctrl(reg_addr == 16'hF000),
+		.ce_ackn(reg_addr == 16'hF010),
 		
 		.irq(irq_pend),
 		
@@ -147,18 +163,25 @@ module map_024(
 	);
 	
 	
-
-
-	wire [6:0]snd_vol;
 	
-	snd_vrc6 snd_inst(
 	
-		.cpu(cpu),
-		.chr_reg_addr(reg_addr[1:0]),
-		.map_rst(mai.map_rst),
-
-		.snd_vol(snd_vol)
+	wire [10:0]vol;	
+	
+	ym2413_audio ym2413_inst(
+	
+		.clk(cpu.m2),
+		.res_n(!mai.map_rst),
+		.cpu_d(cpu.data),
+		.cpu_a(cpu.addr[14:0]),
+		.cpu_ce_n(!cpu.addr[15]),
+		.cpu_rw(cpu.rw),
+		
+		.audio_clk(mai.clk),
+		.audio_out(vol[10:0]),
+		
+		.instrument_set(audio_mute)
 	);
 
+	
 	
 endmodule

@@ -137,6 +137,7 @@ typedef struct{
 	bit [9:0]prg_msk;
 	bit [9:0]chr_msk;
 	bit [10:0]srm_msk;
+	bit [1:0]fds_msk;
 	bit [7:0]master_vol;
 	bit [7:0]ss_key_save;
 	bit [7:0]ss_key_load;

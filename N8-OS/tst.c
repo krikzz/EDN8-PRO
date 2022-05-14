@@ -34,19 +34,6 @@ u8 app_diagnostics() {
 
     u8 resp;
 
-    //gCleanScreen();
-    //gSetY(G_SCREEN_H / 2);
-
-    gCleanScreen();
-    gSetY(G_SCREEN_H / 2 - 4);
-    gConsPrintCX("Mass graphics glitches will");
-    gConsPrintCX("shown during the test");
-    gConsPrintCX("This is normal");
-    gConsPrintCX("");
-    gConsPrintCX("Press any key to begin");
-    gRepaint();
-    sysJoyWait();
-
     gCleanScreen();
     gConsPrint("EverDrive N8 diagnostics menu");
     gFillRect('-', G_BORDER_X, gGetY() + 1, MAX_STR_LEN, 1);

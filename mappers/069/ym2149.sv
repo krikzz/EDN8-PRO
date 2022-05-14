@@ -15,7 +15,7 @@ audio_clk, audio_out, map_enable);
 
 	input				phi_2;
 	
-	inout [7:0]		cpu_d;
+	input [7:0]		cpu_d;
 	input [14:10]	cpu_a;
 	input				cpu_ce_n;
 	input				cpu_rw;

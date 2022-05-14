@@ -49,7 +49,7 @@ module sys_cfg(
 	assign cfg.map_sub[3:0]			= map_cfg[7:4];
 	
 	assign cfg.srm_size[18:0]		= (1'b1 << prg_mask[7:4]) << 7;//exact ram size detection. Used for some eeprom mappers and mmc5
-
+	assign cfg.fds_msk[1:0]			= cfg.prg_msk[4:3];
 	
 //************************************************************* config r/w
 	assign pi_di[7:0] = scfg[pi.addr[3:0]];

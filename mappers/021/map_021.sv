@@ -84,15 +84,15 @@ module map_021(
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= irq_pend & vrc4;
-//************************************************************* mapper implementation
 	assign int_cpu_oe 		= cpu.rw & vrc2_latch_ce;
 	assign int_cpu_data 		= {cpu.addr[15:9], vrc2_latch};
-	
-
+//************************************************************* mapper implementation
 	wire vrc2 					= cfg.map_idx == 22 | (cfg.map_sub == 3 & (cfg.map_idx == 23 | cfg.map_idx == 25));
 	wire vrc4					= !vrc2;
 	
+	wire vrc2_latch_ce 		= {cpu.addr[15:12], 12'd0} == 16'h6000 & cfg.prg_ram_off & vrc2;
 	
+//----------------- mapper address wiring
 	wire [1:0]reg_map21_s0 	= cpu.addr[7:6] == 0 ? {cpu.addr[2], cpu.addr[1]} : {cpu.addr[7], cpu.addr[6]};
 	wire [1:0]reg_map21_s1 	= cpu.addr[2:1];
 	wire [1:0]reg_map21_s2 	= cpu.addr[7:6];
@@ -115,10 +115,8 @@ module map_021(
 	cfg.map_idx == 22 ? reg_map22[1:0] : 
 	cfg.map_idx == 25 ? reg_map25[1:0] : reg_map23[1:0];
 	
-	wire [15:0]reg_addr = {cpu.addr[15:12], 8'd0, 2'd0, reg_map[1:0]};
-	
-	
-	wire vrc2_latch_ce = {cpu.addr[15:12], 12'd0} == 16'h6000 & cfg.prg_ram_off & vrc2;
+	wire [15:0]reg_addr 		= {cpu.addr[15:12], 8'd0, 2'd0, reg_map[1:0]};
+//-----------------	
 	
 	reg [8:0]chr_reg[8];
 	reg [7:0]prg_reg[2];
@@ -188,14 +186,19 @@ module map_021(
 	
 	irq_vrc irq_vrc_inst(
 		
-		.cpu(cpu),
-		.sst(sst),
-		.reg_addr(reg_addr),
-		.map_idx(cfg.map_idx),
+		.cpu_data(cpu.data[7:0]),
+		.cpu_m2(cpu.m2),
+		.cpu_rw(cpu.rw),
 		.map_rst(mai.map_rst),
+		.ce_latl(reg_addr == 16'hF000),
+		.ce_lath(reg_addr == 16'hF001),
+		.ce_ctrl(reg_addr == 16'hF002),
+		.ce_ackn(reg_addr == 16'hF003),
 		
 		.irq(irq_pend),
-		.ss_dout(irq_ss),
+		
+		.sst(sst),
+		.ss_dout(irq_ss)
 	);
 	
 	

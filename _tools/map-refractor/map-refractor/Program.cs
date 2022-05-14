@@ -20,7 +20,7 @@ namespace map_refractor
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
                 //loadDir("E:\\projects\\EDN8-PRO\\mappers");
-                loadDir("C:\\Users\\igor\\Desktop\\005");
+                loadDir("C:\\Users\\igor\\Desktop\\007");
             }
             catch (Exception x)
             {
