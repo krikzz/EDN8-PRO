@@ -1,0 +1,1 @@
+Alternate FDS bios can be stored in this folder. System will look disksys.rom file and will use it for FDS if exists.

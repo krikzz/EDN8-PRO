@@ -57,14 +57,16 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 
 после релиза ос 2.12 сделать рефакторинг кода в систем верилог
 опция переклчателя для чемпионшип картриджа (105 маппер)
-сделать ммц3 согласно схемы реверс инжениринга MMC3C_schematics
++сделать ммц3 согласно схемы реверс инжениринга MMC3C_schematics
 добавить возможность отключения чита и добавить читы в ин-гейм меню
 добавить в ио ядро коекакие функции для ускорения работы с диском (fileAvaiable etc)?
 посмотреть ромы 198 в 05_dbg
 не работает мапер 90 на нт мини. попробовать его потестить на разных клонах
 доработать дма контроллер чтобы не отключался рендеринг если нет доступа в chr
 
-n8 pro I have tested over 900 nes roms. All the official and unofficial games work great with certain roms and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
+n8 pro I have tested over 900 nes roms. 
+All the official and unofficial games work great with certain roms 
+and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
 
 Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
 почему то срабатывали комбинации быстрых сохранений когда играли на вдвоем в s.c.a.t. (вперед+старт) и в кризис форс
@@ -86,7 +88,7 @@ https://github.com/krikzz/EDN8-PRO/pull/2
 сделать обновление регистров на чтение по фронту м2?
 
 не забыть включить зфук, читы и тд
-сделать чтобы в файл инфо было видно размер файлов если он меньше килобайта
++сделать чтобы в файл инфо было видно размер файлов если он меньше килобайта
 добавить функции копирования и переноса файла в ио ядро
 пофиксить negedge clk в ммц5
 в мапере гимика убрать аудио клок и заменить на м2. проверить не нужно сделать такое же в ларанж поинте

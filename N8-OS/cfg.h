@@ -17,21 +17,22 @@
 #define REGI_VER        1       //can be used for registry reset forcing
 
 #define PATH_OS         "EDN8/nesos.nes"
-#define PATH_MAP        "EDN8/MAPS"
+#define PATH_MAP        "EDN8/maps"
 #define PATH_MAPROUT    "EDN8/MAPROUT.BIN"
-#define PATH_REGISTRY   "EDN8/registery.bin"
+#define PATH_NSF_PLAYER "EDN8/syscore/n8nsf.nes"
+#define PATH_UPD_FPGA   "EDN8/syscore/menu-fpg.bin"
+#define PATH_UPD_MENU   "EDN8/syscore/menu-cpu.bin"
+#define PATH_UPD_IOCORE "EDN8/syscore/iocore.bin"
+#define PATH_REGISTRY   "EDN8/sysdata/registry.bin"
+#define PATH_RECENT     "EDN8/sysdata/recent.bin"
+#define PATH_RAMDUMP    "EDN8/sysdata/ramdump01.srm"
+#define PATH_TESTFILE   "EDN8/sysdata/tstfile01.bin"
+#define PATH_FDS_BIOS   "EDN8/sysdata/disksys.rom"
 #define PATH_SAVE_DIR   "EDN8/SAVE"
 #define PATH_SNAP_DIR   "EDN8/SNAP"
 #define PATH_CHEATS     "EDN8/CHEATS"
-#define PATH_RECENT     "EDN8/recent.bin"
-#define PATH_RAMDUMP    "EDN8/ramdump01.srm"
-#define PATH_TESTFILE   "EDN8/tstfile01.bin"
 #define PATH_SDC_FILE   "EDN8/MAPS/255.RBF"
-#define PATH_NSF_PLAYER "EDN8/n8nsf.nes"
-#define PATH_UPD_FPGA   "EDN8/UPDATE/menu-fpg.bin"
-#define PATH_UPD_MENU   "EDN8/UPDATE/menu-cpu.bin"
-#define PATH_UPD_IOCORE "EDN8/UPDATE/iocore.bin"
-#define PATH_FDS_BIOS   "EDN8/disksys.rom"
+
 #define PATH_DEF_GAME   "default-game.nes"
 
 #define G_SCREEN_W      32

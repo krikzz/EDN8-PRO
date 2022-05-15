@@ -1,0 +1,1 @@
+System setting will be reset to default if all files in this folder will be removed

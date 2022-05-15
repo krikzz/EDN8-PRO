@@ -42,16 +42,19 @@ namespace nesbuild
         {
 
             Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8");
-            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/MAPS");
-            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/SAVE");
-            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/SNAP");
-            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/CHEATS");
+            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/maps");
+            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/gamedata");
+            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/sysdata");
+            Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/syscore");
+            //Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/SAVE");
+            //Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/SNAP");
+            //Directory.CreateDirectory("E:/projects/EDN8-PRO/EDN8/CHEATS");
 
-            File.Delete("E:/projects/EDN8-PRO/EDN8/MAPROUT.BIN");
-            File.Copy("E:/projects/EDN8-PRO/mappers/MAPROUT.BIN", "E:/projects/EDN8-PRO/EDN8/MAPROUT.BIN");
+            File.Copy("E:/projects/EDN8-PRO/mappers/MAPROUT.BIN", "E:/projects/EDN8-PRO/EDN8/MAPROUT.BIN", true);
 
-            File.Delete("E:/projects/EDN8-PRO/EDN8/n8nsf.nes");
-            File.Copy("E:/projects/EDN8-PRO/n8nsf/n8nsf.nes", "E:/projects/EDN8-PRO/EDN8/n8nsf.nes");
+            File.Copy("E:/projects/EDN8-PRO/modules/n8nsf/n8nsf.nes", "E:/projects/EDN8-PRO/EDN8/syscore/n8nsf.nes", true);
+
+            File.Copy("E:/projects/EDN8-PRO/sys-dist/iocore.bin", "E:/projects/EDN8-PRO/EDN8/syscore/iocore.bin", true);
 
             byte []mrout = loadMaprout();
 

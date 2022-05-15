@@ -1,0 +1,1 @@
+arm-io and arm boot should be splitted. currently both implemented in arm-io

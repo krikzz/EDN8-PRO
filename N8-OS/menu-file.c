@@ -555,8 +555,13 @@ u8 fileInfo(u8 *path) {
     *ptr = 0;
 
     vals[BINF_FILE_SIZE] = ptr;
-    ptr = str_append_num(ptr, finf.size / 1024);
-    ptr = str_append(ptr, "K");
+    if (finf.size < 1024) {
+        ptr = str_append_num(ptr, finf.size);
+        ptr = str_append(ptr, "B");
+    } else {
+        ptr = str_append_num(ptr, finf.size / 1024);
+        ptr = str_append(ptr, "K");
+    }
 
 
     *++ptr = 0;
