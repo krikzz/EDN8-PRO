@@ -15,6 +15,19 @@ u8 getRomInfo(RomInfo *inf, u8 *path) {
     return resp;
 }
 
+u8 romGetMapIDX(u8 *path, u16 *map_idx) {
+
+    u8 resp;
+    RomInfo inf;
+
+    resp = getRomInfo(&inf, path);
+    if (resp)return resp;
+
+    *map_idx = inf.mapper;
+
+    return 0;
+}
+
 #pragma codeseg ("BNK04")
 
 typedef struct {
@@ -23,8 +36,6 @@ typedef struct {
     u32 crc;
     u32 dat_base;
 } RomID;
-
-
 
 u8 romInfoFDS(RomInfo *inf, RomID *id);
 u8 getRomID(RomID *id, u8 *path);
@@ -60,7 +71,7 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
     inf->rom_type = ROM_TYPE_NES;
     inf->dat_base = id.dat_base;
     inf->crc = id.crc;
-
+ 
     inf->mapper = ((id.ines[6] >> 4) | (id.ines[7] & 0xf0));
     if ((id.ines[7] & 0x0C) == 0x08)inf->nes20 = 1;
 
@@ -98,6 +109,8 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
 
     if (inf->mapper == 30 && inf->bat_ram)inf->prg_save = 1;
     if (inf->mapper == 111)inf->prg_save = 1;
+
+    inf->jmp_size = jmpGetSize(inf->mapper);
 
     //should be in the end
     inf->supported = 1;

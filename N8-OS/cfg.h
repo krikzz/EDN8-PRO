@@ -37,7 +37,7 @@
 //game data files
 #define PATH_GD_SRAM    "bram.srm"
 #define PATH_GD_CHEAT   "cheats.txt"
-#define PATH_GD_SETUP   "setup.bin"
+#define PATH_GD_JUMPER  "jumper.bin"
 
 #define PATH_DEF_GAME   "default-game.nes"
 

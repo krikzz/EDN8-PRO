@@ -20,6 +20,7 @@ module sys_cfg(
 	wire [7:0]ss_key_load	= scfg[6][7:0];
 	wire [7:0]ctrl				= scfg[7][7:0];
 	wire [7:0]ss_key_menu	= scfg[8][7:0];
+	wire [7:0]jumper			= scfg[9][7:0];
 	
 	
 	
@@ -47,6 +48,8 @@ module sys_cfg(
 	assign cfg.chr_ram 				= map_cfg[2];
 	assign cfg.prg_ram_off 			= map_cfg[3];//check if it handled
 	assign cfg.map_sub[3:0]			= map_cfg[7:4];
+	
+	assign cfg.jumper[7:0]			= jumper[7:0];
 	
 	assign cfg.srm_size[18:0]		= (1'b1 << prg_mask[7:4]) << 7;//exact ram size detection. Used for some eeprom mappers and mmc5
 	assign cfg.fds_msk[1:0]			= cfg.prg_msk[4:3];

@@ -23,7 +23,6 @@ module map_hub
 	map_idx == 51  ? map_out_051 : //+
 	map_idx == 52  ? map_out_052 : //+
 	map_idx == 60  ? map_out_060 : //+ bad switch (map_rst??)
-	map_idx == 105 ? map_out_105 : //+
 	map_idx == 144 ? map_out_144 : //+ already implemented in map pack 001 ? 
 	map_idx == 177 ? map_out_177 : //+
 	map_idx == 197 ? map_out_197 : //+
@@ -63,9 +62,6 @@ module map_hub
 
 	wire [`BW_MAP_OUT-1:0]map_out_060;
 	map_060 m060(map_out_060, bus, sys_cfg, ss_ctrl);
-
-	wire [`BW_MAP_OUT-1:0]map_out_105;
-	map_105 m105(map_out_105, bus, sys_cfg, ss_ctrl);
 
 	wire [`BW_MAP_OUT-1:0]map_out_144; 
 	map_144 m144(map_out_144, bus, sys_cfg, ss_ctrl);

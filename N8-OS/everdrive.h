@@ -23,6 +23,7 @@
 #include "var.h"
 #include "fs.h"
 #include "ss_export.h"
+#include "jmp.h"
 
 
 #define CART_ID_PRO     0x17
@@ -37,7 +38,7 @@ typedef struct {
     u8 ss_key_save;
     u8 ss_key_load;
     u8 ss_key_menu;
-    u8 ss_recover; 
+    u8 ss_recover;
     u8 cheats;
     u8 swap_ab;
     u8 rst_delay;
@@ -87,8 +88,8 @@ extern SessionCFG *ses_cfg;
 u8 edInit(u8 sst_mode);
 void edRun();
 u8 edSelectGame(u8 *path, u8 recent_add);
-void edGetMapConfig(RomInfo *inf, MapConfig *cfg);
-u8 edApplyOptions(MapConfig *cfg);
+void edApplyRomInf(MapConfig *cfg, RomInfo *inf);
+void edApplyOptions(MapConfig *cfg);
 u8 edStartGame(u8 usb_mode);
 u8 edRegistrySave();
 void edGetMapPath(u8 map_pack, u8 *path);

@@ -12,6 +12,7 @@ u8 edVramBugHandler();
 u8 edLoadFdsBios();
 u8 edBramBackup();
 u8 edBramRestore();
+u8 edApplyGameData(MapConfig *cfg, RomInfo *inf, u8 *path);
 
 Registry *registry;
 SysInfo *sys_inf;
@@ -156,7 +157,7 @@ u8 edRegistryLoad() {
     if (registry->regi_ver != REGI_VER) {
         return ERR_REGI_CRC;
     }
-    
+
     return 0;
 }
 
@@ -251,7 +252,7 @@ u8 edSelectGame(u8 *path, u8 recent_add) {
     return 0;
 }
 
-void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
+void edApplyRomInf(MapConfig *cfg, RomInfo *inf) {
 
     mem_set(cfg, 0, sizeof (MapConfig));
 
@@ -262,12 +263,11 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
     cfg->chr_msk |= (inf->mapper & 0xf00) >> 4;
     cfg->map_idx = inf->mapper & 0xff;
 
-
     cfg->ss_key_menu = SS_COMBO_OFF;
     cfg->ss_key_save = SS_COMBO_OFF;
     cfg->ss_key_load = SS_COMBO_OFF;
     cfg->map_ctrl = MAP_CTRL_UNLOCK;
-    cfg->master_vol = volGetMasterVol(cfg->map_idx);
+
     if (sys_inf->mcu.cart_form) {
         cfg->map_ctrl |= MAP_CTRL_FAMI;
     }
@@ -282,7 +282,6 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
     if (inf->mir_mode == MIR_1SC)cfg->map_cfg |= MCFG_MIR_1;
 
     //forcing simple incremental swap method instead smart swap. Smart method may not work for some games
-
     if (inf->prg_size > SIZE_FDS_DISK * 2 && inf->rom_type == ROM_TYPE_FDS) {
         //during disk swap use increment disk mode instead of auto detecion for multi disk games.
         //seems like muulti disk gams does not actualy have correct disk number in file request header
@@ -291,16 +290,11 @@ void edGetMapConfig(RomInfo *inf, MapConfig *cfg) {
 
 }
 
-u8 edApplyOptions(MapConfig *cfg) {
+void edApplyOptions(MapConfig *cfg) {
 
-    u8 resp;
     Options *opt = &registry->options;
 
-    if (opt->cheats) {
-        resp = ggLoadCodes(&cfg->gg, registry->cur_game.path);
-        if (resp)return resp;
-        cfg->map_ctrl |= MAP_CTRL_GG_ON;
-    }
+    cfg->master_vol = volGetMasterVol(cfg->map_idx);
 
     if (opt->rst_delay) {
         cfg->map_ctrl |= MAP_CTRL_RDELAY;
@@ -308,23 +302,34 @@ u8 edApplyOptions(MapConfig *cfg) {
 
     if (opt->ss_mode) {
 
-
         cfg->ss_key_save = registry->options.ss_key_save;
         cfg->ss_key_load = registry->options.ss_key_load;
         cfg->ss_key_menu = registry->options.ss_key_menu;
 
         if (cfg->map_idx != MAP_IDX_FDS)cfg->map_ctrl |= MAP_CTRL_SS_BTN;
         cfg->map_ctrl |= MAP_CTRL_SS_ON;
-
-        /*
-        if (opt->ss_mode == SS_MOD_QSS) {
-            cfg->ss_key_load = registery->options.ss_key_load;
-        }
-         */
     }
 
     if (opt->fds_auto_swp && registry->cur_game.rom_inf.rom_type == ROM_TYPE_FDS) {
         cfg->map_cfg |= MCFG_FDS_ASW;
+    }
+
+}
+
+u8 edApplyGameData(MapConfig *cfg, RomInfo *inf, u8 *path) {
+
+    u8 resp;
+    Options *opt = &registry->options;
+
+    if (opt->cheats) {
+        resp = ggLoadCodes(&cfg->gg, path);
+        if (resp)return resp;
+        cfg->map_ctrl |= MAP_CTRL_GG_ON;
+    }
+
+    if (inf->jmp_size != 0) {
+        resp = jmpGetVal(path, inf->mapper, &cfg->jmp_val);
+        if (resp)return resp;
     }
 
     return 0;
@@ -383,19 +388,18 @@ u8 edStartGame(u8 usb_mode) {
         if (cur_game->prg_save) {
             ses_cfg->save_prg = 1;
         }
-
     }
 
-    edGetMapConfig(cur_game, cfg);
-    resp = edApplyOptions(cfg);
+    edApplyRomInf(cfg, cur_game);
+    edApplyOptions(cfg);
+    resp = edApplyGameData(cfg, cur_game, registry->cur_game.path);
     if (resp)return resp;
-
-    if (ext_bios)cfg->map_cfg |= MCFG_FDS_EBI;
+    
+    if (ext_bios) {
+        cfg->map_cfg |= MCFG_FDS_EBI;
+    }
 
     PPU_CTRL = 0x00;
-    //PPU_ADDR = 0x3f;
-    //PPU_ADDR = 0x00;
-    //PPU_DATA = 0x30;
 
     //apu initialize
     for (i = 0; i < 0x13; i++) {

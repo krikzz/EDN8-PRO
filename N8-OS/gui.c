@@ -190,10 +190,18 @@ void app_guiDrawListBox(ListBox *box) {
     u8 joy;
     u8 sel_dpd = box->selector & SEL_DPD;
     u8 sel_skip = box->selector == SEL_JSKIP;
+    u8 hidden_ctr = 0;
 
     box->selector &= ~SEL_DPD;
 
     while (box->items[items] != 0) {
+
+        if (box->items[items] == (void *) GUI_HIDE) {
+            hidden_ctr++;
+            items++;
+            continue;
+        }
+
         str_len = str_lenght(box->items[items]);
         if (max_str_len < str_len)max_str_len = str_len;
         items++;
@@ -202,8 +210,7 @@ void app_guiDrawListBox(ListBox *box) {
     str_len = str_lenght(box->hdr);
     if (max_str_len < str_len)max_str_len = str_len;
 
-    h = items * 2 + 1;
-
+    h = (items - hidden_ctr) * 2 + 1;
 
     while (1) {
 
@@ -211,6 +218,10 @@ void app_guiDrawListBox(ListBox *box) {
         guiDrawWindow(box->hdr, max_str_len, h);
 
         for (i = 0; i < items; i++) {
+
+            if (box->items[i] == (u8 *) GUI_HIDE) {
+                continue;
+            }
 
             if (box->selector == i) {
                 gSetPal(PAL_SEL1);
@@ -227,7 +238,7 @@ void app_guiDrawListBox(ListBox *box) {
             box->act = ACT_EXIT;
             return;
         }
-        
+
         joy = sysJoyWait();
 
         if (joy == JOY_A) {
@@ -235,7 +246,7 @@ void app_guiDrawListBox(ListBox *box) {
             return;
         }
 
-        if (joy == JOY_B) {
+        if (joy == JOY_B || joy == JOY_SEL) {
             box->act = ACT_EXIT;
             return;
         }
@@ -246,14 +257,20 @@ void app_guiDrawListBox(ListBox *box) {
         }
 
         if (joy == JOY_U) {
-            box->selector = box->selector == 0 ? items - 1 : box->selector - 1;
+            //box->selector = box->selector == 0 ? items - 1 : box->selector - 1;
+            for (i = 0; i < items; i++) {
+                box->selector = dec_mod(box->selector, items);
+                if (box->items[box->selector] != (void *) GUI_HIDE)break;
+            }
         }
 
         if (joy == JOY_D) {
-            box->selector = box->selector == items - 1 ? 0 : box->selector + 1;
+            //box->selector = box->selector == items - 1 ? 0 : box->selector + 1;
+            for (i = 0; i < items; i++) {
+                box->selector = inc_mod(box->selector, items);
+                if (box->items[box->selector] != (void *) GUI_HIDE)break;
+            }
         }
-
-
     }
 
 }

@@ -14,6 +14,7 @@
         <itemPath>game-db.h</itemPath>
         <itemPath>gfx.h</itemPath>
         <itemPath>gui.h</itemPath>
+        <itemPath>jmp.h</itemPath>
         <itemPath>rom-config.h</itemPath>
         <itemPath>saveram.h</itemPath>
         <itemPath>ss_export.h</itemPath>
@@ -34,6 +35,7 @@
       <itemPath>gfx.c</itemPath>
       <itemPath>gg.c</itemPath>
       <itemPath>gui.c</itemPath>
+      <itemPath>jmp.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>menu-file.c</itemPath>
       <itemPath>menu-main.c</itemPath>

@@ -13,6 +13,7 @@
 #define SEL_OFF         0xff
 #define SEL_JSKIP       0xfe
 #define SEL_DPD         0x80
+#define GUI_HIDE        ((u8*)0xffff)
 
 typedef struct {
     u8 *hdr;

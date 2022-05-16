@@ -33,10 +33,12 @@ typedef struct {
     u8 usb_game;
     u8 prg_save;
     u8 nes20;
+    u8 jmp_size;
 } RomInfo;
 
 
 u8 getRomInfo(RomInfo *inf, u8 *path);
+u8 romGetMapIDX(u8 *path, u16 *map_idx);
 
 #endif	/* ROM_INFO_H */
 

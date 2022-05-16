@@ -17,6 +17,7 @@
 #define APP_BT2 (BNK_OS_BASE + 6)
 #define APP_USB (BNK_OS_BASE + 6)
 #define APP_TST (BNK_OS_BASE + 7)
+#define APP_JMP (BNK_OS_BASE + 7)
 #define APP_SS  (BNK_OS_BASE + 8)
 #define APP_VOL (BNK_OS_BASE + 8)
 #define APP_FMG (BNK_OS_BASE + 8)

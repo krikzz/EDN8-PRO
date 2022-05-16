@@ -119,9 +119,9 @@ u8 app_nsfPlay(u8 *path) {
     //if (hdr->addr_play >= 0xffD0)return ERR_BAD_NSF;
     //if ((hdr->addr_load + size) > 0xFFE0 && !banks_on)return ERR_BAD_NSF;
 
-    edGetMapConfig(&inf, &cfg);
-    resp = edApplyOptions(&cfg);
-    if (resp)return resp;
+    edApplyRomInf(&cfg, &inf);
+    edApplyOptions(&cfg);
+
     cfg.chr_msk = 0x0f;
     cfg.prg_msk = 0xff;
     cfg.map_ctrl &= ~MAP_CTRL_RDELAY;

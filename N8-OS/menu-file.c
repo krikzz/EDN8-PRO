@@ -102,17 +102,18 @@ u8 fimeTextMenu(u8 *path) {
     return 0;
 }
 
-enum {
-    RM_SEL_START = 0,
-    RM_SEL_ONLY,
-    RM_CHEATS,
-    RM_ROM_INF,
-    RM_HEX,
-    RM_DEL,
-    RM_SIZE
-};
-
 u8 fimeRomMenu(u8 *path) {
+
+    enum {
+        RM_SEL_START = 0,
+        RM_SEL_ONLY,
+        RM_CHEATS,
+        RM_ROM_INF,
+        RM_JUMPERS,
+        RM_HEX,
+        RM_DEL,
+        RM_SIZE
+    };
 
     ListBox box;
     u8 resp;
@@ -127,9 +128,11 @@ u8 fimeRomMenu(u8 *path) {
     items[RM_CHEATS] = "Cheats";
     items[RM_ROM_INF] = "Rom Info";
     items[RM_HEX] = "Hex View";
+    items[RM_JUMPERS] = "Jumper Setup";
     items[RM_DEL] = "Delete";
     items[RM_SIZE] = 0;
 
+    //items[RM_JUMPERS] = GUI_HIDE;
 
     guiDrawListBox(&box);
     if (box.act == ACT_EXIT)return 0;
@@ -153,6 +156,10 @@ u8 fimeRomMenu(u8 *path) {
 
     if (box.selector == RM_HEX) {
         return fileHexView(path);
+    }
+
+    if (box.selector == RM_JUMPERS) {
+        return jmpSetup(path);
     }
 
     if (box.selector == RM_DEL) {
@@ -300,7 +307,7 @@ u8 fileHexView(u8 *path) {
     u8 *buff;
     static u8 *ptr;
     u32 addr = 0;
-    static u8 i;
+    u16 i;
     u16 block;
 
     resp = fileSize(path, &size);
@@ -370,34 +377,28 @@ u8 fileHexView(u8 *path) {
         gConsPrint("");
         gSetPal(PAL_B2);
         ptr = buff;
-        for (i = 0; i < block / 2; i++) {
+
+        for (i = 0; i < block; i++) {
             REG_VRM_ATTR = PAL_B1;
             gAppendHex8(*ptr++);
-            REG_VRM_ATTR = PAL_B3;
-            gAppendHex8(*ptr++);
         }
-        for (i = block / 2; i < 128; i++) {
-            gAppendString("....");
+        for (i = block; i < 256; i++) {
+            gAppendString("..");
         }
 
         gSetPal(PAL_G2);
         ptr = buff;
-        for (i = 0; i < block / 2; i++) {
-            //gAppendChar(buff[i]);
-            REG_VRM_DATA = *ptr++;
+        for (i = 0; i < block; i++) {
             REG_VRM_DATA = *ptr++;
         }
-        for (i = block / 2; i < 128; i++) {
-            //gAppendChar('.');
-            REG_VRM_DATA = 0;
+
+        for (i = block; i < 256; i++) {
             REG_VRM_DATA = 0;
         }
 
         gRepaint();
         joy = sysJoyWait();
         if (joy == JOY_B)break;
-
-
     }
 
     fileClose();
@@ -646,4 +647,49 @@ u8 fileDelMenu(u8 *path) {
     return 0;
 }
 
+/*
+u8 fileJmpSetup(u8 *path) {
 
+    u8 i;
+    u8 jmp_num = 4;
+    u8 jmp_val = 2;
+    u8 selector = 0;
+    u8 joy;
+
+    gCleanScreen();
+
+    while (1) {
+
+        gSetXY((G_SCREEN_W / 2) - jmp_num, G_SCREEN_H / 2);
+
+
+        for (i = 0; i < jmp_num; i++) {
+
+            gSetPal(selector == i ? PAL_B3 : PAL_B1);
+
+            gAppendChar('0' + ((jmp_val >> i) & 1));
+            gAppendChar(' ');
+        }
+
+        gRepaint();
+        joy = sysJoyWait();
+
+        if (joy == JOY_L) {
+            selector = dec_mod(selector, jmp_num);
+        }
+
+        if (joy == JOY_R) {
+            selector = inc_mod(selector, jmp_num);
+        }
+
+
+        if (joy == JOY_U || joy == JOY_D) {
+            jmp_val ^= 1 << selector;
+        }
+    }
+
+    return 0;
+}
+
+void fileGetJmpPath() {
+}*/

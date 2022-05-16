@@ -7,6 +7,7 @@ start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 005/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 006/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 007/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 008/top
+start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 009/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 019/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 021/top
 start C:\altera\13.0sp1\quartus\bin\quartus_sh --flow compile 027/top

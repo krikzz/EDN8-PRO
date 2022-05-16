@@ -159,6 +159,8 @@ typedef struct{
 	bit prg_ram_off;
 	bit [3:0]map_sub;
 	
+	bit[7:0]jumper;
+	
 	bit [18:0]srm_size;
 	
 }SysCfg;

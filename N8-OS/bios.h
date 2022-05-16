@@ -216,6 +216,7 @@ typedef struct {
     u8 ss_key_load;
     u8 map_ctrl;
     u8 ss_key_menu;
+    u8 jmp_val;
 } MapConfig;
 
 typedef struct {

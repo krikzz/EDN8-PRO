@@ -171,7 +171,7 @@ u8 sysJoyWait() {
         if ((bi_get_ticks() - time) > JOY_DELAY) {
 
             time += JOY_SPEED;
-            if ((joy & (JOY_B | JOY_A)) == 0)return joy;
+            if ((joy & (JOY_B | JOY_A | JOY_SEL | JOY_STA)) == 0)return joy;
         }
 
 
