@@ -19,6 +19,7 @@
 #define PATH_OS         "EDN8/nesos.nes"
 #define PATH_MAP        "EDN8/maps"
 #define PATH_MAPROUT    "EDN8/MAPROUT.BIN"
+#define PATH_GAMEDATA   "EDN8/gamedata"
 #define PATH_NSF_PLAYER "EDN8/syscore/n8nsf.nes"
 #define PATH_UPD_FPGA   "EDN8/syscore/menu-fpg.bin"
 #define PATH_UPD_MENU   "EDN8/syscore/menu-cpu.bin"
@@ -32,6 +33,11 @@
 #define PATH_SNAP_DIR   "EDN8/SNAP"
 #define PATH_CHEATS     "EDN8/CHEATS"
 #define PATH_SDC_FILE   "EDN8/MAPS/255.RBF"
+
+//game data files
+#define PATH_GD_SRAM    "bram.srm"
+#define PATH_GD_CHEAT   "cheats.txt"
+#define PATH_GD_SETUP   "setup.bin"
 
 #define PATH_DEF_GAME   "default-game.nes"
 

@@ -552,7 +552,6 @@ u8 edLoadFdsBios() {
         bi_cmd_mem_wr(ADDR_FDS_BIOS + addr, &fix[i + 3], len);
     }
 
-
     return 0;
 }
 

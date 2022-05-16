@@ -49,7 +49,7 @@ u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode) {
 
     resp = bi_file_get_size(src, &size);
     if (resp)return resp;
-    
+
     resp = fileOpen(src, FA_READ);
     if (resp)return resp;
 
@@ -61,7 +61,7 @@ u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode) {
     resp = fileClose();
     if (resp)return resp;
 
-    resp = fileOpen(dst, dst_mode);//FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(dst, dst_mode); //FA_OPEN_ALWAYS | FA_WRITE);
     if (resp)return resp;
 
     resp = fileWrite_mem(ADDR_FBUFF, size);
@@ -86,7 +86,7 @@ u8 fileOpenSync(u8 *dirname, u8 *fname, u8 *ext, u8 mode) {
 
     return resp;
 }
-*/
+ */
 
 void fatMakeSyncPath(u8 *path, u8 *dirname, u8 *fname, u8 *ext) {
 
@@ -101,6 +101,8 @@ void fatMakeSyncPath(u8 *path, u8 *dirname, u8 *fname, u8 *ext) {
         path = str_append(path, "/");
     }
     str_append(path, fname);
+
+    if (ext == 0)return; //do not change extension
 
     path = str_extract_ext(path);
     if (*path == 0) {

@@ -42,6 +42,7 @@ u8 ggEditor(CheatText *gg_txt, u8 *game_path);
 u8 ggEditSlot(TextSlot *slot);
 u8 ggTextSave(CheatText *gg_txt, u8 *game);
 u8 ggGetCode(CheatSlot *code, u8* str);
+void ggGetPath(u8 *path, u8 *game);
 
 static const u8 gg_tbl[26] = {
     0x00, 0xff, 0xff, 0xff, 0x08, 0xff, 0x04, 0xff,
@@ -175,11 +176,12 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt) {
         if (src == 0) {
             src = buff;
             //str_make_sync_name(game, src, PATH_CHEATS, "txt", SYNC_IDX_OFF);
-            fatMakeSyncPath(src, PATH_CHEATS, game, "txt");
+            //fatMakeSyncPath(src, PATH_CHEATS, game, "txt");
+            ggGetPath(src, game);
         }
 
         resp = fileSize(src, &fsize);
-        if (resp != 0 && resp != FAT_NO_FILE)break;
+        if (resp != 0 && resp != FAT_NO_FILE && resp != FAT_NO_PATH)break;
 
         if (resp == 0) {//if file exist
 
@@ -227,17 +229,18 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
 
     buff = malloc(MAX_PATH_SIZE);
     //str_make_sync_name(game, buff, PATH_CHEATS, "txt", SYNC_IDX_OFF);
-    fatMakeSyncPath(buff, PATH_CHEATS, game, "txt");
+    //fatMakeSyncPath(buff, PATH_CHEATS, game, "txt");
+    ggGetPath(buff, game);
 
     if (empty) {
 
         resp = fileDel(buff);
-        if (resp == FAT_NO_FILE)resp = 0;
+        if (resp == FAT_NO_FILE || resp == FAT_NO_PATH)resp = 0;
 
     } else {
 
-        resp = fileOpen(buff, FA_WRITE | FA_OPEN_ALWAYS);
-
+        resp = fileOpen(buff, FA_WRITE | FA_OPEN_ALWAYS | FS_MAKEPATH);
+        
         if (resp == 0) {
             resp = fileWrite(gg_txt, sizeof (CheatText));
         }
@@ -456,4 +459,11 @@ u8 ggEditSlot(TextSlot *slot) {
 
 
     return 0;
+}
+
+void ggGetPath(u8 *path, u8 *game) {
+
+    fatMakeSyncPath(path, PATH_GAMEDATA, game, 0);
+    path = str_append(path, "/");
+    str_append(path, PATH_GD_CHEAT);
 }

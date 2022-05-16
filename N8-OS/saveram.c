@@ -6,6 +6,7 @@
 u32 savGetUsedMemory(u32 addr, u32 max_size);
 u32 srmCalcFdsCrc(u32 addr, u32 len);
 void srmGetPathSS(u8 *path, u8 bank);
+void srmGetPathSRM(u8 *path);
 
 u8 srmBackup() {
 
@@ -22,7 +23,8 @@ u8 srmBackup() {
 
     path = malloc(MAX_PATH_SIZE);
     //str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
-    fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    //fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    srmGetPathSRM(path);
     resp = srmMemToFile(path, ADDR_SRM, srm_size);
     free(MAX_PATH_SIZE);
 
@@ -39,12 +41,21 @@ u8 srmRestore() {
 
     path = malloc(MAX_PATH_SIZE);
     //str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
-    fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    //fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    srmGetPathSRM(path);
     resp = srmFileToMem(path, ADDR_SRM, SIZE_SRM_GAME);
     free(MAX_PATH_SIZE);
 
-    if (resp == FAT_NO_FILE)resp = 0;
+    if (resp == FAT_NO_FILE || resp == FAT_NO_PATH)resp = 0;
+
     return resp;
+}
+
+void srmGetPathSRM(u8 *path) {
+
+    fatMakeSyncPath(path, PATH_GAMEDATA, registry->cur_game.path, 0);
+    path = str_append(path, "/");
+    str_append(path, PATH_GD_SRAM);
 }
 
 u8 srmBackupSS(u8 bank) {
@@ -144,7 +155,7 @@ void srmGetPathSS(u8 *path, u8 bank) {
     //fatMakeSyncPath(path, PATH_SNAP_DIR, registery->cur_game.path, "sav");
     //fatAppenIdx(path, bank);
 
-    fatMakeSyncPath(path, PATH_SNAP_DIR, registry->cur_game.path, "");
+    fatMakeSyncPath(path, PATH_GAMEDATA, registry->cur_game.path, 0);
     //str_trim(path);
     path = str_append(path, "/");
     path = str_append_hex8(path, bank);
@@ -177,7 +188,7 @@ u8 srmMemToFile(u8 *path, u32 addr, u32 len) {
 
     u8 resp;
 
-    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE | FS_MAKEPATH);
     if (resp)return resp;
 
     resp = fileWrite_mem(addr, len);
@@ -242,12 +253,13 @@ u8 srmRestoreFDS() {
 
     path = malloc(MAX_PATH_SIZE);
     //str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
-    fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    //fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    srmGetPathSRM(path);
 
     s.size = registry->cur_game.rom_inf.prg_size;
     resp = fileOpen(path, FA_READ);
 
-    if (resp == FAT_NO_FILE) {//load source disk image if no saved image. 
+    if (resp == FAT_NO_FILE || resp == FAT_NO_PATH) {//load source disk image if no saved image. 
         resp = fileOpen(registry->cur_game.path, FA_READ);
         skip_header = 1; //skip header if exists
     }
@@ -311,9 +323,10 @@ u8 srmBackupFDS() {
 
     path = malloc(MAX_PATH_SIZE);
     //str_make_sync_name(registery->cur_game.path, path, PATH_SAVE_DIR, "srm", SYNC_IDX_OFF);
-    fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    //fatMakeSyncPath(path, PATH_SAVE_DIR, registry->cur_game.path, "srm");
+    srmGetPathSRM(path);
 
-    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileOpen(path, FA_OPEN_ALWAYS | FA_WRITE | FS_MAKEPATH);
     free(MAX_PATH_SIZE);
     if (resp)return resp;
 

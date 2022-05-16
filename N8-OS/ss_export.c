@@ -12,6 +12,7 @@ u8 ssExport() {
     u8 bank = REG_APP_BANK;
     
     if (registry->ss_export_done)return 0;
+    
     REG_APP_BANK = APP_SSE;
     resp = app_ssExport();
     REG_APP_BANK = bank;
