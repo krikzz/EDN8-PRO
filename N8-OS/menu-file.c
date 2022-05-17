@@ -109,14 +109,16 @@ u8 fimeRomMenu(u8 *path) {
         RM_SEL_ONLY,
         RM_CHEATS,
         RM_ROM_INF,
-        RM_JUMPERS,
         RM_HEX,
+        RM_JUMPERS,
         RM_DEL,
         RM_SIZE
     };
 
     ListBox box;
+    u16 map_idx;
     u8 resp;
+
     static u8 * items[RM_SIZE + 1];
 
     box.hdr = "File Menu";
@@ -132,7 +134,11 @@ u8 fimeRomMenu(u8 *path) {
     items[RM_DEL] = "Delete";
     items[RM_SIZE] = 0;
 
-    //items[RM_JUMPERS] = GUI_HIDE;
+    resp = romGetMapIDX(path, &map_idx);
+    if (resp)return resp;
+    if (jmpGetSize(map_idx) == 0) {
+        items[RM_JUMPERS] = GUI_HIDE;
+    }
 
     guiDrawListBox(&box);
     if (box.act == ACT_EXIT)return 0;
@@ -382,6 +388,7 @@ u8 fileHexView(u8 *path) {
             REG_VRM_ATTR = PAL_B1;
             gAppendHex8(*ptr++);
         }
+
         for (i = block; i < 256; i++) {
             gAppendString("..");
         }

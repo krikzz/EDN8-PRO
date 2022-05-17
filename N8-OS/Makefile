@@ -18,7 +18,7 @@ ASMINC = $(CC65_HOME)/asminc
 # This one comes with VICE
 
 # --static-locals
-CFLAGS		:= -Oi
+CFLAGS		:= -O
 AFLAGS		:= -t $(SYS)
 BDIR		:=build
 

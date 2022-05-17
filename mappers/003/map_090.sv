@@ -93,8 +93,8 @@ module map_090(
 	assign int_cpu_oe			= map_cpu_oe;
 	assign int_cpu_data		= map_cpu_dout;
 //************************************************************* mapper implementation
-	wire ce_60xx  = {cpu.addr[15:13], 13'd0} == 16'h6000;
-	wire [1:0]dip	= 2'b00;
+	wire ce_60xx  				= {cpu.addr[15:13], 13'd0} == 16'h6000;
+	wire [1:0]dip				= cfg.jumper[1:0];
 //************************************************************* mirroring
 	
 	wire rom_ntb		 = reg_D000[5];

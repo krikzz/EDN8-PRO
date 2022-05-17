@@ -23,13 +23,26 @@ u8 jmpGetVal(u8 *game, u8 map_idx, u8 *val) {
     return resp;
 }
 
-u8 jmpGetSize(u8 map_idx) {
+u8 jmpGetSize(u16 map_idx) {
 
-    if (map_idx == 105) {
-        return 4;
+    switch (map_idx) {
+        case 90:
+            return 2;
+        case 105:
+            return 4;
     }
 
     return 0;
+}
+
+u8 jmpGetDefault(u16 map_idx) {
+
+    switch (map_idx) {
+        case 90:
+            return 0;
+        case 105:
+            return 4;
+    }
 }
 
 #pragma codeseg ("BNK07")
@@ -137,16 +150,6 @@ u8 app_jmpGetVal(u8 *game, u8 map_idx, u8 *val) {
     if (resp)return resp;
     resp = fileClose();
     if (resp)return resp;
-
-    return 0;
-}
-
-u8 jmpGetDefault(u16 map_idx) {
-
-    if (map_idx == 105) {
-
-        return 4;
-    }
 
     return 0;
 }

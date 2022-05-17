@@ -58,7 +58,7 @@ module top(
 	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
 	assign cpu.rw				= cpu_rw;
 	assign cpu.m2				= m2;
-	assign cpu.m3				= m2_st[9:7] == 'b001 & m2_st[0];//used if block cloced by clk instead of m2. (mmc3)
+	assign cpu.m3				= m2_st[7:0] == 'b01111111;//m2_st[9:7] == 'b001 & m2_st[0];//used if block cloced by clk instead of m2. (mmc3)
 	
 	assign ppu.data[7:0]		= ppu_dat[7:0];
 	assign ppu.addr[13:0]	= ppu_addr[13:0];

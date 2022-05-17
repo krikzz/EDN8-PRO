@@ -18,12 +18,19 @@ u8 getRomInfo(RomInfo *inf, u8 *path) {
 u8 romGetMapIDX(u8 *path, u16 *map_idx) {
 
     u8 resp;
-    RomInfo inf;
+    u8 ines[16];
 
-    resp = getRomInfo(&inf, path);
+    resp = fileOpen(path, FA_READ);
     if (resp)return resp;
+    resp = fileRead(ines, sizeof (ines));
+    if (resp)return resp;
+    fileClose();
 
-    *map_idx = inf.mapper;
+    if (ines[0] != 'N' || ines[1] != 'E' || ines[2] != 'S') {
+        *map_idx = MAP_IDX_FDS;
+    } else {
+        *map_idx = ((ines[6] >> 4) | (ines[7] & 0xf0));
+    }
 
     return 0;
 }
@@ -71,7 +78,7 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
     inf->rom_type = ROM_TYPE_NES;
     inf->dat_base = id.dat_base;
     inf->crc = id.crc;
- 
+
     inf->mapper = ((id.ines[6] >> 4) | (id.ines[7] & 0xf0));
     if ((id.ines[7] & 0x0C) == 0x08)inf->nes20 = 1;
 

@@ -23,7 +23,7 @@
 #include "var.h"
 #include "fs.h"
 #include "ss_export.h"
-#include "jmp.h"
+#include "jumper.h"
 
 
 #define CART_ID_PRO     0x17
