@@ -6,7 +6,7 @@
 
 module ym2149(
 cpu_d,cpu_a, cpu_ce_n, cpu_rw, phi_2,
-audio_clk, audio_out, map_enable);
+audio_out, map_enable);
 
 /* ========================
    **** I/O Assignments ***
@@ -20,7 +20,6 @@ audio_clk, audio_out, map_enable);
 	input				cpu_ce_n;
 	input				cpu_rw;
 	
-	input				audio_clk;
 	output reg		[11:0]audio_out;
 
 	input				map_enable;
@@ -203,7 +202,9 @@ audio_clk, audio_out, map_enable);
 	
 	// Mix stage 4: final mix & volume
 	
-	always @(posedge audio_clk) begin
+	always @(negedge phi_2) 
+	begin
+	
 		level0_l[7:0] <= level0[7:0];
 		level1_l[7:0] <= level1[7:0];		
 		level2_l[7:0] <= level2[7:0];
@@ -216,14 +217,7 @@ audio_clk, audio_out, map_enable);
 								+ {4'b0000,level2_l[7:0]};
 	end
 	
-	// Audio output
-	/*
-	DAC_delta_sigma dac(
-		.clk_i(audio_clk),
-		.reset_n_i(map_enable),
-		.dac_input_i(audio_mix[11:0]),
-		.dac_output_o(audio_out)
-	);*/
+
 	
 endmodule
 

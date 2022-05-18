@@ -135,10 +135,7 @@ module map_069(
 		.cpu_a(cpu.addr[14:10]),
 		.cpu_ce_n(!cpu.addr[15]),
 		.cpu_rw(cpu.rw),
-		
-		.audio_clk(mai.clk),
 		.audio_out(snd_vol),
-
 		.map_enable(!mai.map_rst)
 	);
 	
