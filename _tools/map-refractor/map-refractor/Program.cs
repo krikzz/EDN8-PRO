@@ -20,7 +20,7 @@ namespace map_refractor
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
                 //loadDir("E:\\projects\\EDN8-PRO\\mappers");
-                loadDir("C:\\Users\\igor\\Desktop\\mappers");
+                loadDir("C:\\Users\\igor\\Desktop\\83");
             }
             catch (Exception x)
             {
@@ -56,8 +56,7 @@ namespace map_refractor
 
             string[] targets =
             {
-                "sys_rst", "sys_rst"
-                /*
+                              
                 "negedge m2", "negedge cpu.m2",
                 "ss_act", "sst.act",
                 "assign ss_rdat", "assign mao.sst_di",
@@ -71,7 +70,7 @@ namespace map_refractor
                 "cfg_chr_ram", "cfg.chr_ram",
                 //"map_sub", "cfg.map_sub",
                 //"map_idx", "cfg.map_idx",
-                "!cpu_ce", "cpu.addr[15]",*/
+                "!cpu_ce", "cpu.addr[15]",
             };
 
             if (!path.EndsWith(".v")) return;
@@ -86,7 +85,7 @@ namespace map_refractor
                 Console.WriteLine("refract: " + path + ": " + targets[i]);
             }
 
-            //File.WriteAllText(path, code);
+            File.WriteAllText(path, code);
 
             //Console.WriteLine("scan file: " + path);
         }

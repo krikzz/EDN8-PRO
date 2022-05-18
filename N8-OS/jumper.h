@@ -8,9 +8,12 @@
 #ifndef JMP_H
 #define	JMP_H
 
+#include "rom-config.h"
+
+
 u8 jmpSetup(u8 *path);
-u8 jmpGetSize(u16 map_idx);
-u8 jmpGetVal(u8 *game, u8 map_idx, u8 *val);
+u8 jmpGetVal(u8 *game, RomInfo *inf, u8 *val);
+u8 jmpSupported(u8 *path);
 
 #endif	/* JMP_H */
 

@@ -327,10 +327,9 @@ u8 edApplyGameData(MapConfig *cfg, RomInfo *inf, u8 *path) {
         cfg->map_ctrl |= MAP_CTRL_GG_ON;
     }
 
-    if (inf->jmp_size != 0) {
-        resp = jmpGetVal(path, inf->mapper, &cfg->jmp_val);
-        if (resp)return resp;
-    }
+    resp = jmpGetVal(path, inf, &cfg->jmp_val);
+    if (resp)return resp;
+
 
     return 0;
 }
@@ -394,7 +393,7 @@ u8 edStartGame(u8 usb_mode) {
     edApplyOptions(cfg);
     resp = edApplyGameData(cfg, cur_game, registry->cur_game.path);
     if (resp)return resp;
-    
+
     if (ext_bios) {
         cfg->map_cfg |= MCFG_FDS_EBI;
     }

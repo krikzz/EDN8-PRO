@@ -2,7 +2,8 @@
 #include "everdrive.h"
 
 u8 app_jmpSetup(u8 *path);
-u8 app_jmpGetVal(u8 *game, u8 map_idx, u8 *val);
+u8 app_jmpGetVal(u8 *game, RomInfo *inf, u8 *val);
+u8 app_jmpSupported(u8 *path);
 
 u8 jmpSetup(u8 *path) {
 
@@ -14,43 +15,34 @@ u8 jmpSetup(u8 *path) {
     return resp;
 }
 
-u8 jmpGetVal(u8 *game, u8 map_idx, u8 *val) {
+u8 jmpGetVal(u8 *game, RomInfo *inf, u8 *val) {
+
     u8 resp;
     u8 bank = REG_APP_BANK;
     REG_APP_BANK = APP_JMP;
-    resp = app_jmpGetVal(game, map_idx, val);
+    resp = app_jmpGetVal(game, inf, val);
     REG_APP_BANK = bank;
     return resp;
 }
 
-u8 jmpGetSize(u16 map_idx) {
+u8 jmpSupported(u8 *path) {
 
-    switch (map_idx) {
-        case 90:
-            return 2;
-        case 105:
-            return 4;
-    }
-
-    return 0;
+    u8 resp;
+    u8 bank = REG_APP_BANK;
+    REG_APP_BANK = APP_JMP;
+    resp = app_jmpSupported(path);
+    REG_APP_BANK = bank;
+    return resp;
 }
 
-u8 jmpGetDefault(u16 map_idx) {
-
-    switch (map_idx) {
-        case 90:
-            return 0;
-        case 105:
-            return 4;
-    }
-}
 
 #pragma codeseg ("BNK07")
 
-u8 jmpGetDefault(u16 map_idx);
+u8 jmpGetDefault(RomInfo *inf);
 u8 jmpOpen(u8 *game, u8 fmode);
 void jmpGetPath(u8 *cfg_path, u8 *game_path);
 void jmpDrawJumper(u8 jmp_num, u8 jmp_val, u8 selector, u8 x, u8 y);
+u8 jmpGetSize(u16 map_idx);
 
 u8 app_jmpSetup(u8 *path) {
 
@@ -80,7 +72,7 @@ u8 app_jmpSetup(u8 *path) {
         return 0;
     }
 
-    resp = jmpGetVal(path, inf.mapper, &jmp_val);
+    resp = jmpGetVal(path, &inf, &jmp_val);
     if (resp)return resp;
     jmp_val_old = jmp_val;
 
@@ -135,11 +127,16 @@ u8 app_jmpSetup(u8 *path) {
     return 0;
 }
 
-u8 app_jmpGetVal(u8 *game, u8 map_idx, u8 *val) {
+u8 app_jmpGetVal(u8 *game, RomInfo *inf, u8 *val) {
 
     u8 resp;
 
-    *val = jmpGetDefault(map_idx);
+    if (jmpGetSize(inf->mapper) == 0) {
+        *val = 0;
+        return 0;
+    }
+
+    *val = jmpGetDefault(inf);
 
     resp = jmpOpen(game, FA_READ);
     if (resp == FAT_NO_FILE || resp == FAT_NO_PATH) {
@@ -152,6 +149,17 @@ u8 app_jmpGetVal(u8 *game, u8 map_idx, u8 *val) {
     if (resp)return resp;
 
     return 0;
+}
+
+u8 app_jmpSupported(u8 *path) {
+
+    u8 resp;
+    u16 map_idx;
+
+    resp = romGetMapIDX(path, &map_idx);
+    if (resp)return 0;
+
+    return jmpGetSize(map_idx);
 }
 
 u8 jmpOpen(u8 *game, u8 fmode) {
@@ -210,5 +218,31 @@ void jmpDrawJumper(u8 jmp_num, u8 jmp_val, u8 selector, u8 x, u8 y) {
         gSetPal(selector == i ? PAL_G3 : PAL_G1);
         gAppendChar(((jmp_val >> i) & 1) ? 24 : 25);
 
+    }
+}
+
+u8 jmpGetSize(u16 map_idx) {
+
+    switch (map_idx) {
+        case 83:
+            return 2;
+        case 90:
+            return 2;
+        case 105:
+            return 4;
+    }
+
+    return 0;
+}
+
+u8 jmpGetDefault(RomInfo *inf) {
+
+    switch (inf->mapper) {
+        case 83:
+            return 0;
+        case 90:
+            return 0;
+        case 105:
+            return 4;
     }
 }

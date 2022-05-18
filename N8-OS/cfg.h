@@ -12,7 +12,8 @@
 
 
 #define OS_VER          0x0213
-#define OS_BETA         1
+//#define OS_BETA         1
+#define OS_RC           1
 
 #define REGI_VER        1       //can be used for registry reset forcing
 

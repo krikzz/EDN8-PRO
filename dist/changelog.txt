@@ -7,6 +7,8 @@ EDN8-V2.13  ???
 2) Minor improvements for MMC3 mapper
 3) Minor improvements for MMC1 mapper
 4) Virtual DIP switch function for NWC 1990 and others
+5) Chets access from in-game menu
+6) Per-cheat on/off switch
 
 
 *Changes was made to prevent save/load state slowdown due the storing a large amount of files in save-state folder.

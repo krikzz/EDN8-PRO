@@ -33,7 +33,6 @@ typedef struct {
     u8 usb_game;
     u8 prg_save;
     u8 nes20;
-    u8 jmp_size;
 } RomInfo;
 
 

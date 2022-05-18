@@ -514,7 +514,7 @@ void mmDeviceInfo() {
         str_append(val[DI_CART_TYPE], "N8-PRO-NES");
     } else {
         str_append(val[DI_CART_TYPE], "N8-PRO-FC");
-    }
+    } 
 
     str_append_num(val[DI_OS_VER], sys_inf->os_ver >> 8);
     str_append(val[DI_OS_VER], ".");
@@ -522,6 +522,9 @@ void mmDeviceInfo() {
 #ifdef OS_BETA
     str_append(val[DI_OS_VER], " Beta-");
     str_append_num(val[DI_OS_VER], OS_BETA);
+#elif OS_RC
+    str_append(val[DI_OS_VER], " RC-");
+    str_append_num(val[DI_OS_VER], OS_RC);
 #endif
 
     str_append_date(val[DI_OS_DATE], sys_inf->os_bld_date);

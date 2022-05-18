@@ -116,7 +116,6 @@ u8 fimeRomMenu(u8 *path) {
     };
 
     ListBox box;
-    u16 map_idx;
     u8 resp;
 
     static u8 * items[RM_SIZE + 1];
@@ -134,9 +133,7 @@ u8 fimeRomMenu(u8 *path) {
     items[RM_DEL] = "Delete";
     items[RM_SIZE] = 0;
 
-    resp = romGetMapIDX(path, &map_idx);
-    if (resp)return resp;
-    if (jmpGetSize(map_idx) == 0) {
+    if (jmpSupported(path) == 0) {
         items[RM_JUMPERS] = GUI_HIDE;
     }
 

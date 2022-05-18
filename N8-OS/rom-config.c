@@ -117,8 +117,6 @@ u8 app_getRomInfo(RomInfo *inf, u8 *path) {
     if (inf->mapper == 30 && inf->bat_ram)inf->prg_save = 1;
     if (inf->mapper == 111)inf->prg_save = 1;
 
-    inf->jmp_size = jmpGetSize(inf->mapper);
-
     //should be in the end
     inf->supported = 1;
 

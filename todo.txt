@@ -55,41 +55,38 @@ FDS BIOS uses a special custom BIOS instead, which doesn't work with some unlice
 +функция fileCopy поставить bi_file_get_size перед fileOpen
 +сделать функцию стейт рековери включеной по умолчанию
 
+-----------------------------------------
+
 +после релиза ос 2.12 сделать рефакторинг кода в систем верилог
-опция переклчателя для чемпионшип картриджа (105 маппер)
++опция переклчателя для чемпионшип картриджа (105 маппер)
 +сделать ммц3 согласно схемы реверс инжениринга MMC3C_schematics
-добавить возможность отключения чита и добавить читы в ин-гейм меню
-добавить в ио ядро коекакие функции для ускорения работы с диском (fileAvaiable etc)?
-посмотреть ромы 198 в 05_dbg
-не работает мапер 90 на нт мини. попробовать его потестить на разных клонах
-доработать дма контроллер чтобы не отключался рендеринг если нет доступа в chr
-
-n8 pro I have tested over 900 nes roms. 
-All the official and unofficial games work great with certain roms 
-and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
-
-Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
-почему то срабатывали комбинации быстрых сохранений когда играли на вдвоем в s.c.a.t. (вперед+старт) и в кризис форс
-
-I need your help with something. N8pro has supported mapper245 for a long time, but it doesn't actually support it.
-Mapper245 is used for the Chinese version of dq4 in China
-
++добавить возможность отключения чита и добавить читы в ин-гейм меню
++доработать дма контроллер чтобы не отключался рендеринг если нет доступа в chr
+?n8 pro I have tested over 900 nes roms. 
+?All the official and unofficial games work great with certain roms 
+?and the only games that do not work are Quattro arcade, adventure, sport, Silent assault and elite
 добавить exp порт?
 https://github.com/krikzz/EDN8-PRO/pull/3/commits/42d9ea18f74d6ca12cf87975f1a9fbce28553447
 https://github.com/Perkka2/EPSM
 https://github.com/krikzz/EDN8-PRO/pull/2
 +обновить структуру папок ос как в гба
-вынести бутлоадер за пределы ос
-подвинуть немного светодиоды от края платы
 +по повторному нажатию селекта закрывать главное меню
-попробовать пофиксить потерю даты при переносе стейтов устанавливая в часы дату файла перед созданием
 -возможно с помощью таймера восстанавливать часы обратно
-разобраться с крашем начальной загрузки в условиях повышеного энергопотребления. можно репродюсить на фамиком+ргб бластер+джойз
 +сделать обновление регистров на чтение по фронту м2?
-
-не забыть включить зфук, читы и тд
 +сделать чтобы в файл инфо было видно размер файлов если он меньше килобайта
+разобраться с крашем начальной загрузки в условиях повышеного энергопотребления. можно репродюсить на фамиком+ргб бластер+джойз
+Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
+
+I need your help with something. N8pro has supported mapper245 for a long time, but it doesn't actually support it.
+Mapper245 is used for the Chinese version of dq4 in China
+
 добавить функции копирования и переноса файла в ио ядро
+добавить в ио ядро коекакие функции для ускорения работы с диском (fileAvaiable etc)?
+вынести бутлоадер за пределы ос
+попробовать пофиксить потерю даты при переносе стейтов устанавливая в часы дату файла перед созданием
 пофиксить negedge clk в ммц5
 в мапере гимика убрать аудио клок и заменить на м2. проверить не нужно сделать такое же в ларанж поинте
 надо прочекать работоспособность sys_rst. он не работает по м2
+почему то срабатывали комбинации быстрых сохранений когда играли на вдвоем в s.c.a.t. (вперед+старт) и в кризис форс
+посмотреть ромы 198 в 05_dbg
+не работает мапер 90 на нт мини. попробовать его потестить на разных клонах (m3 bug?)

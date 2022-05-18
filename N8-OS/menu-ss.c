@@ -17,6 +17,7 @@ void inGameMenu() {
 
 void ss_return();
 void ss_reset();
+u8 ssCheats();
 
 void app_inGameMenu() {
 
@@ -24,6 +25,7 @@ void app_inGameMenu() {
         SS_SAVE,
         SS_LOAD,
         SS_BANK,
+        SS_CHEATS,
         SS_RESET,
         SS_EXIT,
         SS_SWAP_DISK,
@@ -51,10 +53,15 @@ void app_inGameMenu() {
     box.selector = ses_cfg->ss_selector;
     items[SS_SAVE] = "Save State";
     items[SS_LOAD] = "Load State";
+    items[SS_CHEATS] = "Cheats";
     items[SS_RESET] = "Reset Game";
     items[SS_EXIT] = "Exit Game";
     items[SS_SWAP_DISK] = 0; //"Swap Disk";
     items[SS_SIZE] = 0;
+
+    if (registry->options.cheats == 0) {
+        items[SS_CHEATS] = GUI_HIDE;
+    }
 
     ss_bank_hex = decToBcd(ses_cfg->ss_bank);
 
@@ -128,6 +135,12 @@ void app_inGameMenu() {
             update_info = 1;
         }
 
+        if (box.selector == SS_CHEATS) {
+            resp = ssCheats();
+            if (resp)printError(resp);
+            gCleanScreen();
+            continue;
+        }
 
         //gCleanScreen();
         if (box.selector == SS_BANK)continue;
@@ -171,4 +184,18 @@ void app_inGameMenu() {
         bi_exit_game();
     }
 
+}
+
+u8 ssCheats() {
+
+    u8 resp;
+    resp = ggEdit(0, registry->cur_game.path);
+    if (resp)return resp;
+
+    resp = ggLoadCodes(&ses_cfg->cfg.gg, registry->cur_game.path);
+    if (resp)return resp;
+
+    bi_cmd_mem_wr(ADDR_CFG, &ses_cfg->cfg, sizeof (MapConfig));
+
+    return 0;
 }

@@ -27,7 +27,9 @@ u8 ggLoadCodes(CheatList *gg, u8 *game) {
 #pragma codeseg ("BNK05")
 
 typedef struct {
-    u8 chars[8 + 2];
+    u8 chars[9]; //code+space
+    u8 on; //on off
+    u8 nl[2]; //new line
 } TextSlot;
 
 typedef struct {
@@ -41,8 +43,9 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt);
 u8 ggEditor(CheatText *gg_txt, u8 *game_path);
 u8 ggEditSlot(TextSlot *slot);
 u8 ggTextSave(CheatText *gg_txt, u8 *game);
-u8 ggGetCode(CheatSlot *code, u8* str);
+u8 ggGetCode(CheatSlot *code, TextSlot *slot);
 void ggGetPath(u8 *path, u8 *game);
+u8 ggCodeMenu(TextSlot *slot, u8 changed);
 
 static const u8 gg_tbl[26] = {
     0x00, 0xff, 0xff, 0xff, 0x08, 0xff, 0x04, 0xff,
@@ -63,14 +66,8 @@ u8 app_ggEdit(u8 *src, u8 *game) {
     gCleanScreen();
     gRepaint();
 
-    /*
-    if (game[0] == 0) {
-        printError(ERR_GAME_NOT_SEL);
-        return 0;
-    }*/
-
     gg_txt = malloc(sizeof (CheatText));
-
+    
     resp = ggTextLoad(src, game, gg_txt);
     if (resp) {
         free(sizeof (CheatText));
@@ -105,18 +102,19 @@ u8 app_ggLoadCodes(CheatList *gg, u8 *game) {
 
     for (i = 0; i < GG_SLOTS; i++) {
 
-        ggGetCode(&gg->slot[i], gg_txt.slot[i].chars);
+        ggGetCode(&gg->slot[i], &gg_txt.slot[i]);
     }
 
     return 0;
 
 }
 
-u8 ggGetCode(CheatSlot *code, u8* str) {
+u8 ggGetCode(CheatSlot *code, TextSlot *slot) {
 
     u8 i;
     u8 clen;
     u8 buff[8];
+    u8* str = slot->chars;
 
 
     for (i = 0; i < 8; i++) {
@@ -131,6 +129,11 @@ u8 ggGetCode(CheatSlot *code, u8* str) {
     if (clen != 6 && clen != 8) {
         mem_set(code, 0, sizeof (CheatSlot));
         return ERR_INCORRECT_GG;
+    }
+
+    if (slot->on == '0') {
+        mem_set(code, 0, sizeof (CheatSlot));
+        return 0;
     }
 
     code->addr = 0x8000;
@@ -179,9 +182,11 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt) {
             //fatMakeSyncPath(src, PATH_CHEATS, game, "txt");
             ggGetPath(src, game);
         }
-
+        
         resp = fileSize(src, &fsize);
-        if (resp != 0 && resp != FAT_NO_FILE && resp != FAT_NO_PATH)break;
+        if (resp != 0 && resp != FAT_NO_FILE && resp != FAT_NO_PATH) {
+            break;
+        }
 
         if (resp == 0) {//if file exist
 
@@ -202,7 +207,7 @@ u8 ggTextLoad(u8 *src, u8 *game, CheatText *gg_txt) {
             resp = 0;
             mem_set(buff, 0, MAX_GG_FSIZE);
         }
-
+        
         ggParse(buff, gg_txt);
 
         break;
@@ -222,9 +227,14 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
     u8 empty = 1;
 
     for (i = 0; i < GG_SLOTS; i++) {
-        gg_txt->slot[i].chars[8] = 0x0D; //insert new line
-        gg_txt->slot[i].chars[9] = 0x0A;
-        if (mem_tst(gg_txt->slot[i].chars, '-', 8) == 0)empty = 0;
+
+        gg_txt->slot[i].nl[0] = 0x0D; //insert new line
+        gg_txt->slot[i].nl[1] = 0x0A;
+        gg_txt->slot[i].chars[8] = ' ';
+
+        if (mem_tst(gg_txt->slot[i].chars, '-', 8) == 0) {
+            empty = 0;
+        }
     }
 
     buff = malloc(MAX_PATH_SIZE);
@@ -240,7 +250,7 @@ u8 ggTextSave(CheatText *gg_txt, u8 *game) {
     } else {
 
         resp = fileOpen(buff, FA_WRITE | FA_OPEN_ALWAYS | FS_MAKEPATH);
-        
+
         if (resp == 0) {
             resp = fileWrite(gg_txt, sizeof (CheatText));
         }
@@ -273,6 +283,9 @@ void ggParse(u8 *data, CheatText *gg_txt) {
 
     mem_set(gg_txt, '-', sizeof (CheatText));
 
+    for (i = 0; i < GG_SLOTS; i++) {
+        gg_txt->slot[i].on = '1';
+    }
 
     len = MAX_GG_FSIZE;
 
@@ -294,6 +307,11 @@ void ggParse(u8 *data, CheatText *gg_txt) {
         }
 
         mem_copy(data, gg_txt->slot[slot].chars, i);
+        if (data[9] == '0' || data[9] == '1') {
+            gg_txt->slot[slot].on = data[9];
+        } else {
+            gg_txt->slot[slot].on = '1';
+        }
 
         slot++;
         len -= i;
@@ -312,32 +330,38 @@ enum {
 u8 ggEditor(CheatText *gg_txt, u8 *game_path) {
 
     u8 i;
+    u8 joy;
     u8 *game_name;
     u8 changed = 0;
-    ListBox box;
-    ListBox sel;
-    u8 * items[GG_SLOTS + 1];
-    static u8 * sle_items[] = {"Edit", "Clear", "Back", 0};
+    InfoBox box;
+    u8 * codes[GG_SLOTS + 1];
+    u8 * on_off[GG_SLOTS + 1];
+    u8 on_old[GG_SLOTS];
 
     for (i = 0; i < GG_SLOTS; i++) {
         gg_txt->slot[i].chars[8] = 0;
-        items[i] = gg_txt->slot[i].chars;
+        codes[i] = gg_txt->slot[i].chars;
+        on_old[i] = gg_txt->slot[i].on;
     }
-    items[GG_SLOTS] = 0;
-
+    codes[GG_SLOTS] = 0;
+    on_off[GG_SLOTS] = 0;
 
     box.hdr = "Cheat Editor";
+    box.items = GG_SLOTS;
     box.selector = 0;
-    box.items = items;
-
-    sel.hdr = "Code Menu";
-    sel.items = sle_items;
+    box.arg = codes;
+    box.val = on_off;
+    box.skip_init = 0;
 
     game_name = str_extract_fname(game_path);
 
     while (1) {
 
         gCleanScreen();
+
+        for (i = 0; i < GG_SLOTS; i++) {
+            on_off[i] = gg_txt->slot[i].on == '0' ? "OFF" : "ON ";
+        }
 
         gSetPal(PAL_G1);
         gDrawHeader("", G_CENTER);
@@ -352,26 +376,62 @@ u8 ggEditor(CheatText *gg_txt, u8 *game_path) {
             gConsPrintCX_ML(game_name, MAX_STR_LEN);
         }
 
+        guiDrawInfoBox(&box);
+        joy = sysJoyWait();
 
+        if (joy == JOY_B) {
+            break;
+        }
 
-        guiDrawListBox(&box);
-        if (box.act == ACT_EXIT)break;
+        if (joy == JOY_U) {
+            box.selector = dec_mod(box.selector, GG_SLOTS);
+        }
+        if (joy == JOY_D) {
+            box.selector = inc_mod(box.selector, GG_SLOTS);
+        }
 
-        gCleanScreen();
+        if (joy == JOY_L || joy == JOY_R) {
+            gg_txt->slot[box.selector].on = gg_txt->slot[box.selector].on == '1' ? '0' : '1';
+        }
 
-        sel.selector = 0;
-        guiDrawListBox(&sel);
-        if (sel.act == ACT_EXIT || sel.selector == GE_BACK)continue;
+        if (joy == JOY_A) {
+            changed = ggCodeMenu(&gg_txt->slot[box.selector], changed);
+        }
 
-        if (sel.selector == GE_CLR) {
+    }
+
+    for (i = 0; i < GG_SLOTS; i++) {
+
+        if (on_old[i] != gg_txt->slot[i].on) {
             changed = 1;
-            mem_set(gg_txt->slot[box.selector].chars, '-', 8);
         }
+    }
 
-        if (sel.selector == GE_EDIT) {
+    return changed;
+}
 
-            changed |= ggEditSlot(&gg_txt->slot[box.selector]);
-        }
+u8 ggCodeMenu(TextSlot *slot, u8 changed) {
+
+    ListBox box;
+    static u8 * items[] = {"Edit", "Clear", "Back", 0};
+
+    box.hdr = "Code Menu";
+    box.items = items;
+
+    gCleanScreen();
+
+    box.selector = 0;
+    guiDrawListBox(&box);
+    if (box.act == ACT_EXIT || box.selector == GE_BACK)return changed;
+
+    if (box.selector == GE_CLR) {
+        changed = 1;
+        mem_set(slot->chars, '-', 8);
+    }
+
+    if (box.selector == GE_EDIT) {
+
+        changed |= ggEditSlot(slot);
     }
 
     return changed;
