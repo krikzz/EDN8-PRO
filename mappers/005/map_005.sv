@@ -309,7 +309,7 @@ module map_005(
 
 	xram xram_inst(
 	
-		.clk_a(cpu.m2), 
+		.clk_a(!cpu.m2), 
 		.din_a(cpu.data[7:0]), 
 		.addr_a(xram_addr_wo[9:0]), 
 		.we_a(xram_we_cpu), 
@@ -323,7 +323,7 @@ module map_005(
 	
 	reg [7:0]ext_atr;
 	reg [3:0]nt_rd_st;
-	always @(negedge mai.clk)
+	always @(posedge mai.clk)
 	begin
 		nt_rd_st[3:0] <= {nt_rd_st[2:0], (ppu_ntb_ce & !ppu.oe)};
 		if(nt_rd_st[3:0] == 4'b0111)ext_atr[7:0] <= xram_dout[7:0];
@@ -455,13 +455,13 @@ module xram(
 	reg [7:0]ram[1024];
 	
 	
-	always @(negedge clk_a)
+	always @(posedge clk_a)
 	begin
 		dout_a <= we_a ? din_a : ram[addr_a];
 		if(we_a)ram[addr_a] <= din_a;
 	end
 	
-	always @(negedge clk_b)
+	always @(posedge clk_b)
 	begin
 		dout_b <= we_b ? din_b : ram[addr_b];
 		if(we_b)ram[addr_b] <= din_b;

@@ -201,7 +201,7 @@ module pulse(
 	reg [3:0]envelope;
 	
 	reg freq_clk;
-	always @(negedge freq_clk)
+	always @(posedge freq_clk)
 	begin
 		if(!silent)duty_ctr <= duty_ctr + 1;
 	end
