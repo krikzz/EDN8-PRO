@@ -175,10 +175,7 @@ module map_085(
 		.cpu_a(cpu.addr[14:0]),
 		.cpu_ce_n(!cpu.addr[15]),
 		.cpu_rw(cpu.rw),
-		
-		.audio_clk(mai.clk),
 		.audio_out(vol[10:0]),
-		
 		.instrument_set(audio_mute)
 	);
 

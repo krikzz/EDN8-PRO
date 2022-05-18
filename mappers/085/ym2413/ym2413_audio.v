@@ -12,7 +12,7 @@
 module ym2413_audio(
 	clk,res_n,
 	cpu_d,cpu_a,cpu_ce_n,cpu_rw,
-	audio_clk,audio_out,instrument_set
+	audio_out,instrument_set
 );
 
 /* ========================
@@ -28,7 +28,6 @@ module ym2413_audio(
 	input				cpu_ce_n;
 	input				cpu_rw;
 	
-	input				audio_clk;
 	output reg [10:0]	audio_out;
 	
 	input				instrument_set;
@@ -476,19 +475,13 @@ ym2413_param_gen param_gen(
 		.ch_rhy_vol		(ch_rhy_vol[3:0])		
 	);
 
-	always @(posedge audio_clk) begin
+	always @(negedge clk) 
+	begin
 		audio_dat[10:0] <= audio_mix[10:0];
 		audio_out[10:0] <= audio_dat[10:0];
 		audio_res <= res_n;
 	end
 	
-	/*
-	DAC_delta_sigma dac(
-		.clk_i(audio_clk),
-		.reset_n_i(audio_res),
-		.dac_input_i(audio_dat_2[10:0]),
-		.dac_output_o(audio_out)
-	);*/
 
 endmodule
 
