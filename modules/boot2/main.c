@@ -1,40 +1,31 @@
 
+
 #include "everdrive.h"
-
-#define BOOT_VER     0x0100   
-
-void app_bootloader(u8 *boot_flag);
-
-void bootloader(u8 *boot_flag) {
-
-    u8 bank = REG_APP_BANK;
-    REG_APP_BANK = APP_BT2;
-    app_bootloader(boot_flag);
-    REG_APP_BANK = bank;
-}
-
-#pragma codeseg ("BNK06")
 
 void bootError();
 
-void app_bootloader(u8 *boot_flag) {
+int main() {
 
-    u8 resp;
+    u8 *restart;
 
+    std_init();
+    sysInit();
+    gInit();
+ 
+    restart = malloc(1);
 
-    resp = bi_check_status();
-    if (resp != ERR_BOOT_FAULT)return;
-
-    if (*boot_flag == 0) {
-        *boot_flag = 1;
-        bootError();
-        gRepaint();
-        while (1)sysJoyWait();
+    if (*restart) {
+        ppuOFF();
+        bi_cmd_reboot();
+    } else {
+        *restart = 1;
     }
 
-    ppuOFF();
-    bi_cmd_reboot();
-
+    bootError();
+    gRepaint();
+    while (1);
+    
+    return 0;
 }
 
 void bootError() {
@@ -52,7 +43,7 @@ void bootError() {
     gFillRect(' ', 0, 0, G_SCREEN_W, G_SCREEN_H);
 
     gSetXY(G_BORDER_X, G_SCREEN_H - G_BORDER_Y - 1);
-    gConsPrint("2019 krikzz");
+    gConsPrint("2022 krikzz");
     gSetX(G_SCREEN_W - G_BORDER_X - 7);
     gAppendString("SN:");
     gAppendHex16(inf.serial_l);

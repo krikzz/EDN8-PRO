@@ -41,8 +41,6 @@ u8 edInit(u8 sst_mode) {
     ses_cfg->ss_bank = 0;
     ses_cfg->ss_selector = 0;
 
-    bootloader(&ses_cfg->boot_flag);
-
     resp = bi_init();
     if (resp)return resp;
 
