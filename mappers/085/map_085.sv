@@ -87,8 +87,7 @@ module map_085(
 	assign mao.irq				= irq_pend;
 	assign mao.snd[15:0]		= {vol[10:0], 5'd0};
 //************************************************************* mapper implementation
-
-	wire [15:0]reg_addr = {cpu.addr[15:5], cpu.addr[4] | cpu.addr[3], 1'b0, cpu.addr[2:0]};
+	wire [15:0]reg_addr = {cpu.addr[15:12], 6'd0, cpu.addr[5:4] | cpu.addr[3], 1'b0, cpu.addr[2:0]};
 	
 	
 	reg [7:0]prg_reg[3];
@@ -154,8 +153,7 @@ module map_085(
 		.map_rst(mai.map_rst),
 		.ce_latx(reg_addr == 16'hE010),
 		.ce_ctrl(reg_addr == 16'hF000),
-		.ce_ackn(reg_addr == 16'hF010),
-		
+		.ce_ackn(reg_addr == 16'hF010),		
 		.irq(irq_pend),
 		
 		.sst(sst),

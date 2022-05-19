@@ -58,7 +58,7 @@ module top(
 	assign cpu.addr[15:0]	= {!cpu_ce, cpu_addr[14:0]};
 	assign cpu.rw				= cpu_rw;
 	assign cpu.m2				= m2;
-	assign cpu.m3				= m2_st[7:0] == 'b01111111;//m2_st[9:7] == 'b001 & m2_st[0];//used if block cloced by clk instead of m2. (mmc3)
+	assign cpu.m3				= m3;
 	
 	assign ppu.data[7:0]		= ppu_dat[7:0];
 	assign ppu.addr[13:0]	= ppu_addr[13:0];
@@ -74,12 +74,6 @@ module top(
 	assign mai.cpu				= cpu;
 	assign mai.ppu				= ppu;
 	assign mai.cfg				= cfg;
-	
-	reg [15:0]m2_st;
-	always @(posedge mai.clk)
-	begin
-		m2_st[15:0]	<= {m2_st[14:0], cpu.m2};
-	end
 //**************************************************************************************** map out	
 	MapOut mao;
 	MemCtrl prg;
@@ -96,7 +90,7 @@ module top(
 	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk[17:0] : prg_addr_msk[21:0];
 	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
 	assign prg_oe 				= !(prg.oe | bus_cf_act);
-	assign prg_we 				= !prg.we;
+	assign prg_we 				= !(prg.we & (bus_ok | prg.async_io));
 	
 	assign chr_lb 				= chr_addr_msk[22];
 	assign chr_ub 				= !chr_addr_msk[22];
@@ -107,7 +101,7 @@ module top(
 	
 	assign srm_ce 				= srm.ce & !dma.req_prg & (cpu.m2 | srm.async_io) & !srm_off;
 	assign srm_oe 				= !srm.oe;
-	assign srm_we 				= !srm.we;
+	assign srm_we 				= !(srm.we & (bus_ok | srm.async_io));
 	
 	assign cpu_irq				= !mao.irq;
 	
@@ -167,6 +161,17 @@ module top(
 	//bus conflicts
 	wire bus_cf_act			= mao.bus_cf & !prg_ce & !cpu_rw;
 	wire [7:0]cpu_data_bcf	= cpu_dat[7:0] & prg_dat[7:0];
+	
+//****************************************************************************************
+	wire bus_ok					= cpu.m2 & m2_st[5:0] == 'b111111;//data bus isn't valid in the begin of wr cycle
+	wire m3						= m2_st[8:0] == 'b011111111;//used if block cloced by clk instead of m2. (mmc3)
+	
+	reg [15:0]m2_st;
+	
+	always @(posedge mai.clk)
+	begin
+		m2_st[15:0]	<= {m2_st[14:0], cpu.m2};
+	end	
 //**************************************************************************************** vram driver
 	wire ppu_iram_oe;
 	wire [7:0]ppu_iram_do;

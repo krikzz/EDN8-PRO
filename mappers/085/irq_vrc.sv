@@ -1,5 +1,4 @@
 
-
 module irq_vrc(
 			
 	input  [7:0]cpu_data,
@@ -11,7 +10,6 @@ module irq_vrc(
 	input  ce_lath,//latch 4 hi bits (vrc4)
 	input  ce_ctrl,//control
 	input  ce_ackn,//acknowledge
-	input  mode_vrc4,//(map 24, 26, 85 in vrc6 mode)
 	
 	output irq,
 	
@@ -33,7 +31,7 @@ module irq_vrc(
 	
 	wire irq_cyc_mode = irq_cfg[2];
 	wire irq_on 		= irq_cfg[1];
-	wire scan_tick 	=  prescal == 113 | prescal == 227 | prescal == 340;//prescal[9];
+	wire scan_tick 	= prescal == 113 | prescal == 227 | prescal == 340;//prescal[9];
 	wire ctr_tick 		= (irq_cyc_mode | scan_tick);
 	
 	reg irq_pend;
@@ -42,7 +40,7 @@ module irq_vrc(
 	reg [7:0]irq_ctr;
 	reg [8:0]prescal;
 	
-	always@(negedge cpu_m2)
+	always @(negedge cpu_m2)
 	if(sst.act)
 	begin
 		if(sst.we_reg & sst.addr[7:0] == 32){irq_pend, irq_cfg[2:0]} 	<= sst.dato[3:0];

@@ -1,5 +1,4 @@
 
-`include "../base/defs.v"
 
 module base_io(
 
