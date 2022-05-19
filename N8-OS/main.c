@@ -1,6 +1,27 @@
 
 
 #include "everdrive.h"
+/*
+void tst() {
+
+
+    u8 resp;
+    u16 time;
+
+    time = bi_get_ticks();
+    //resp = fileCopy("savik.sav", "oscopy.bin", FA_OPEN_ALWAYS | FA_WRITE);
+    resp = fileMove("oscopy.bin", "moved.bin", FA_OPEN_ALWAYS | FA_WRITE);
+    time = bi_get_ticks() - time;
+    
+    gConsPrint("resp: ");
+    gAppendHex8(resp);
+    
+    gConsPrint("time: ");
+    gAppendNum(time);
+
+    gRepaint();
+    sysJoyWait();
+}*/
 
 int main() {
 

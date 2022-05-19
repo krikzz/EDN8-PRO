@@ -167,11 +167,13 @@ u8 srmFileToMem(u8 *path, u32 addr, u32 max_size) {
     u8 resp;
     u32 size;
 
-    resp = fileSize(path, &size);
-    if (resp)return resp;
+    //resp = fileSize(path, &size);
+    //if (resp)return resp;
 
     resp = fileOpen(path, FA_READ);
     if (resp)return resp;
+
+    size = fileAvailable();
 
     size = min(size, max_size);
 

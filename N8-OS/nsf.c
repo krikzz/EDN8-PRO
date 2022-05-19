@@ -47,7 +47,7 @@ u8 app_nsfPlay(u8 *path) {
     u8 resp;
     Nsf hdr;
     RomInfo inf;
-    FileInfo finf = {0};
+    //FileInfo finf = {0};
     MapConfig cfg;
     u32 addr, size;
     u8 i, banks_on;
@@ -76,12 +76,14 @@ u8 app_nsfPlay(u8 *path) {
     resp = fileClose();
     if (resp)return resp;
 
-    fileGetInfo(path, &finf);
-    if (resp)return resp;
+    //fileGetInfo(path, &finf); 
+    //if (resp)return resp;
 
     resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
+    size = fileAvailable();
+    
     //hdr = malloc(sizeof (Nsf));
     resp = fileRead(&hdr, sizeof (Nsf));
 
@@ -100,7 +102,7 @@ u8 app_nsfPlay(u8 *path) {
     //free(sizeof (Nsf));
     if (resp)return resp;
 
-    size = min(finf.size - 0x80, 0x100000 - 4096 - addr);
+    size = min(size - 0x80, 0x100000 - 4096 - addr);
 
     resp = fileSetPtr(0);
     if (resp)return resp;

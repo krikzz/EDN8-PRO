@@ -57,6 +57,9 @@
 #define CMD_F_FCRC      0xD1
 #define CMD_F_DIR_MK    0xD2
 #define CMD_F_DEL       0xD3
+#define CMD_F_AVB       0xD5
+#define CMD_F_FCP       0xD6
+#define CMD_F_FMV       0xD7
 
 
 #define CMD_USB_RECOV   0xF0

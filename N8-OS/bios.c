@@ -48,6 +48,9 @@
 #define CMD_F_FCRC      0xD1
 #define CMD_F_DIR_MK    0xD2
 #define CMD_F_DEL       0xD3
+#define CMD_F_AVB       0xD5
+#define CMD_F_FCP       0xD6
+#define CMD_F_FMV       0xD7
 
 
 
@@ -299,7 +302,7 @@ u8 bi_cmd_file_del(u8 *path) {
 }
 
 u8 bi_cmd_dir_make(u8 *path) {
-    
+
     bi_cmd_tx(CMD_F_DIR_MK);
     bi_tx_string(path);
     return bi_check_status();
@@ -353,6 +356,33 @@ u8 bi_cmd_file_crc(u32 len, u32 *crc_base) {
     bi_fifo_rd(crc_base, 4);
 
     return 0;
+}
+
+u32 bi_cmd_file_available() {
+
+    u32 len[2]; //len comes in 64 bit format
+    bi_cmd_tx(CMD_F_AVB);
+    bi_fifo_rd(len, 8);
+
+    return len[0];
+}
+
+u8 bi_cmd_file_copy(u8 *src, u8 *dst, u8 dst_mode) {
+
+    bi_cmd_tx(CMD_F_FCP);
+    bi_fifo_wr(&dst_mode, 1);
+    bi_tx_string(src);
+    bi_tx_string(dst);
+    return bi_check_status();
+}
+
+u8 bi_cmd_file_move(u8 *src, u8 *dst, u8 dst_mode) {
+
+    bi_cmd_tx(CMD_F_FMV);
+    bi_fifo_wr(&dst_mode, 1);
+    bi_tx_string(src);
+    bi_tx_string(dst);
+    return bi_check_status();
 }
 
 void bi_cmd_mem_set(u8 val, u32 addr, u32 len) {

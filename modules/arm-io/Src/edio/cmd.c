@@ -16,8 +16,8 @@ void cmdProcessor(u8 status) {
     u8 link_src = LINK_SRC_FIFO;
 
     sys_pwr_initial = gpioRD_pin(pwr_sys_GPIO_Port, pwr_sys_Pin);
-     
-    
+
+
     while (1) {
 
         led(0);
@@ -31,7 +31,7 @@ void cmdProcessor(u8 status) {
         //dbg_append_h8(cmd);
 
         wdogRefresh();
-        
+
 
         switch (cmd) {
 
@@ -122,6 +122,15 @@ void cmdProcessor(u8 status) {
                 break;
             case CMD_F_FCRC:
                 status = cmd_fileCRC();
+                break;
+            case CMD_F_AVB:
+                cmd_fileAvailable();
+                break;
+            case CMD_F_FCP:
+                status = cmd_fileCopy();
+                break;
+            case CMD_F_FMV:
+                status = cmd_fileMove();
                 break;
 
             case CMD_MEM_WR:

@@ -313,11 +313,13 @@ u8 fileHexView(u8 *path) {
     u16 i;
     u16 block;
 
-    resp = fileSize(path, &size);
-    if (resp)return resp;
+    //resp = fileSize(path, &size);
+    //if (resp)return resp;
 
     resp = fileOpen(path, FA_READ);
     if (resp)return resp;
+
+    size = fileAvailable();
 
     buff = malloc(256);
 

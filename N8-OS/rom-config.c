@@ -188,28 +188,31 @@ u8 romInfoFDS(RomInfo *inf, RomID *id) {
 
 u8 getRomID(RomID *id, u8 *path) {
 
-    FileInfo finf = {0};
+    //FileInfo finf = {0};
     u8 resp;
     u32 crc_len;
+    u32 size;
 
-    resp = fileGetInfo(path, &finf);
-    if (resp)return resp;
+    //resp = fileGetInfo(path, &finf);
+    //if (resp)return resp;
 
     resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
+    size = fileAvailable();
+
     resp = fileRead(id->ines, 32);
     if (resp)return resp;
 
-    id->size = finf.size;
-    crc_len = finf.size;
+    id->size = size;
+    crc_len = size;
 
     id->dat_base = 0;
     if (str_cmp_len("NES", id->ines, 3) || str_cmp_len("HVC", &id->ines[0x1B], 3)) {
         id->dat_base = 16;
     }
 
-    crc_len = min(MAX_ID_CALC_LEN, finf.size - id->dat_base);
+    crc_len = min(MAX_ID_CALC_LEN, size - id->dat_base);
 
     resp = fileSetPtr(id->dat_base);
     if (resp)return resp;

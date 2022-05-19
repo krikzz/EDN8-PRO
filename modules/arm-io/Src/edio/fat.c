@@ -28,6 +28,7 @@ u8 fatDirLoad();
 u8 fatGetRecs(u16 start_idx, u16 amount, u16 max_name_len);
 u8 fatGetRecsSorted(u16 start_idx, u16 amount, u16 max_name_len);
 u8 fatReadDir(DIR *dp, FILINFO *inf);
+u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode);
 
 u8 fatInit() {
 
@@ -271,7 +272,6 @@ u8 cmd_fileWrite_mem() {
 
 u8 cmd_fileClose() {
 
-
     return f_close(&file_io);
 }
 
@@ -323,6 +323,53 @@ u8 cmd_fileCRC() {
     linkTX(&crc, 4);
 
     return resp;
+}
+
+void cmd_fileAvailable() {
+
+    u64 avb = file_io.obj.objsize - file_io.fptr;
+    linkTX(&avb, 8);
+}
+
+u8 cmd_fileCopy() {
+
+    u8 resp;
+    u8 dst_mode;
+    u8 src[MAX_STR_LEN + 1];
+    u8 dst[MAX_STR_LEN + 1];
+
+    linkRX(&dst_mode, 1); //dst mode
+    resp = strRX(src, MAX_STR_LEN);
+    if (resp)return resp;
+    resp = strRX(dst, MAX_STR_LEN);
+    if (resp)return resp;
+
+    resp = fileCopy(src, dst, dst_mode);
+    if (resp)return resp;
+
+    return 0;
+}
+
+u8 cmd_fileMove() {
+
+    u8 resp;
+    u8 dst_mode;
+    u8 src[MAX_STR_LEN + 1];
+    u8 dst[MAX_STR_LEN + 1];
+
+    linkRX(&dst_mode, 1); //dst mode
+    resp = strRX(src, MAX_STR_LEN);
+    if (resp)return resp;
+    resp = strRX(dst, MAX_STR_LEN);
+    if (resp)return resp;
+
+    resp = fileCopy(src, dst, dst_mode);
+    if (resp)return resp;
+
+    resp = f_unlink((TCHAR *) src);
+    if (resp)return resp;
+
+    return 0;
 }
 
 u8 cmd_delRecord() {
@@ -604,6 +651,59 @@ u8 fileClose() {
     return f_close(&file_io);
 }
 
+u8 fileCopy(u8 *src, u8 *dst, u8 dst_mode) {
+
+    u8 resp, ra, rb;
+    u8 buff[16384];
+    FIL fsrc = {0};
+    FIL fdst = {0};
+    FILINFO inf;
+    u64 size;
+    u32 block, rw;
+
+    resp = f_open(&fsrc, (TCHAR *) src, FA_READ);
+    if (resp)return resp;
+
+    resp = f_open(&fdst, (TCHAR *) dst, dst_mode);
+    if (resp) {
+        f_close(&fsrc);
+        return resp;
+    }
+
+    size = fsrc.obj.objsize - fsrc.fptr;
+
+    while (size) {
+
+        block = sizeof (buff);
+        if (block > size) {
+            block = size;
+        }
+
+        resp = f_read(&fsrc, buff, block, (UINT *) & rw);
+        if (resp)break;
+
+        resp = f_write(&fdst, buff, block, (UINT *) & rw);
+        if (resp)break;
+
+        size -= block;
+    }
+
+    ra = f_close(&fsrc);
+    rb = f_close(&fdst);
+
+    if (resp)return resp;
+    if (ra)return ra;
+    if (rb)return rb;
+
+    resp = f_stat((TCHAR *) src, &inf);
+    if (resp)return resp;
+
+    resp = f_utime((TCHAR *) dst, &inf);
+    if (resp)return resp;
+
+    return 0;
+}
+
 u8 fatReadDir(DIR *dp, FILINFO *inf) {
 
     u8 resp;
@@ -641,3 +741,4 @@ u32 fatGetIme(void) {
 
     return dt;
 }
+
