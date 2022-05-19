@@ -126,7 +126,7 @@ u8 mmOptions() {
     arg[OP_CHEATS] = "Cheats";
     arg[OP_RST_DELAY] = "Reset Delay";
     arg[OP_FILE_SORT] = "File Sorting";
-    arg[OP_SWAP_AB] = "Swap A/B";
+    arg[OP_SWAP_AB] = "Swap Joy A/B";
     arg[OP_AUTOSTART] = "Boot Last Game";
     arg[OP_FDS_AUTO_SWP] = "FDS Auto Swap";
     arg[OP_IG_COMBO] = "[In-Game Combo]";

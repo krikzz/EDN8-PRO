@@ -26,7 +26,6 @@
       </logicalFolder>
       <itemPath>bios.c</itemPath>
       <itemPath>bios_asm.s</itemPath>
-      <itemPath>boot1.s</itemPath>
       <itemPath>boot2.c</itemPath>
       <itemPath>crt0.s</itemPath>
       <itemPath>everdrive.c</itemPath>
@@ -58,7 +57,6 @@
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
-      <itemPath>boot.cfg</itemPath>
       <itemPath>build/mem.map</itemPath>
       <itemPath>nes.cfg</itemPath>
     </logicalFolder>
