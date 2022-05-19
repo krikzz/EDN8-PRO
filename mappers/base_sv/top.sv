@@ -88,9 +88,9 @@ module top(
 	assign prg_lb 				= prg_addr_msk[22];
 	assign prg_ub 				= !prg_addr_msk[22];
 	assign prg_addr[21:0] 	= srm.ce ? srm_addr_msk[17:0] : prg_addr_msk[21:0];
-	assign prg_ce 				= !(prg.ce & !dma.req_srm & (cpu.m2 | prg.async_io));
+	assign prg_ce 				= !(prg.ce & !dma.req_srm & (ce_ok | prg.async_io));
 	assign prg_oe 				= !(prg.oe | bus_cf_act);
-	assign prg_we 				= !(prg.we & (bus_ok | prg.async_io));
+	assign prg_we 				= !(prg.we & (we_ok | prg.async_io));
 	
 	assign chr_lb 				= chr_addr_msk[22];
 	assign chr_ub 				= !chr_addr_msk[22];
@@ -99,9 +99,9 @@ module top(
 	assign chr_oe 				= !chr.oe;
 	assign chr_we 				= !chr.we;
 	
-	assign srm_ce 				= srm.ce & !dma.req_prg & (cpu.m2 | srm.async_io) & !srm_off;
+	assign srm_ce 				= srm.ce & !dma.req_prg & (ce_ok | srm.async_io) & !srm_off;
 	assign srm_oe 				= !srm.oe;
-	assign srm_we 				= !(srm.we & (bus_ok | srm.async_io));
+	assign srm_we 				= !(srm.we & (we_ok | srm.async_io));
 	
 	assign cpu_irq				= !mao.irq;
 	
@@ -163,8 +163,9 @@ module top(
 	wire [7:0]cpu_data_bcf	= cpu_dat[7:0] & prg_dat[7:0];
 	
 //****************************************************************************************
-	wire bus_ok					= cpu.m2 & m2_st[5:0] == 'b111111;//data bus isn't valid in the begin of wr cycle
-	wire m3						= m2_st[8:0] == 'b011111111;//used if block cloced by clk instead of m2. (mmc3)
+	wire we_ok					= cpu.m2 & m2_st[7:0] == 'b11111111;//data bus stable
+	wire ce_ok					= cpu.m2 & m2_st[1:0] == 'b11;//addr bus stable (cpu_ce comes with little delay)
+	wire m3						= m2_st[10:0] == 'b01111111111;//used if block cloced by clk instead of m2. (mmc3)
 	
 	reg [15:0]m2_st;
 	
