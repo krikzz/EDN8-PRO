@@ -38,7 +38,6 @@ typedef struct {
     u8 ss_key_save;
     u8 ss_key_load;
     u8 ss_key_menu;
-    u8 ss_recover;
     u8 cheats;
     u8 swap_ab;
     u8 rst_delay;

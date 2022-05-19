@@ -76,9 +76,8 @@ void app_inGameMenu() {
     if (ss_src != 0x00 && ss_src == registry->options.ss_key_save) {
         ppuOFF();
 
-        if (registry->options.ss_recover) {
-            srmSSrpoint(ss_bank_hex);
-        }
+        resp = srmSSrpoint(ss_bank_hex);
+        if (resp)printError(resp);
 
         resp = srmBackupSS(ss_bank_hex);
         if (resp)printError(resp);
@@ -107,7 +106,7 @@ void app_inGameMenu() {
 
 
         str_append(buff, "Slot: ");
-        if (registry->options.ss_recover && ss_bank_hex == 0x99) {
+        if (ss_bank_hex == 0x99) {
             str_append(buff, "RC");
         } else {
             str_append_hex8(buff, ss_bank_hex);
@@ -135,15 +134,15 @@ void app_inGameMenu() {
             update_info = 1;
         }
 
-        if (box.selector == SS_CHEATS) {
+        //gCleanScreen();
+        if (box.selector == SS_BANK)continue;
+
+        if (box.selector == SS_CHEATS & box.act == ACT_OPEN) {
             resp = ssCheats();
             if (resp)printError(resp);
             gCleanScreen();
             continue;
         }
-
-        //gCleanScreen();
-        if (box.selector == SS_BANK)continue;
 
         if (box.act == ACT_OPEN) {
             break;
@@ -159,9 +158,8 @@ void app_inGameMenu() {
 
     if (box.selector == SS_SAVE) {
 
-        if (registry->options.ss_recover) {
-            srmSSrpoint(ss_bank_hex);
-        }
+        resp = srmSSrpoint(ss_bank_hex);
+        if (resp)printError(resp);
 
         resp = srmBackupSS(ss_bank_hex);
         if (resp)printError(resp);

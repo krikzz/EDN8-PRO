@@ -10,14 +10,14 @@ u8 ssExport() {
 
     u8 resp;
     u8 bank = REG_APP_BANK;
-    
+
     if (registry->ss_export_done)return 0;
-    
+
     REG_APP_BANK = APP_SSE;
     resp = app_ssExport();
     REG_APP_BANK = bank;
     if (resp)return resp;
-    
+
     registry->ss_export_done = 1; //exporting check performs just once
     return edRegistrySave();
 }
@@ -166,6 +166,7 @@ u8 ssExportSeek(u8 *home, u8 *ext, u8 *valid) {//valid ss files seek
     inf.file_name = fname;
 
     resp = bi_cmd_dir_load(home, 0);
+    if (resp == FAT_NO_PATH)return 0;
     if (resp)return resp;
     bi_cmd_dir_get_size(&dir_size);
 

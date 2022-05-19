@@ -104,7 +104,6 @@ enum {
     OP_SWAP_AB,
     OP_FDS_AUTO_SWP,
     OP_AUTOSTART,
-    OP_SS_RECOVERY,
     OP_IG_COMBO,
     OP_AUDIO_VOL,
     OP_RTC,
@@ -129,7 +128,6 @@ u8 mmOptions() {
     arg[OP_FILE_SORT] = "File Sorting";
     arg[OP_SWAP_AB] = "Swap A/B";
     arg[OP_AUTOSTART] = "Boot Last Game";
-    arg[OP_SS_RECOVERY] = "State Recovery";
     arg[OP_FDS_AUTO_SWP] = "FDS Auto Swap";
     arg[OP_IG_COMBO] = "[In-Game Combo]";
     arg[OP_AUDIO_VOL] = "[Audio Balance]";
@@ -153,7 +151,6 @@ u8 mmOptions() {
         val[OP_FILE_SORT] = off_on[opt->sort_files];
         val[OP_SWAP_AB] = off_on[swap_ab];
         val[OP_AUTOSTART] = off_on[opt->autostart];
-        val[OP_SS_RECOVERY] = off_on[opt->ss_recover];
         val[OP_FDS_AUTO_SWP] = off_on[opt->fds_auto_swp];
         val[OP_IG_COMBO] = 0;
         val[OP_AUDIO_VOL] = 0;
@@ -184,7 +181,6 @@ u8 mmOptions() {
             if (box.selector == OP_FILE_SORT)opt->sort_files ^= 1;
             if (box.selector == OP_SWAP_AB)swap_ab ^= 1;
             if (box.selector == OP_AUTOSTART)opt->autostart ^= 1;
-            if (box.selector == OP_SS_RECOVERY)opt->ss_recover ^= 1;
             if (box.selector == OP_FDS_AUTO_SWP)opt->fds_auto_swp ^= 1;
             if (box.selector == OP_IG_COMBO)mmHotKeySetup(); //
             if (box.selector == OP_RTC)rtcSetup();

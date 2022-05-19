@@ -172,7 +172,6 @@ u8 edRegistryReset() {
     registry->options.ss_key_load = SS_COMBO_OFF;
     registry->options.ss_mode = 1;
     registry->options.fds_auto_swp = 1;
-    registry->options.ss_recover = 1;
 
     volSetDefaults();
 
