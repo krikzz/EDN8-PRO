@@ -23,7 +23,6 @@ typedef struct {
 } Signature;
 
 void sigInit();
-u8 sigSet(u8 *data);
 
 #endif	/* SIGNATURE_H */
 

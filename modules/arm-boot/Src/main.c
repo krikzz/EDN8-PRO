@@ -91,11 +91,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 void appStart() {
 
-#ifdef BOOT_MODULE
     SCB->VTOR = ADDR_PFL_BOOT;
-#else    
-    SCB->VTOR = ADDR_PFL_APP;
-#endif  
 
     HAL_Init();
     SystemClock_Config();

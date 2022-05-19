@@ -26,11 +26,8 @@
 #include "memory.h"
 #include "disk.h"
 #include "error.h"
-#include "boot.h"
 #include "cmd.h"
 #include "signature.h"
-#include "mcuprog.h"
-#include "var.h"
 #include "bootram.h"
 
 typedef struct {
@@ -62,9 +59,6 @@ void edio();
 u8 strRX(u8 *buff, u16 max_len);
 void strTX(u8 *buff, u16 max_len);
 void led(u8 val);
-
-
-
 
 void cmd_status(u8 status);
 void cmd_fifo_wr();

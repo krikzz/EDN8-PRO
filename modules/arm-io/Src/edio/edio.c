@@ -8,6 +8,13 @@
 
 #define MAP_CTRL_UNLOCK 0x80
 
+#define RST_SRC_POR     0 //power on
+#define RST_SRC_WDG     1
+#define RST_SRC_SWR     2
+#define RST_SRC_PIN     3
+#define RST_SRC_PWR     4 //low power or brown out
+#define RST_SRC_UNK     5 
+
 typedef struct {
     u16 v50;
     u16 v25;

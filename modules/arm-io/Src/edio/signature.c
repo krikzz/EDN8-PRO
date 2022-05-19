@@ -136,24 +136,3 @@ u8 sigCheckKey(u8 *key, u8 *uid) {
     return 0;
 }
 
-u8 sigSet(u8 *data) {
-
-    u8 buff[sizeof (Edsg)];
-    u8 sig_eq, sig_blank;
-
-    memcpy(buff, (void *) ADDR_PFL_EDSG, sizeof (Edsg));
-
-    sig_eq = 1;
-    sig_blank = 1;
-    for (int i = 0; i < sizeof (Edsg); i++) {
-        if (buff[i] != 0xff)sig_blank = 0;
-        if (buff[i] != data[i])sig_eq = 0;
-    }
-
-    if (sig_eq)return 0;
-    if (!sig_blank)return ERR_SIG_NBLA;
-    
-    mcuProgData(data, ADDR_PFL_EDSG, sizeof (Edsg));
-    
-    return 0;
-}

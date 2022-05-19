@@ -18,10 +18,6 @@
                     <name>app</name>
                     <type>0</type>
                 </confElem>
-                <confElem>
-                    <name>bootld</name>
-                    <type>0</type>
-                </confElem>
             </confList>
         </data>
     </configuration>

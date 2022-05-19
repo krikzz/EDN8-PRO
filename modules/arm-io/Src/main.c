@@ -91,11 +91,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 void appStart() {
 
-#ifdef BOOT_MODULE
-    SCB->VTOR = ADDR_PFL_BOOT;
-#else    
     SCB->VTOR = ADDR_PFL_APP;
-#endif  
 
     HAL_Init();
     SystemClock_Config();
@@ -110,19 +106,8 @@ void appStart() {
     MX_RTC_Init();
     MX_CRC_Init();
 
-#ifdef BOOT_MODULE
-
-    if (isServiceMode()) {
-        MX_USB_DEVICE_Init();
-        bootloader(1);
-    } else {
-        bootloader(0);
-    }
-
-#else
     MX_USB_DEVICE_Init();
     edio();
-#endif  
 
     dbg_print("Unexpected condition");
     for (;;);

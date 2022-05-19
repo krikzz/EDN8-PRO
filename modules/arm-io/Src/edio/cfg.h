@@ -13,8 +13,7 @@
 #define u32 uint32_t
 #define u64 uint64_t
 
-#define EDIO_VER        0x0100
-#define BOOT_VER        0x0100
+#define EDIO_VER        0x0101
 
 #define SPI_FLA         SPI2
 #define SPI_FPGA        SPI2
