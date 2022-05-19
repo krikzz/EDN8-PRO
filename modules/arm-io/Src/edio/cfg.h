@@ -18,9 +18,9 @@
 
 #define SPI_FLA         SPI2
 #define SPI_FPGA        SPI2
-#define SPI_MEM          SPI1
+#define SPI_MEM         SPI1
 
-#define SPI_SS_MEM       1
+#define SPI_SS_MEM      1
 #define SPI_SS_FLA      2
 
 #define PATH_OS         "EDN8/nesos.nes"
