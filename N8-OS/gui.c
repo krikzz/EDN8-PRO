@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 void app_guiInit();
 void app_guiDrawInfoBox(InfoBox *box);

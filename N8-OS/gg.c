@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 u8 app_ggEdit(u8 *src, u8 *game);
 u8 app_ggLoadCodes(CheatList *gg, u8 *game);

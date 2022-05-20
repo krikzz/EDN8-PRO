@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 #define CMD_STATUS      0x10
 #define CMD_GET_MODE    0x11

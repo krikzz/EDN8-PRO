@@ -2,35 +2,12 @@
  * File:   everdrive.h
  * Author: igor
  *
- * Created on March 28, 2019, 5:03 PM
+ * Created on May 20, 2022, 12:49 PM
  */
 
 #ifndef EVERDRIVE_H
-#define	EVERDRIVE_H
+#define	EVERDRIVE_H 
 
-#include "types.h"
-#include "gfx.h"
-#include "cfg.h"
-#include "sys.h"
-#include "bios.h"
-#include "std.h"
-#include "errors.h"
-#include "gui.h"
-#include "saveram.h"
-#include "app.h"
-#include "vol-ctrl.h"
-#include "rom-config.h"
-#include "var.h"
-#include "fs.h"
-#include "ss_export.h"
-#include "jumper.h"
-
-
-#define CART_ID_PRO     0x17
-
-#define SS_MOD_OFF      0x00    //in-game menu and save state dissabled
-#define SS_MOD_STD      0x01    //standard in-game menu
-#define SS_MOD_QSS      0x02    //quick save/load state without in-game menu
 #define MAP_IDX_FDS     254
 
 typedef struct {
@@ -93,14 +70,6 @@ u8 edRegistrySave();
 void edGetMapPath(u8 map_pack, u8 *path);
 u8 edBramBackup();
 void edRebootGame();
-
-void usbListener();
-void printError(u8 code);
-
-u8 diagnostics();
-
-u8 updateCheck();
-u8 nsfPlay(u8 *path);
 
 #endif	/* EVERDRIVE_H */
 

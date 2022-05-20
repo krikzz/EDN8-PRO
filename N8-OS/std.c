@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 u8* str_get_ext_ptr(u8 *str);
 

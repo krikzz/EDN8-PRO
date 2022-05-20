@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 u8 app_jmpSetup(u8 *path);
 u8 app_jmpGetVal(u8 *game, RomInfo *inf, u8 *val);

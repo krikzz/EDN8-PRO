@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 u8 app_nsfPlay(u8 *path);
 

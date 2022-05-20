@@ -1,6 +1,6 @@
 
 
-#include "everdrive.h"
+#include "main.h"
 
 void ppuSetAddr(u16 addr);
 void ppuSetPal(u8 *pal);

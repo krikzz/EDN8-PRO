@@ -1,6 +1,6 @@
 
 
-#include "everdrive.h"
+#include "main.h"
 
 typedef struct {
     u16 selector;

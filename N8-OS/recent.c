@@ -1,5 +1,5 @@
 
-#include "everdrive.h"
+#include "main.h"
 
 u8 app_recentMenu();
 u8 app_recentAdd(u8 *path);
@@ -35,6 +35,7 @@ typedef struct {
 } Recent;
 
 u8 recentLoad(Recent *recent, u8 shift);
+u8 recentStart(u8 selector);
 
 #define RECENT_RAM_SIZE 6144
 #define RECENT_RAM      (APP_ADDR + (APP_SIZE - RECENT_RAM_SIZE))
@@ -52,7 +53,7 @@ u8 app_recentMenu() {
     u8 selector = 0;
     u8 null_slot[MAX_STR_LEN + 1];
     u8 *file_name;
-    u8 *name_buff;
+
 
     gCleanScreen();
     gRepaint();
@@ -99,15 +100,9 @@ u8 app_recentMenu() {
         }
 
         if (joy == JOY_A) {
-            if (recent->slot[selector].path[0] != 0) {
 
-                name_buff = malloc(MAX_PATH_SIZE);
-                str_copy(recent->slot[selector].path, name_buff);
-                resp = edSelectGame(name_buff, 0);
-                free(MAX_PATH_SIZE);
-                if (resp)return resp;
-                return edStartGame(0);
-            }
+            resp = recentStart(selector);
+            if (resp)return resp;
         }
 
     }
@@ -171,6 +166,26 @@ u8 recentLoad(Recent *recent, u8 shift) {
 
     resp = fileClose();
     if (resp)return resp;
+
+    return 0;
+}
+
+u8 recentStart(u8 selector) {
+
+    Recent *recent = (Recent *) RECENT_RAM;
+    u8 resp;
+    u8 *name_buff;
+
+    if (recent->slot[selector].path[0] == 0) {
+        return 0;
+    }
+
+    name_buff = malloc(MAX_PATH_SIZE);
+    str_copy(recent->slot[selector].path, name_buff);
+    resp = edSelectGame(name_buff, 0);
+    free(MAX_PATH_SIZE);
+    if (resp)return resp;
+    return edStartGame(0);
 
     return 0;
 }

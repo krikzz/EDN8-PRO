@@ -15,12 +15,17 @@
         <itemPath>gfx.h</itemPath>
         <itemPath>gui.h</itemPath>
         <itemPath>jumper.h</itemPath>
+        <itemPath>main.h</itemPath>
+        <itemPath>nsf.h</itemPath>
         <itemPath>rom-config.h</itemPath>
         <itemPath>saveram.h</itemPath>
         <itemPath>ss_export.h</itemPath>
         <itemPath>std.h</itemPath>
         <itemPath>sys.h</itemPath>
+        <itemPath>tst.h</itemPath>
         <itemPath>types.h</itemPath>
+        <itemPath>update.h</itemPath>
+        <itemPath>usb.h</itemPath>
         <itemPath>var.h</itemPath>
         <itemPath>vol-ctrl.h</itemPath>
       </logicalFolder>

@@ -8,7 +8,7 @@
 #ifndef GAME_DB_H
 #define	GAME_DB_H
 
-#include "everdrive.h"
+#include "main.h"
 
 typedef struct {
     u32 crc;
