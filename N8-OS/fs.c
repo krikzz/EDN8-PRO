@@ -93,7 +93,6 @@ void fatMakeSyncPath(u8 *path, u8 *dirname, u8 *fname, u8 *ext) {
     *path = 0;
 
     str_append(path, ext);
-
 }
 
 u8 fileGetInfo(u8 *path, FileInfo *inf) {

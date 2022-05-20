@@ -309,7 +309,7 @@ u8 app_guiConfirmBox(u8 *str, u8 def) {
         gRepaint();
         joy = sysJoyWait();
 
-        if ((joy & JOY_B))return 0;
+        //if ((joy & JOY_B))return 0;
         if ((joy & JOY_A))return selector;
 
         if (joy == JOY_R && selector == 1)selector--;

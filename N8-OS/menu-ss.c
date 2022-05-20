@@ -141,6 +141,7 @@ void app_inGameMenu() {
             resp = ssCheats();
             if (resp)printError(resp);
             gCleanScreen();
+            update_info = 1;
             continue;
         }
 
@@ -187,8 +188,15 @@ void app_inGameMenu() {
 u8 ssCheats() {
 
     u8 resp;
+
+    gCleanScreen();
+    gRepaint();
+
     resp = ggEdit(0, registry->cur_game.path);
     if (resp)return resp;
+
+    gCleanScreen();
+    gRepaint();
 
     resp = ggLoadCodes(&ses_cfg->cfg.gg, registry->cur_game.path);
     if (resp)return resp;

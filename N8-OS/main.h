@@ -22,7 +22,7 @@
 #include "rom-config.h"
 #include "var.h"
 #include "fs.h"
-#include "ss_export.h"
+#include "data_export.h"
 #include "jumper.h"
 #include "usb.h"
 #include "tst.h"

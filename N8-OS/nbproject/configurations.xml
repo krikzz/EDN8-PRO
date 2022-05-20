@@ -8,6 +8,7 @@
         <itemPath>app.h</itemPath>
         <itemPath>bios.h</itemPath>
         <itemPath>cfg.h</itemPath>
+        <itemPath>data_export.h</itemPath>
         <itemPath>errors.h</itemPath>
         <itemPath>everdrive.h</itemPath>
         <itemPath>fs.h</itemPath>
@@ -19,7 +20,6 @@
         <itemPath>nsf.h</itemPath>
         <itemPath>rom-config.h</itemPath>
         <itemPath>saveram.h</itemPath>
-        <itemPath>ss_export.h</itemPath>
         <itemPath>std.h</itemPath>
         <itemPath>sys.h</itemPath>
         <itemPath>tst.h</itemPath>
@@ -32,6 +32,7 @@
       <itemPath>bios.c</itemPath>
       <itemPath>bios_asm.s</itemPath>
       <itemPath>crt0.s</itemPath>
+      <itemPath>data_export.c</itemPath>
       <itemPath>everdrive.c</itemPath>
       <itemPath>fmanager.c</itemPath>
       <itemPath>fs.c</itemPath>
@@ -49,7 +50,6 @@
       <itemPath>rtc.c</itemPath>
       <itemPath>saveram.c</itemPath>
       <itemPath>ss.s</itemPath>
-      <itemPath>ss_export.c</itemPath>
       <itemPath>std.c</itemPath>
       <itemPath>sys.c</itemPath>
       <itemPath>tst.c</itemPath>

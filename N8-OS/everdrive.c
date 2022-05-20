@@ -79,7 +79,7 @@ u8 edInit(u8 sst_mode) {
     resp = edBramBackup();
     if (resp)return resp;
 
-    resp = ssExport();
+    resp = dataExport();
     if (resp)return resp;
 
     if (ses_cfg->hot_start == 0) {

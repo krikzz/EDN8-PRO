@@ -31,9 +31,6 @@
 #define PATH_RAMDUMP    "EDN8/sysdata/ramdump01.srm"
 #define PATH_TESTFILE   "EDN8/sysdata/tstfile01.bin"
 #define PATH_FDS_BIOS   "EDN8/sysdata/disksys.rom"
-#define PATH_SAVE_DIR   "EDN8/SAVE"
-#define PATH_SNAP_DIR   "EDN8/SNAP"
-#define PATH_CHEATS     "EDN8/CHEATS"
 #define PATH_SDC_FILE   "EDN8/MAPS/255.RBF"
 
 //game data files

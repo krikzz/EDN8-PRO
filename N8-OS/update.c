@@ -58,11 +58,11 @@ u8 updLoadToFlash(u8 *path, u32 addr, u8 crc_check) {
     u8 resp;
     u32 crc_fla, crc_file, crc_calc;
     u32 size;
-    FileInfo inf;
+    u32 fsize;
 
-    resp = fileGetInfo(path, &inf);
+    resp = fileSize(path, &fsize);
     if (resp)return resp;
-    if (inf.size > MAX_UPD_SIZE)return ERR_BAD_FILE;
+    if (fsize > MAX_UPD_SIZE)return ERR_BAD_FILE;
 
     crc_calc = 0;
     resp = fileOpen(path, FA_READ);
@@ -71,14 +71,14 @@ u8 updLoadToFlash(u8 *path, u32 addr, u8 crc_check) {
     if (resp)return resp;
     resp = fileRead(&crc_file, 4);
     if (resp)return resp;
-    resp = bi_cmd_file_crc(inf.size - 8, &crc_calc);
+    resp = bi_cmd_file_crc(fsize - 8, &crc_calc);
     if (resp)return resp;
 
     resp = fileClose();
     if (resp)return resp;
 
     if (crc_calc != crc_file && crc_check)return ERR_BAD_FILE;
-    if (inf.size - 8 != size)return ERR_BAD_FILE;
+    if (fsize - 8 != size)return ERR_BAD_FILE;
 
     bi_cmd_fla_rd(&crc_fla, addr + 4, 4);
     //if (crc_fla == crc_file)return 0;
@@ -86,7 +86,7 @@ u8 updLoadToFlash(u8 *path, u32 addr, u8 crc_check) {
     resp = fileOpen(path, FA_READ);
     if (resp)return resp;
 
-    resp = bi_cmd_fla_wr_sdc(addr, inf.size);
+    resp = bi_cmd_fla_wr_sdc(addr, fsize);
     if (resp)return resp;
 
     resp = fileClose();

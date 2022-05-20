@@ -8,7 +8,7 @@
 #ifndef SS_EXPORT_H
 #define	SS_EXPORT_H
 
-u8 ssExport();
+u8 dataExport();
 
 #endif	/* SS_EXPORT_H */
 
