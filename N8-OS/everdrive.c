@@ -47,6 +47,11 @@ u8 edInit(u8 sst_mode) {
     resp = edLoadSysyInfo();
     if (resp)return resp;
 
+    if (ses_cfg->hot_start == 0) {
+        resp = updateCheck();
+        if (resp)return resp;
+    }
+
     resp = edMapRoutLoad();
     if (resp)return resp;
 
@@ -60,9 +65,6 @@ u8 edInit(u8 sst_mode) {
     resp = edVramBugHandler();
     if (resp)return resp;
 
-    //gConsPrint("ok");
-    //gRepaint();
-
     if (sys_inf->mcu.ram_rst) {
         bi_cmd_mem_set(RAM_NULL, ADDR_SRM, SIZE_SRM);
         registry->ram_backup_req = 0;
@@ -72,10 +74,7 @@ u8 edInit(u8 sst_mode) {
         printError(ERR_BAT_RDY);
     }
 
-    if (ses_cfg->hot_start == 0) {
-        resp = updateCheck();
-        if (resp)return resp;
-    }
+
 
     resp = edBramBackup();
     if (resp)return resp;

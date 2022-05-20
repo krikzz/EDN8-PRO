@@ -1,3 +1,0 @@
-v1.0.0.2  04.05.2020
-1) Fixed copying from sd to computed
-

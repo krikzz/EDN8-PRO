@@ -15,6 +15,7 @@
 //#define OS_BETA         1
 #define OS_RC           1
 
+#define EDIO_REQ        0x0101
 #define REGI_VER        1       //can be used for registry reset forcing
 
 #define PATH_OS         "EDN8/nesos.nes"

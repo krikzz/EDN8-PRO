@@ -1,0 +1,1 @@
+Drop OS files in this folder for using OS update via USB

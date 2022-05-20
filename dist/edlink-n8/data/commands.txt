@@ -1,0 +1,19 @@
+-recovery 	Install io co-processor update
+-diag		System diagnostics
+-mkdir		Make dir on SD card
+-rtcset		Set RTC time
+-cp		Copy file on SD card
+-flawr		Write on-board flash chip
+
+ROM and mapper files can be loaded without command, just point them at edlink-n8.exe
+ROM can be loaded in pair with mapper file. If mapper file is not specified system will load internal mapper from sd card.
+
+
+Execution without any arguments will print cartridge configuration. 
+Besides cartridge config itself in upper hex bloc will be printed current state of mapper registers and some ppu registers in bottom block.
+
+hex block structure:
+map regs	128
+apu regs 	32
+ppu pal		32 
+ppu regs	4

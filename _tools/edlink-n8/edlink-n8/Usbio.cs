@@ -163,7 +163,7 @@ namespace edlink_n8
             if (dst.ToLower().StartsWith("sd:"))
             {
                 dst = dst.Substring(3);
-                edio.fileOpen(dst, Edio.FAT_OPEN_ALWAYS | Edio.FAT_WRITE);
+                edio.fileOpen(dst, Edio.FAT_CREATE_ALWAYS | Edio.FAT_WRITE);
                 edio.fileWrite(src_data, 0, src_data.Length);
                 edio.fileClose();
             }

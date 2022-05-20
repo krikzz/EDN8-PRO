@@ -1,0 +1,9 @@
+v1.0.0.5  20.05.2022
+1) Minor fixes
+
+v1.0.0.3  23.05.2020
+1) Changed sram mask calculation for compatibility with OS 2.08
+
+v1.0.0.2  04.05.2020
+1) Fixed copying from sd to computed
+

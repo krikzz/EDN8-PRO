@@ -19,24 +19,25 @@ u8 updateCheck() {
 u8 updLoadToFlash(u8 *path, u32 addr, u8 crc_check);
 
 u8 app_updateCheck() {
-/*
+
+
     u8 resp;
     u32 crc;
 
-    if (sys_inf->os_ver >= 0x0100)return 0;
+    if (sys_inf->mcu.sw_ver == EDIO_REQ)return 0;
 
     gCleanScreen();
     gSetY(G_SCREEN_H / 2 - 3);
-    gConsPrintCX("Firmware update required");
+    gConsPrintCX("IO core update required");
     gConsPrintCX("");
-    gConsPrintCX("Press any key to start update");
-    
+    gConsPrintCX("Push A to begin");
+
     gRepaint();
-    sysJoyWait();
+    while (sysJoyWait() != JOY_A);
 
     gCleanScreen();
     gSetY(G_SCREEN_H / 2 - 1);
-    gConsPrintCX("Processing...");
+    gConsPrintCX("Update...");
     gRepaint();
 
     resp = updLoadToFlash(PATH_UPD_IOCORE, ADDR_FLA_ICOR, 0);
@@ -47,7 +48,7 @@ u8 app_updateCheck() {
     if (resp)return resp;
     resp = fileRead(&crc, 4);
     if (resp)return resp;
-    bi_cmd_upd_exec(ADDR_FLA_ICOR, crc);*/
+    bi_cmd_upd_exec(ADDR_FLA_ICOR, crc);
 
     return 0;
 }
