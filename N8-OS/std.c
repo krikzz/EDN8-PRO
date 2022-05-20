@@ -133,7 +133,7 @@ u8 str_cmp_ncase(u8 *str1, u8 *str2) {
     return 1;
 }
 
-u8 str_cmp_len(u8 *str1, u8 *str2, u8 len) {
+u8 str_cmp_len(u8 *str1, u8 *str2, u16 len) {
 
     while (len--) {
         if (*str1 == 0 && *str2 == 0)return 1;

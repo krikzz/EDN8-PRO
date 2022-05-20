@@ -21,7 +21,7 @@ u16 str_lenght(u8 *str);
 u8 str_extension(u8 *target, u8 *str);
 u8 str_extension_list(u8 **ext_list, u8 *name);
 u8 str_cmp_ncase(u8 *str1, u8 *str2);
-u8 str_cmp_len(u8 *str1, u8 *str2, u8 len);
+u8 str_cmp_len(u8 *str1, u8 *str2, u16 len);
 void str_copy(u8 *src, u8 *dst);
 u8 *str_extract_fname(u8 *str);
 u8 *str_extract_ext(u8 *str);

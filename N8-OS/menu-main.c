@@ -404,7 +404,7 @@ void mmAbout() {
     gSetPal(PAL_B3);
     gConsPrint("Special thanks:");
     gSetPal(PAL_B1);
-    gConsPrint("wiki.nesdev.com");
+    gConsPrint("nesdev.org");
     //gConsPrint("www.mesen.ca - nice debugger");
     //gConsPrint("James-F - audio tuning");
     gConsPrint("YM2149 core by Necronomfive");

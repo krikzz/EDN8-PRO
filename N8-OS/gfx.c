@@ -217,11 +217,13 @@ void gDrawHeader(u8 *str, u8 attr) {
 
 void gDrawFooter(u8 *str, u8 rows, u8 attr) {
 
+    u8 i;
 
     gFillRect(' ', 0, G_SCREEN_H - G_BORDER_Y - rows, G_SCREEN_W, rows);
     gSetY(G_SCREEN_H - G_BORDER_Y - rows - 1);
 
-    while (1) {
+    for (i = 0; i < INF_ROWS; i++) {
+
         if ((attr & G_CENTER)) {
             gConsPrintCX_ML(str, MAX_STR_LEN);
         } else {
@@ -262,7 +264,7 @@ void gRepaint() {
 
     g_base ^= 1024;
     if (g_base == 0)scroll = 240;
-    
+
 
     sysVsync();
     ppuSetScroll(0, scroll);
