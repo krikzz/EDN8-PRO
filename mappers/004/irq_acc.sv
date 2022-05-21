@@ -13,12 +13,10 @@ module irq_acc(//for Acclaim mapper
 	output irq,
 	
 	input  SSTBus sst,
-	output sst_ce,
-	output [7:0]sst_do
+	output [7:0]sst_di
 );
 	
-	assign sst_ce = sst.addr[7:0] >= 16 & sst.addr[7:0] <= 19;
-	assign sst_do = 
+	assign sst_di = 
 	sst.addr[7:0] == 16 ? reload_val : 
 	sst.addr[7:0] == 17 ? irq_on : //irq_on should be saved befor irq_pend
 	sst.addr[7:0] == 18 ? irq_ctr : 

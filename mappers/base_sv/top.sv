@@ -67,7 +67,7 @@ module top(
 	assign ppu.oe				= ppu_oe;
 	assign ppu.we				= ppu_we;
 	
-	assign mai.clk 			= clk;
+	assign mai.clk 			= clk;//50Mhz clock for stuff which can not be driven by system clock
 	assign mai.fds_sw 		= !fds_sw;
 	assign mai.map_rst 		= cfg.map_idx == 255 | !cfg.ct_unlock | map_rst_req;
 	assign mai.prg_do			= prg_dat;
