@@ -127,10 +127,10 @@ module sst_sw(
 	wire ss_req 		= ss_req_st[1:0] == 2'b10;
 	
 	wire nmi 			= cpu.rw & cpu.addr[15:0] == 16'hfffa;
+	wire joy_hit_save = cfg.ss_key_save != 8'h00 & joy1 == cfg.ss_key_save;
+	wire joy_hit_load = cfg.ss_key_load != 8'h00 & joy1 == cfg.ss_key_load;
+	wire joy_hit_menu = cfg.ss_key_menu != 8'h00 & joy1 == cfg.ss_key_menu;
 	wire joy_hit 		= joy_hit_save | joy_hit_load | joy_hit_menu;
-	wire joy_hit_save = joy1 == cfg.ss_key_save & cfg.ss_key_save != 8'h00;
-	wire joy_hit_load = joy1 == cfg.ss_key_load & cfg.ss_key_load != 8'h00;
-	wire joy_hit_menu = joy1 == cfg.ss_key_menu & cfg.ss_key_menu != 8'h00;
 	wire btn_hit 		= fds_sw & cfg.ct_ss_btn;
 	
 	
@@ -191,6 +191,7 @@ module sst_sw(
 		
 	end
 	
+	
 	wire [7:0]joy1;
 	
 	joy_rdr joy_inst1(
@@ -219,7 +220,9 @@ module joy_rdr(
 	assign joy_ce[1] 	= joy_cex & cpu.addr[0] == 1;
 	
 	reg load;
-	reg [8:0]buff;
+	reg [3:0]bctr;
+	reg [7:0]buff[2];
+	reg buff_sw;
 	
 	always @(negedge cpu.m2, posedge sys_rst)
 	if(sys_rst)
@@ -236,18 +239,33 @@ module joy_rdr(
 		
 		if(load)
 		begin
-			buff 		<= 1;
+			bctr <= 7;
 		end
 			else
-		if(buff[8])
+		if(bctr[3])
 		begin
-			dout[7:0] <= buff[7:0];
+			
+			if(buff[0] == buff[1])//required for solve the problem with dmc collision glitch
+			begin
+				dout[7:0] <= buff[0];
+			end
+			
 		end
 			else
 		if(joy_ce[port] & cpu.rw == 1)
 		begin
-			buff[8:0] <= {buff[7:0], cpu.data[0] | cpu.data[1]};
+		
+			buff[buff_sw][bctr] <= cpu.data[0] | cpu.data[1];
+			
+			bctr <= bctr - 1;
+			
+			if(bctr == 0)
+			begin
+				buff_sw <= !buff_sw;
+			end
+			
 		end
+		
 	
 	end
 	

@@ -32,7 +32,7 @@ void app_inGameMenu() {
         SS_SIZE
     };
 
-    u8 resp;
+    u8 resp, iresp;
     FileInfo inf = {0};
     ListBox box;
     u8 * items[SS_SIZE + 1];
@@ -88,12 +88,13 @@ void app_inGameMenu() {
     while (1) {
 
         if (update_info) {
-            resp = srmGetInfoSS(&inf, ss_bank_hex);
+            inf.file_name = 0; //just in case
+            iresp = srmGetInfoSS(&inf, ss_bank_hex);
             update_info = 0;
         }
 
         gSetPal(PAL_G2);
-        if (resp == 0) {
+        if (iresp == 0) {
             gDrawFooter("Save Time: ", 1, 0);
             gAppendDate(inf.date);
             gAppendString(" ");
@@ -141,7 +142,7 @@ void app_inGameMenu() {
             resp = ssCheats();
             if (resp)printError(resp);
             gCleanScreen();
-            update_info = 1;
+            //update_info = 1;
             continue;
         }
 

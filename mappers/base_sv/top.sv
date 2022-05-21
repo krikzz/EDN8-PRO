@@ -37,7 +37,8 @@ module top(
 	inout  [9:0]exp_io,
 	output [2:0]xio,
 	input  rx,
-	output tx
+	output tx,
+	output m2n
 );
 
 
@@ -45,6 +46,7 @@ module top(
 	assign exp_io[9:1] 	= 9'hzz;
 	assign xio[2:0] 		= 3'bzzz;
 	assign boot_on 		= 0;
+	assign m2n				= !m2;
 	
 
 	SysCfg cfg;

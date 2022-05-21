@@ -10,8 +10,9 @@ EDN8-V2.13  ???
 5) Chets access from in-game menu
 6) Per-cheat on/off switch
 7) Improved recently played menu
+8) Fixed false firing of save state combos in some games
 
-?) Minor fixes
+?) Minor fixes which i didn't logged
 
 
 *Changes was made to prevent save/load state slowdown due the storing a large amount of files in save-state folder.

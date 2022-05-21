@@ -189,7 +189,8 @@ module map_090(
 	irq_src == 0 ? m2_pe 	 :			//m2
 	irq_src == 1 ? ppu_12_pe : 		//a12 rise
 	irq_src == 2 ? ppu_oe_ne : 		//ppu oe
-						m2_pe & !cpu.rw; 	//cpu wr
+						rw_ne;
+						//m2_pe & !cpu.rw; 	//cpu wr
 
 	
 //************************************************************* regs
@@ -215,27 +216,36 @@ module map_090(
 	
 	
 //************************************************************* oe/we sync stuff
-	wire ppu_oe_ne = ppu_oe_st == 'b10000000;
-	wire ppu_12_pe = ppu_12_st == 'b01111111;
-	wire m2_pe 		= cpu.m3;//m2_st 		== 'b01111111;
+	wire ppu_oe_ne = ppu_oe_st[3:0]	== 'b1000;
+	wire ppu_oe_pe = ppu_oe_st[3:0]	== 'b0001;
+	wire ppu_12_pe = ppu_12_st[2:0] 	== 'b001;
+	wire m2_pe 		= m2_st[2:0] 		== 'b011;
+	wire rw_ne		= rw_st[2:0]		== 'b100;
 	
 	reg [1:0]mmc_latch;
 	reg [7:0]ppu_oe_st;
 	reg [7:0]ppu_12_st;
 	reg [7:0]m2_st;
+	reg [2:0]rw_st;
+	reg [13:0]ppu_addr_st;
 	
 	always @(posedge mai.clk)
 	begin
 		
-		ppu_oe_st <= {ppu_oe_st[6:0], ppu.oe};
-		ppu_12_st <= {ppu_12_st[6:0], ppu.addr[12]};
-		m2_st		 <= {m2_st[6:0], cpu.m2};
+		ppu_oe_st 	<= {ppu_oe_st[6:0], ppu.oe};
+		ppu_12_st 	<= {ppu_12_st[6:0], ppu.addr[12]};
+		m2_st		 	<= {m2_st[6:0], cpu.m2};
+		rw_st			<= {rw_st[1:0], cpu.rw};
 		
-		//mmc_latch[ppu.addr[12]]
+		
+		if(ppu_oe_ne)
+		begin
+			ppu_addr_st <= ppu.addr;
+		end
 		
 		//mmc4-like chr switch
-		if(ppu_oe_ne)
-		case({ppu.addr[13:3], 3'd0})
+		if(ppu_oe_pe)
+		case({ppu_addr_st[13:3], 3'd0})
 			'h0FD8:mmc_latch[0] <= 0;
 			'h1FD8:mmc_latch[1] <= 0;
 			'h0FE8:mmc_latch[0] <= 1;
@@ -256,7 +266,7 @@ module map_090(
 		else
 	if(sst.act)
 	begin
-		if(m2_pe & sst.we_reg)
+		if(cpu.m3 & sst.we_reg)
 		begin
 			if(sst.addr[7:3] == 0)chr_bank[sst.addr[2:0]][7:0] 	<= sst.dato;
 			if(sst.addr[7:3] == 1)chr_bank[sst.addr[2:0]][15:8] 	<= sst.dato;
@@ -286,7 +296,7 @@ module map_090(
 	begin
 	
 //*************************************************************	regs
-		if(m2_pe)
+		if(cpu.m3)
 		begin
 		
 			//mul and accum
