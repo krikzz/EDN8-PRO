@@ -32,7 +32,7 @@ module map_hub
 	map_idx == 205 ? map_out_205 :
 	map_idx == 208 ? map_out_208 :
 	map_idx == 219 ? map_out_219 :
-	map_idx == 245 ? map_out_074 :
+	//map_idx == 245 ? map_out_074 :
 	map_out_nom;
 	
 	

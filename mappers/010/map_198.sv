@@ -73,9 +73,9 @@ module map_198(
 	
 	wire irq_n;
 	wire ciram_a10;
-	wire ram_ce;
-	wire ram_ce_n;
-	wire ram_we_n;
+	//wire ram_ce;
+	//wire ram_ce_n;
+	//wire ram_we_n;
 	wire prg_ce_n;
 	wire [19:13]prg_addr;
 	wire [17:10]chr_addr;
@@ -95,16 +95,16 @@ module map_198(
 		
 		.irq_n(irq_n),
 		.ciram_a10(ciram_a10),
-		.ram_ce(ram_ce),
-		.ram_ce_n(ram_ce_n),
-		.ram_we_n(ram_we_n),	
+		//.ram_ce(ram_ce),
+		//.ram_ce_n(ram_ce_n),
+		//.ram_we_n(ram_we_n),	
 		.prg_ce_n(prg_ce_n),
 		.prg_addr(prg_addr),
 		.chr_addr(chr_addr),
 		
 		.clk(mai.clk),
 		.rst(mai.map_rst),
-		.map_sub(mai.cfg.map_sub),
+		.map_sub(0),
 		.mir_h(cfg.mir_h),
 		.cpu_m3(cpu.m3),
 		
