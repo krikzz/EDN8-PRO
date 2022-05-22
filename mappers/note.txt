@@ -8,6 +8,7 @@
 007 new mapper pack
 008 NES2.0 mappers
 009 new mapper pack sv
+010 new mmc3 like sv
 
 019 namco 163 (snd)
 021 konami vrc-x (vrc6 snd inclided)

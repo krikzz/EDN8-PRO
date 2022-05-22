@@ -10,6 +10,7 @@ start quartus_sh --flow compile 006/top
 start quartus_sh --flow compile 007/top
 start quartus_sh --flow compile 008/top
 start quartus_sh --flow compile 009/top
+start quartus_sh --flow compile 010/top
 start quartus_sh --flow compile 019/top
 start quartus_sh --flow compile 021/top
 start quartus_sh --flow compile 027/top

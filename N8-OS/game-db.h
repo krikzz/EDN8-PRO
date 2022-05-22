@@ -106,6 +106,7 @@ const GameDB game_db[] = {
     {0x555A555E, SET_MAP, 191}, //Sugoro Quest - Dice no Senshi Tachi (Ch)
     {0x96CE586E, SET_MAP, 189}, //Street Fighter II - The World Warrior (Unl) [!]
     {0xD5224FDE, SET_MAP, 195}, //Waixing's Chinese translation of SNK's God Slayer/Crystalis.
+    {0xAD730AF3, SET_MAP, 198}, //unknown game for map 198
 
 
     {0, 0, 0}//db end

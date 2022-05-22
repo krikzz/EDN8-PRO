@@ -317,4 +317,8 @@ void romConfigGlobl(RomInfo *inf) {
         inf->submap = 1;
     }
 
+    if (inf->mapper == 198 && inf->prg_size != 0xA0000) {
+        inf->submap = 1; //different mapping if PRG is not 640K
+    }
+
 }

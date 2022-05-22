@@ -52,7 +52,7 @@ set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVCMOS"
 set_location_assignment PIN_G16 -to ppu_a13n
 set_location_assignment PIN_M12 -to cpu_addr[14]
 set_location_assignment PIN_N13 -to cpu_addr[13]
@@ -209,47 +209,39 @@ set_location_assignment PIN_R9 -to prg_dat[7]
 set_location_assignment PIN_T2 -to gpio[3]
 set_location_assignment PIN_J1 -to fifo_rxf
 set_location_assignment PIN_K1 -to mcu_busy
-set_location_assignment PIN_C2 -to exp[0]
-set_location_assignment PIN_C1 -to exp[1]
-set_location_assignment PIN_D2 -to exp[2]
-set_location_assignment PIN_D1 -to exp[3]
-set_location_assignment PIN_F2 -to exp[4]
-set_location_assignment PIN_F1 -to exp[5]
-set_location_assignment PIN_G2 -to exp[6]
-set_location_assignment PIN_G1 -to exp[7]
-set_location_assignment PIN_C3 -to exp[8]
-set_location_assignment PIN_F3 -to exp[9]
 set_location_assignment PIN_D3 -to xio[0]
 set_location_assignment PIN_D4 -to xio[1]
 set_location_assignment PIN_D5 -to xio[2]
 set_location_assignment PIN_R4 -to boot_on
-set_global_assignment -name VERILOG_FILE map_hub.v
-set_global_assignment -name VERILOG_FILE map_012.v
-set_global_assignment -name VERILOG_FILE map_047.v
-set_global_assignment -name VERILOG_FILE map_064.v
-set_global_assignment -name VERILOG_FILE map_074.v
-set_global_assignment -name VERILOG_FILE map_115.v
-set_global_assignment -name VERILOG_FILE map_118.v
-set_global_assignment -name VERILOG_FILE map_119.v
-set_global_assignment -name VERILOG_FILE map_182.v
-set_global_assignment -name VERILOG_FILE map_189.v
-set_global_assignment -name VERILOG_FILE map_191.v
-set_global_assignment -name VERILOG_FILE map_194.v
-set_global_assignment -name VERILOG_FILE map_195.v
-set_global_assignment -name VERILOG_FILE map_196.v
-set_global_assignment -name VERILOG_FILE map_205.v
-set_global_assignment -name VERILOG_FILE map_208.v
-set_global_assignment -name VERILOG_FILE map_219.v
-set_global_assignment -name VERILOG_FILE irq_mmc3.v
-set_global_assignment -name VERILOG_FILE ../base/top.v
-set_global_assignment -name VERILOG_FILE ../base/map_255.v
-set_global_assignment -name VERILOG_FILE ../base/map_dma.v
-set_global_assignment -name VERILOG_FILE ../base/map_nom.v
-set_global_assignment -name SDC_FILE ../base/mapper.sdc
-set_global_assignment -name VERILOG_FILE ../base/ss.v
-set_global_assignment -name VERILOG_FILE ../base/gg.v
-set_global_assignment -name VERILOG_INCLUDE_FILE ../base/map_out.v
-set_global_assignment -name VERILOG_INCLUDE_FILE ../base/sys_cfg_in.v
-set_global_assignment -name VERILOG_FILE ../base/base_io.v
-set_global_assignment -name VERILOG_INCLUDE_FILE ../base/defs.v
+set_location_assignment PIN_R1 -to rx
+set_location_assignment PIN_P2 -to tx
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_location_assignment PIN_F3 -to exp_io[9]
+set_location_assignment PIN_C3 -to exp_io[8]
+set_location_assignment PIN_G1 -to exp_io[7]
+set_location_assignment PIN_G2 -to exp_io[6]
+set_location_assignment PIN_F1 -to exp_io[5]
+set_location_assignment PIN_F2 -to exp_io[4]
+set_location_assignment PIN_D1 -to exp_io[3]
+set_location_assignment PIN_D2 -to exp_io[2]
+set_location_assignment PIN_C1 -to exp_io[1]
+set_location_assignment PIN_C2 -to exp_io[0]
+set_global_assignment -name SYSTEMVERILOG_FILE map_hub.sv
+set_global_assignment -name SYSTEMVERILOG_FILE map_198.sv
+set_global_assignment -name SYSTEMVERILOG_FILE chip_mmc3.sv
+set_global_assignment -name SYSTEMVERILOG_FILE irq_mmc3.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/top.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_255.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_nom.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/dma.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/pi.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/base_io.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/sys_cfg.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/sst.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/ggc.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/structs.sv
+set_global_assignment -name SDC_FILE ../base_sv/clocks.sdc
+set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/defs.sv
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

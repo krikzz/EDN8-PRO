@@ -11,6 +11,7 @@ EDN8-V2.13  ???
 6) Per-cheat on/off switch
 7) Improved recently played menu
 8) Fixed false firing of save state combos in some games
+9) Update for mapper 198
 
 ?) Minor fixes which i didn't logged
 
