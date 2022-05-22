@@ -7,6 +7,7 @@ module map_hub(
 
 	
 	assign mao =
+	mai.cfg.map_idx == 74 	? map_out_192 :
 	mai.cfg.map_idx == 192 	? map_out_192 :
 	mai.cfg.map_idx == 198 	? map_out_198 :
 	mai.cfg.map_idx == 245 	? map_out_245 :

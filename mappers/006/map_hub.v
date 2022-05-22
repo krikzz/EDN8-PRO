@@ -18,7 +18,6 @@ module map_hub
 	map_idx == 12  ? map_out_012 : //need MMC3A, othervise game hanging at boot-up as it gets stuck in an infinite loop with the IRQ reload set to 0 
 	map_idx == 47  ? map_out_047 :
 	map_idx == 64  ? map_out_064 :
-	map_idx == 74  ? map_out_074 :
 	map_idx == 115 ? map_out_115 :
 	map_idx == 118 ? map_out_118 :
 	map_idx == 119 ? map_out_119 :
@@ -32,7 +31,6 @@ module map_hub
 	map_idx == 205 ? map_out_205 :
 	map_idx == 208 ? map_out_208 :
 	map_idx == 219 ? map_out_219 :
-	//map_idx == 245 ? map_out_074 :
 	map_out_nom;
 	
 	
@@ -47,9 +45,6 @@ module map_hub
 	
 	wire [`BW_MAP_OUT-1:0]map_out_064;
 	map_064 m064(map_out_064, bus, sys_cfg, ss_ctrl);
-	
-	wire [`BW_MAP_OUT-1:0]map_out_074;
-	map_074 m074(map_out_074, bus, sys_cfg, ss_ctrl);
 	
 	wire [`BW_MAP_OUT-1:0]map_out_115;
 	map_115 m115(map_out_115, bus, sys_cfg, ss_ctrl);

@@ -85,11 +85,11 @@ https://github.com/krikzz/EDN8-PRO/pull/2
 +почему то срабатывали комбинации быстрых сохранений когда играли на вдвоем в s.c.a.t. (вперед+старт) и в кризис форс
 +не работает мапер 90 на нт мини. попробовать его потестить на разных клонах (m3 bug?)
 +посмотреть ромы 198 в 05_dbg
++I need your help with something. N8pro has supported mapper245 for a long time, but it doesn't actually support it.
++Mapper245 is used for the Chinese version of dq4 in China
+??разобраться с крашем начальной загрузки в условиях повышеного энергопотребления. можно репродюсить на фамиком+ргб бластер+джойз
+??Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
 
-разобраться с крашем начальной загрузки в условиях повышеного энергопотребления. можно репродюсить на фамиком+ргб бластер+джойз
-Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
-
-I need your help with something. N8pro has supported mapper245 for a long time, but it doesn't actually support it.
-Mapper245 is used for the Chinese version of dq4 in China
+проверить мапер 176. тестить Chaos World (Ch)
 
 

@@ -113,12 +113,19 @@ module map_192(
 	);
 	
 //*************************************************************
-	wire chr_ram_ce = chr_addr[17:10] >= 8 & chr_addr[17:10] <= 11;
+	wire chr_ram_ce					= cfg.map_idx == 74 ? chr_ram_ce_74 : chr_ram_ce_192;
+	wire chr_ram_ce_74 				= chr_addr[17:10] >= 8 & chr_addr[17:10] <= 9; //2x 1K banks
+	wire chr_ram_ce_192 				= chr_addr[17:10] >= 8 & chr_addr[17:10] <= 11;//4x 1K banks
 	
-	wire [17:10]chr_addr_x = chr_ram_ce ? chr_addr_ram : chr_addr_rom;
 	
-	wire [17:10]chr_addr_rom = chr_addr[17:10];
-	wire [17:10]chr_addr_ram = ppu.addr[11:10];
+	wire [17:10]chr_addr_x 			= chr_ram_ce ? chr_addr_ram : chr_addr_rom;
+	
+	wire [17:10]chr_addr_rom 		= chr_addr[17:10];
+	
+	wire [17:10]chr_addr_ram 		= cfg.map_idx == 74 ? chr_addr_ram_74 : chr_addr_ram_192;
+	wire [17:10]chr_addr_ram_74	= ppu.addr[10];	//2K ram
+	wire [17:10]chr_addr_ram_192	= ppu.addr[11:10];//4K ram
+	
 	
 endmodule
 

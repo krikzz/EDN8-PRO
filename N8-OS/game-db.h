@@ -109,8 +109,10 @@ const GameDB game_db[] = {
     {0xAD730AF3, SET_MAP, 198}, //unknown game for map 198 
     {0x345EE51A, SET_MAP, 245}, //Yong Zhe Dou E Long - Dragon Quest VII (Ch)
     {0x98C1CD4B, SET_MAP, 192}, //Ying Lie Qun Xia Zhuan (Ch)
-    
-
+    {0xAE854CEF, SET_MAP, 74}, //Jia A Fung Yun (Ch)
+    {0xEE810D55, SET_MAP, 192}, //You Ling Xing Dong (Ch)
+    {0x2D0877F3, SET_MAP, 195}, //Zu Qiu Xiao Jiang (Ch)
+    {0x7F3DBF1B, SET_MAP, 176}, //Chaos World (Ch)
 
     {0, 0, 0}//db end
 };

@@ -4,7 +4,7 @@
 
 EDN8-V2.13  ???
 1) Changes in structure of save-state folder*
-2) Update for mappers: MMC3, MMC1, 198, 90, 245
+2) Update for mappers: 4, 1, 198, 90, 245, 74
 3) New mapper 192
 4) Virtual DIP switch function for NWC 1990 and others
 5) Chets access from in-game menu
