@@ -1,0 +1,1 @@
+All game data stored here (saves, cheats, disp-switch settings etc)

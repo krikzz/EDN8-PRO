@@ -465,8 +465,10 @@ void mmDeviceInfo() {
     u8 *buff;
     Vdc vdc;
 
+    gCleanScreen();
+    gRepaint();
+    
     buff = malloc(DI_SIZE * 16);
-
 
     box.hdr = "Device Info";
     box.arg = arg;
@@ -660,11 +662,12 @@ void mmDeviceInfo_full() {
         gAppendString(" (BLANK)");
     }
 
+    /*
     gConsPrint("");
     gConsPrint("MCUID:");
     gAppendHex(sys_inf->mcu.cpu_id, 12);
     gConsPrint("FLAID:");
-    gAppendHex(sys_inf->mcu.fla_id, 8);
+    gAppendHex(sys_inf->mcu.fla_id, 8);*/
 
     gRepaint();
     sysJoyWait();

@@ -89,7 +89,9 @@ https://github.com/krikzz/EDN8-PRO/pull/2
 +Mapper245 is used for the Chinese version of dq4 in China
 ??разобраться с крашем начальной загрузки в условиях повышеного энергопотребления. можно репродюсить на фамиком+ргб бластер+джойз
 ??Mahjong Kazoku (FDS) error 23 on startup.  Tried both no-intro and tosec.  Currently running firmware 2.11, haven't tried 2.12 yet.
+не работает карта eXceleram 32GB синенькая. попробовать ее на меге
 
 проверить мапер 176. тестить Chaos World (Ch)
+сделать для VRC  маперов реализацию с chip_vrc, как это было сделано для ммц
 
 

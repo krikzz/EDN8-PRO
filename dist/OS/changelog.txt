@@ -1,23 +1,25 @@
 ****************************************************************************
 !!!We recommend backup your old EDN8 folder before than install OS update!!!
 ****************************************************************************
+Copy new files over old EDN8 folder. Update via USB may not work properly
+if folders structure was changed.
+****************************************************************************
 
-EDN8-V2.13  ???
-1) Changes in structure of save-state folder*
+
+EDN8-V2.13  23.05.2022
+1) Changes in folders sturcture*
 2) Update for mappers: 4, 1, 198, 90, 245, 74
 3) New mapper 192
 4) Virtual DIP switch function for NWC 1990 and others
-5) Chets access from in-game menu
+5) Cheats access from in-game menu
 6) Per-cheat on/off switch
 7) Improved recently played menu
 8) Fixed false firing of save state combos in some games
+9) State recovery option always turned on
+10) Minor fixes and changes which i didn't logged
 
-
-?) Minor fixes which i didn't logged
-
-
-*Changes was made to prevent save/load state slowdown due the storing a large amount of files in save-state folder.
-Now each game has own subfolder with save slots files inside.
+*Each game has own subfolder where stored all data related to it (saves, cheats etc.)
+All game data located in EDN8/gamedata
 
 ****************************************************************************
 

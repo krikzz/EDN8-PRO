@@ -12,8 +12,9 @@
 
 
 #define OS_VER          0x0213
+//#define OS_RC           1
 //#define OS_BETA         1
-#define OS_RC           1
+
 
 #define EDIO_REQ        0x0101
 #define REGI_VER        1       //can be used for registry reset forcing
@@ -26,11 +27,11 @@
 #define PATH_UPD_FPGA   "EDN8/syscore/menu-fpg.bin"
 #define PATH_UPD_MENU   "EDN8/syscore/menu-cpu.bin"
 #define PATH_UPD_IOCORE "EDN8/syscore/iocore.bin"
+#define PATH_FDS_BIOS   "EDN8/syscore/disksys.rom"
 #define PATH_REGISTRY   "EDN8/sysdata/registry.bin"
 #define PATH_RECENT     "EDN8/sysdata/recent.bin"
 #define PATH_RAMDUMP    "EDN8/sysdata/ramdump01.srm"
 #define PATH_TESTFILE   "EDN8/sysdata/tstfile01.bin"
-#define PATH_FDS_BIOS   "EDN8/sysdata/disksys.rom"
 #define PATH_SDC_FILE   "EDN8/MAPS/255.RBF"
 
 //game data files
