@@ -257,6 +257,7 @@ module map_090(
 	
 	
 //************************************************************* mapper regs and logic
+
 	always @(posedge mai.clk)
 	if(mai.map_rst)
 	begin
@@ -264,7 +265,7 @@ module map_090(
 		irq_pend		<= 0;
 	end
 		else
-	if(sst.act)
+	if(sst.act_mc)
 	begin
 		if(cpu.m3 & sst.we_reg)
 		begin

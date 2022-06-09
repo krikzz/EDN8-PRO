@@ -3,8 +3,9 @@
 module irq_acc(//for Acclaim mapper
 
 	input clk,
-	input decode_en,
+	input cpu_m3,
 	input cpu_m2,
+	input cpu_rw,
 	input [7:0]cpu_data,
 	input [3:0]reg_addr,
 	input ppu_a12,
@@ -15,15 +16,15 @@ module irq_acc(//for Acclaim mapper
 	input  SSTBus sst,
 	output [7:0]sst_di
 );
-	
+
+//************************************************************* sst stuff	
 	assign sst_di = 
 	sst.addr[7:0] == 16 ? reload_val : 
 	sst.addr[7:0] == 17 ? irq_on : //irq_on should be saved befor irq_pend
 	sst.addr[7:0] == 18 ? irq_ctr : 
 	sst.addr[7:0] == 19 ? {reload_req, irq_pend} :
 	8'hff;
-	
-	
+//************************************************************* 		
 	assign irq 				= irq_pend_ne;
 	
 	
@@ -36,14 +37,14 @@ module irq_acc(//for Acclaim mapper
 	reg [2:0]edge_ctr;
 
 	always @(posedge clk)
-	if(sst.act)
+	if(sst.act_mc)
 	begin
-		if(decode_en)
+		if(cpu_m3)
 		begin
 			if(sst.we_reg & sst.addr[7:0] == 16)reload_val 	<= sst.dato;
 			if(sst.we_reg & sst.addr[7:0] == 17)irq_on 		<= sst.dato[0];
 			if(sst.we_reg & sst.addr[7:0] == 18)irq_ctr		<= sst.dato;
-			if(sst.we_reg & sst.addr[7:0] == 19){reload_req, irq_pend} <= sst.dato;
+			//if(sst.we_reg & sst.addr[7:0] == 19){reload_req, irq_pend} <= sst.dato;
 		end
 		irq_pend_ne	<= irq_pend;
 	end
@@ -56,7 +57,7 @@ module irq_acc(//for Acclaim mapper
 		else
 	begin
 		
-		if(decode_en)
+		if(!cpu_rw & cpu_m3)
 		case(reg_addr[3:0])
 			4'hC:reload_val[7:0] <= cpu_data[7:0];//C000
 			4'hE:irq_on 			<= 0;//E000
@@ -64,7 +65,7 @@ module irq_acc(//for Acclaim mapper
 		endcase
 		
 		
-		if(decode_en & reg_addr == 4'hD)//C001
+		if(!cpu_rw & cpu_m3 & reg_addr == 4'hD)//C001
 		begin
 			reload_req		<= 1;
 			irq_ctr[7:0] 	<= 0;

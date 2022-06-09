@@ -167,7 +167,7 @@ module top(
 //****************************************************************************************
 	wire we_ok					= cpu.m2 & m2_st[7:0] == 'b11111111;//data bus stable
 	wire ce_ok					= cpu.m2 & m2_st[1:0] == 'b11;//addr bus stable (cpu_ce comes with little delay)
-	wire m3						= m2_st[10:0] == 'b01111111111;//used if block cloced by clk instead of m2. (mmc3)
+	wire m3						= m2_st[12:10] == 'b001;//used if block cloced by master clock (clk) instead of m2. (mmc3)
 	
 	reg [15:0]m2_st;
 	

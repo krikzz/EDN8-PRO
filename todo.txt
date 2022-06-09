@@ -93,5 +93,6 @@ https://github.com/krikzz/EDN8-PRO/pull/2
 
 проверить мапер 176. тестить Chaos World (Ch)
 сделать для VRC  маперов реализацию с chip_vrc, как это было сделано для ммц
+It does not work, Nintenco Campus Challenge 1991 requires support for its mapper (555) to run. 
 
 

@@ -95,7 +95,7 @@ module map_009(//MMC2
 	
 	always @(posedge mai.clk)
 	begin
-	
+
 		ppu_oe_st[7:0] <= {ppu_oe_st[6:0], ppu.oe};
 		
 		if(ppu_oe_st[3:0] == 4'b1000)
@@ -103,7 +103,7 @@ module map_009(//MMC2
 			ppu_addr_st[10:0] <= ppu.addr[13:3];
 		end
 
-		if(sst.act)
+		if(sst.act_mc)
 		begin
 			if(sst.we_reg & sst.addr == 5 & cpu.m3)clatch1 <= cpu.data[1];
 			if(sst.we_reg & sst.addr == 5 & cpu.m3)clatch2 <= cpu.data[2];

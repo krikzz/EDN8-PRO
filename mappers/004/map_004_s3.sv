@@ -119,8 +119,9 @@ module map_004_s3(//Acclaim mmc3 modification. Everything the same except irq
 	irq_acc irq_acc_inst(
 		
 		.clk(mai.clk),
-		.decode_en(cpu.m3 & !cpu.rw),
+		.cpu_m3(cpu.m3),
 		.cpu_m2(cpu.m2),
+		.cpu_rw(cpu.rw),
 		.cpu_data(cpu.data),
 		.reg_addr({cpu.addr[15:13], cpu.addr[0]}),
 		.ppu_a12(ppu.addr[12]),

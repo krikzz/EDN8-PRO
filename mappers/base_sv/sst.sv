@@ -70,6 +70,11 @@ module sst_controller(
 	end
 	
 	
+	always @(posedge clk)
+	begin
+		sst.act_mc	<= sst.act;
+	end
+	
 	sst_sw sst_sw_inst(
 	
 		.cpu(cpu),

@@ -36,7 +36,7 @@ typedef struct{
 
 typedef struct {
 	
-	bit clk;		//50Mhz clock
+	bit clk;		//50Mhz master clock
 	bit fds_sw;	//cart button
 	bit sys_rst;//cpu reset
 	bit map_rst;//mapper reset
@@ -171,6 +171,7 @@ typedef struct{
 
 	bit [12:0]addr;
 	bit act;
+	bit act_mc;//for blocks driven by master clock
 	bit we;
 	
 	bit we_reg;
