@@ -11,7 +11,7 @@
 #include "bios.h"
 
 
-#define OS_VER          0x0213
+#define OS_VER          0x0214
 //#define OS_RC           1
 //#define OS_BETA         1
 
