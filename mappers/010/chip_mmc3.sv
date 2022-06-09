@@ -64,7 +64,6 @@ module chip_mmc3(
 	ppu_addr[11:10] == 2 ? r8001[4][7:0] :
    r8001[5][7:0];
 	
-	wire decode_en 		= cpu_m3 & !cpu_rw;
 	wire [3:0]reg_addr	= {!cpu_ce_n, cpu_a14, cpu_a13, cpu_a0};
 	
 	wire prg_mod 			= r8000[6];
@@ -79,16 +78,13 @@ module chip_mmc3(
 	reg [7:0]rA001;
 	
 	
-	always @(posedge clk)
+	always @(negedge cpu_m2)
 	if(sst.act)
 	begin
-		if(cpu_m3)
-		begin
-			if(sst.we_reg & sst.addr[7:3] == 0)r8001[sst.addr[2:0]] 	<= sst.dato;
-			if(sst.we_reg & sst.addr[7:0] == 8)r8000 						<= sst.dato;
-			if(sst.we_reg & sst.addr[7:0] == 9)rA000 						<= sst.dato;
-			if(sst.we_reg & sst.addr[7:0] == 10)rA001						<= sst.dato;
-		end
+		if(sst.we_reg & sst.addr[7:3] == 0)r8001[sst.addr[2:0]] 	<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 8)r8000 						<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 9)rA000 						<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 10)rA001						<= sst.dato;
 	end
 		else
 	if(rst)
@@ -108,14 +104,13 @@ module chip_mmc3(
 		r8001[7][7:0] 	<= 1;
 	end
 		else
-	if(decode_en)
+	if(!cpu_rw)
 	case(reg_addr[3:0])
 		4'h8:r8000[7:0] 					<= cpu_data[7:0];
 		4'h9:r8001[r8000[2:0]][7:0]	<= cpu_data[7:0];
 		4'hA:rA000[7:0] 					<= cpu_data[7:0];
 		4'hB:rA001[7:0] 					<= cpu_data[7:0];
 	endcase
-	
 	
 //************************************************************* irq
 	wire irq_pend;
@@ -124,8 +119,9 @@ module chip_mmc3(
 	irq_mmc3 irq_mmc_inst(
 		
 		.clk(clk),
-		.decode_en(decode_en),
+		.cpu_m3(cpu_m3),
 		.cpu_m2(cpu_m2),
+		.cpu_rw(cpu_rw),
 		.cpu_data(cpu_data),
 		.reg_addr(reg_addr),
 		.ppu_a12(ppu_addr[12]),

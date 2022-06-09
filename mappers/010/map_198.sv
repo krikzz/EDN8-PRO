@@ -192,7 +192,6 @@ module chip_mmc3_198(
 	ppu_addr[11:10] == 2 ? r8001[4][7:0] :
    r8001[5][7:0];
 	
-	wire decode_en 		= cpu_m3 & !cpu_rw;
 	wire [3:0]reg_addr	= {!cpu_ce_n, cpu_a14, cpu_a13, cpu_a0};
 	
 	wire prg_mod 			= r8000[6];
@@ -208,7 +207,7 @@ module chip_mmc3_198(
 	
 	
 	always @(posedge clk)
-	if(sst.act)
+	if(sst.act_mc)
 	begin
 		if(cpu_m3)
 		begin
@@ -236,7 +235,7 @@ module chip_mmc3_198(
 		r8001[7][7:0] 	<= 1;
 	end
 		else
-	if(decode_en)
+	if(cpu_m3 & !cpu_rw)
 	case(reg_addr[3:0])
 		4'h8:r8000[7:0] 					<= cpu_data[7:0];
 		4'h9:r8001[r8000[2:0]][7:0]	<= cpu_data[7:0];
@@ -252,8 +251,9 @@ module chip_mmc3_198(
 	irq_mmc3 irq_mmc_inst(
 		
 		.clk(clk),
-		.decode_en(decode_en),
+		.cpu_m3(cpu_m3),
 		.cpu_m2(cpu_m2),
+		.cpu_rw(cpu_rw),
 		.cpu_data(cpu_data),
 		.reg_addr(reg_addr),
 		.ppu_a12(ppu_addr[12]),

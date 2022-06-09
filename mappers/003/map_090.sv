@@ -64,7 +64,7 @@ module map_090(
 	sst.addr[7:0] == 49 	? mul_arg[1] : 
 	sst.addr[7:0] == 50 	? mul_rez[7:0] : 
 	sst.addr[7:0] == 51 	? mul_rez[15:8] : 
-	sst.addr[7:0] == 52 	? {mul_req, irq_en, irq_pend, irq_en_st} : 
+	sst.addr[7:0] == 52 	? {irq_en, irq_pend, irq_en_st} : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
 	assign srm.ce				= ce_60xx & reg_D000[7] == 1;
@@ -198,7 +198,6 @@ module map_090(
 	
 	reg [7:0]mul_arg[2];
 	reg [15:0]mul_rez;
-	reg mul_req;
 	reg [7:0]acc;
 	reg [7:0]acc_test;
 	
@@ -259,12 +258,6 @@ module map_090(
 //************************************************************* mapper regs and logic
 
 	always @(posedge mai.clk)
-	if(mai.map_rst)
-	begin
-		reg_D000[2] <= 0;
-		irq_pend		<= 0;
-	end
-		else
 	if(sst.act_mc)
 	begin
 		if(cpu.m3 & sst.we_reg)
@@ -290,8 +283,16 @@ module map_090(
 			if(sst.addr[7:0] == 49)mul_arg[1] 		<= sst.dato;
 			if(sst.addr[7:0] == 50)mul_rez[7:0] 	<= sst.dato;
 			if(sst.addr[7:0] == 51)mul_rez[15:8] 	<= sst.dato;
-			if(sst.addr[7:0] == 52){mul_req, irq_en, irq_pend, irq_en_st} <= sst.dato;
+			if(sst.addr[7:0] == 52)irq_en_st 		<= sst.dato[0];
+			//if(sst.addr[7:0] == 52)irq_pend 			<= sst.dato[1];
+			if(sst.addr[7:0] == 52)irq_en 			<= sst.dato[2];
 		end
+	end
+		else
+	if(mai.map_rst)
+	begin
+		reg_D000[2] <= 0;
+		irq_pend		<= 0;
 	end
 		else
 	begin
@@ -305,11 +306,9 @@ module map_090(
 			case({cpu.addr[15:11], 9'd0, cpu.addr[1:0]})
 				16'h5800:begin
 					mul_arg[0] 	<= cpu.data;
-					mul_req 		<= 1;
 				end
 				16'h5801:begin
 					mul_arg[1] 	<= cpu.data;
-					mul_req 		<= 1;
 				end
 				16'h5802:begin
 					acc 			<= cpu.data + acc;
@@ -364,12 +363,9 @@ module map_090(
 
 		
 //************************************************************* mul
-			if(mul_req)
-			begin
-				mul_rez <= mul_arg[0] * mul_arg[1];
-				mul_req <= 0;
-			end
-		
+
+			mul_rez <= mul_arg[0] * mul_arg[1];
+
 		end
 		
 //************************************************************* irq

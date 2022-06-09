@@ -77,7 +77,7 @@ module map_096(
 	reg [4:0]pa13_st;
 	
 	always @(posedge mai.clk)
-	if(sst.act)
+	if(sst.act_mc)
 	begin
 		if(sst.we_reg & sst.addr[7:0] == 1 & cpu.m3)chr_bank <= sst.dato;
 	end

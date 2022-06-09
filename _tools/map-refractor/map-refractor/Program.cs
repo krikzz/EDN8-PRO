@@ -20,7 +20,7 @@ namespace map_refractor
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
                 //loadDir("E:\\projects\\EDN8-PRO\\mappers");
-                loadDir("C:\\Users\\igor\\Desktop\\83");
+                loadDir("C:\\Users\\igor\\Desktop\\mappers");
             }
             catch (Exception x)
             {
@@ -41,19 +41,21 @@ namespace map_refractor
                 loadDir(dirs[i]);
             }
 
-            string[] files = Directory.GetFiles(path, "*.v");
+            string[] files = Directory.GetFiles(path, "*.sv");
 
             for (int i = 0; i < files.Length; i++)
             {
                 loadFile(files[i]);
             }
 
+        
+
         }
 
 
         static void loadFile(string path)
         {
-
+            /*
             string[] targets =
             {
                               
@@ -71,9 +73,15 @@ namespace map_refractor
                 //"map_sub", "cfg.map_sub",
                 //"map_idx", "cfg.map_idx",
                 "!cpu_ce", "cpu.addr[15]",
+            };*/
+
+            string[] targets =
+           {
+
+                "m3", "m3",
             };
 
-            if (!path.EndsWith(".v")) return;
+            if (!path.EndsWith(".sv") && !path.EndsWith(".v")) return;
 
             string code = File.ReadAllText(path);
 
@@ -85,7 +93,7 @@ namespace map_refractor
                 Console.WriteLine("refract: " + path + ": " + targets[i]);
             }
 
-            File.WriteAllText(path, code);
+            //File.WriteAllText(path, code);
 
             //Console.WriteLine("scan file: " + path);
         }

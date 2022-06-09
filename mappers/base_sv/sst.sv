@@ -83,14 +83,14 @@ module sst_controller(
 		.sys_rst(sys_rst),
 		.fds_sw(fds_sw),
 		.sst_ce(sst_data_ce),
-		.ss_act(sst.act),
-		.ss_src(ss_src),
+		.sst_act(sst.act),
+		.sst_src(sst_src),
 		.sniff_off(sniff_off)
 	);
 
 		//wire ss_we;
 	wire [7:0]snif_do;
-	wire [7:0]ss_src;
+	wire [7:0]sst_src;
 	wire sniff_off;
 	
 	sst_sniffer sniffer_inst(
@@ -99,7 +99,7 @@ module sst_controller(
 		.cpu(cpu),
 		.rd_addr(sst.addr[8:0]),
 		.sniff_off(sniff_off),
-		.ss_src(ss_src),
+		.sst_src(sst_src),
 		
 		.dout(snif_do)
 	);
@@ -117,15 +117,15 @@ module sst_sw(
 	input  fds_sw,
 	input  sst_ce,
 	
-	output ss_act,
-	output reg [7:0]ss_src,
+	output sst_act,
+	output reg [7:0]sst_src,
 	output sniff_off
 );
 	
 	
-	assign ss_act 		= ((game_out & cpu.m2) | ss_latch) & !(game_ret & cpu.m2);
-	//assign ss_we 		= sst_ce & ss_act & !cpu.rw;
-	assign sniff_off 	= ss_act & !ss_ack;
+	assign sst_act 	= (game_out | ss_latch) & !game_ret;
+	//assign sst_act 	= ((game_out & cpu.m2) | ss_latch) & !(game_ret & cpu.m2);
+	assign sniff_off 	= sst_act & !ss_ack;
 	
 	wire game_out 		= (nmi & ss_ack == 0 & ss_req);
 	wire game_ret 		= (nmi & ss_ack == 1);
@@ -150,7 +150,7 @@ module sst_sw(
 				
 		if(ss_req_st[1:0] == 2'b01)
 		begin
-			ss_src[7:0] 	<= joy1[7:0];
+			sst_src[7:0] 	<= joy1[7:0];
 		end
 	
 		if(ss_latch)
@@ -184,7 +184,7 @@ module sst_sw(
 		if(game_ret)ss_latch <= 0;
 		
 		
-		if(game_ret | !ss_act)
+		if(game_ret | !sst_act)
 		begin
 			ss_ack <= 0;
 		end
@@ -283,7 +283,7 @@ module sst_sniffer(
 	input  CpuBus cpu,
 	input  [8:0]rd_addr,
 	input  sniff_off,
-	input  [7:0]ss_src,
+	input  [7:0]sst_src,
 	
 	output [7:0]dout
 	
@@ -321,7 +321,7 @@ module sst_sniffer(
 	rd_addr[5:0] == 2 ? ppu_scrl[15:8] : 
 	rd_addr[5:0] == 3 ? ppu_scrl[7:0] :
 	rd_addr[5:0] == 15 ? 8'h53 : 
-	rd_addr[5:0] == 63 ? ss_src[7:0] : 
+	rd_addr[5:0] == 63 ? sst_src[7:0] : 
 	8'hff;
 	
 	
