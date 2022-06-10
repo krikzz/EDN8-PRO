@@ -1,5 +1,5 @@
 
-module map_075(
+module map_075(//VRC1
 
 	input  MapIn  mai,
 	output MapOut mao
@@ -39,16 +39,11 @@ module map_075(
 	assign mao.prg_mask_off = 0;
 	assign mao.chr_mask_off = 0;
 	assign mao.srm_mask_off = 0;
-	assign mao.mir_4sc		= 0;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
+	assign mao.mir_4sc		= 1;//enable support for 4-screen mirroring. for activation should be enabled in cfg.mir_4 also
 	assign mao.bus_cf 		= 0;//bus conflicts
 //************************************************************* save state regs read
-	assign mao.sst_di[7:0] =
-	sst.addr[7:0] == 0 ? prg0 : 
-	sst.addr[7:0] == 1 ? prg1 : 
-	sst.addr[7:0] == 2 ? prg2 : 
-	sst.addr[7:0] == 3 ? chr0 : 
-	sst.addr[7:0] == 4 ? chr1 : 
-	sst.addr[7:0] == 5 ? mir_mode : 
+	assign mao.sst_di[7:0] 	=
+	sst.addr[7:0]  < 127 ? sst_di : 
 	sst.addr[7:0] == 127 ? cfg.map_idx : 8'hff;
 //************************************************************* mapper-controlled pins
 	assign srm.ce				= 0;
@@ -56,57 +51,59 @@ module map_075(
 	assign srm.we				= 0;
 	assign srm.addr[12:0]	= 0;
 	
-	assign prg.ce				= cpu.addr[15];
+	assign prg.ce				= !prg_ce_n;
 	assign prg.oe 				= cpu.rw;
 	assign prg.we				= 0;
 	assign prg.addr[12:0]	= cpu.addr[12:0];
-	assign prg.addr[16:13] 	=
-	cpu.addr[14:13] == 0 ? prg0[3:0] : 
-	cpu.addr[14:13] == 1 ? prg1[3:0] : 
-	cpu.addr[14:13] == 2 ? prg2[3:0] : 
-	4'b1111; 
+	assign prg.addr[16:13] 	= prg_addr[16:13];
 	
-	assign chr.ce 				= mao.ciram_ce;
+	assign chr.ce 				= !chr_ce_n;
 	assign chr.oe 				= !ppu.oe;
 	assign chr.we 				= cfg.chr_ram ? !ppu.we & mao.ciram_ce : 0;
 	assign chr.addr[11:0]	= ppu.addr[11:0];
-	assign chr.addr[16:12] 	= !ppu.addr[12] ? chr0[4:0] : chr1[4:0];
+	assign chr.addr[16:12] 	= chr_addr[16:12];
 
 	
 	//A10-Vmir, A11-Hmir
-	assign mao.ciram_a10 	= cfg.map_idx == 151 ? mir_std : !mir_mode ? ppu.addr[10] : ppu.addr[11];
+	assign mao.ciram_a10 	= ciram_a10;
 	assign mao.ciram_ce 		= !ppu.addr[13];
 	
 	assign mao.irq				= 0;
 //************************************************************* mapper implementation
 
-	wire mir_std 				= cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
+	wire ciram_a10				= cfg.map_idx == 151 ? ciram_a10_m151 : ciram_a10_m075;
+	wire ciram_a10_m151 		= cfg.mir_v ? ppu.addr[10] : ppu.addr[11];
+	
+	wire ciram_a10_m075;
+	wire prg_ce_n;
+	wire chr_ce_n;
+	wire [16:13]prg_addr;
+	wire [16:12]chr_addr;
+	wire [7:0]sst_di;
+	
+	chip_vrc1 vrc1_inst(
 
-	wire [15:0]reg_addr 		= {cpu.addr[15:12], 12'd0};
+		.cpu_m2(cpu.m2),
+		.cpu_rw(cpu.rw),
+		.cpu_a12(cpu.addr[12]),
+		.cpu_a13(cpu.addr[13]),
+		.cpu_a14(cpu.addr[14]),
+		.cpu_ce_n(!cpu.addr[15]),
+		.ppu_oe_n(ppu.oe),
+		.cpu_data(cpu.data[3:0]),
+		.ppu_addr(ppu.addr[13:10]),
+
+		.ciram_a10(ciram_a10_m075),
+		.prg_ce_n(prg_ce_n),
+		.chr_ce_n(chr_ce_n),
+		.prg_addr(prg_addr),
+		.chr_addr(chr_addr),
+		
+		.rst(mai.map_rst),
+		.sst(sst),
+		.sst_di(sst_di)
 	
-	reg [3:0]prg0, prg1, prg2;
-	reg [4:0]chr0, chr1;
-	reg mir_mode;
-	
-	always @(negedge cpu.m2)
-	if(sst.act)
-	begin
-		if(sst.we_reg & sst.addr[7:0] == 0)prg0 <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 1)prg1 <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 2)prg2 <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 3)chr0 <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 4)chr1 <= sst.dato;
-		if(sst.we_reg & sst.addr[7:0] == 5)mir_mode <= sst.dato[0];
-	end
-		else
-	if(!cpu.rw)
-	case(reg_addr[15:0])
-		16'h8000:prg0[3:0] <= cpu.data[3:0];
-		16'h9000:{chr1[4], chr0[4], mir_mode} <= cpu.data[2:0];
-		16'hA000:prg1[3:0] <= cpu.data[3:0];
-		16'hC000:prg2[3:0] <= cpu.data[3:0];
-		16'hE000:chr0[3:0] <= cpu.data[3:0];
-		16'hF000:chr1[3:0] <= cpu.data[3:0];
-	endcase
+	);
 	
 endmodule
+
