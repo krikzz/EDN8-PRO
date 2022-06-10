@@ -239,8 +239,8 @@ set_global_assignment -name SYSTEMVERILOG_FILE chip_vrc2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE chip_vrc3.sv
 set_global_assignment -name SYSTEMVERILOG_FILE chip_vrc4.sv
 set_global_assignment -name SYSTEMVERILOG_FILE chip_vrc6.sv
-set_global_assignment -name SYSTEMVERILOG_FILE irq_vrc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE snd_vrc6.sv
+set_global_assignment -name SYSTEMVERILOG_FILE irq_vrc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/top.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_255.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../base_sv/map_nom.sv
