@@ -11,16 +11,15 @@ module irq_vrc(
 	input  ce_lath,//latch 4 hi bits (vrc4)
 	input  ce_ctrl,//control
 	input  ce_ackn,//acknowledge
-	input  mode_vrc4,//(map 24, 26, 85 in vrc6 mode)
 	
 	output irq,
 	
 	input  SSTBus sst,
-	output [7:0]ss_dout
+	output [7:0]sst_di
 );
 
 
-	assign ss_dout[7:0] = 
+	assign sst_di[7:0] = 
 	sst.addr == 32 ? {irq_pend, irq_cfg[2:0]}  : 
 	sst.addr == 33 ? irq_latch[7:0] :
 	sst.addr == 34 ? irq_ctr[7:0] :
@@ -45,11 +44,11 @@ module irq_vrc(
 	always@(negedge cpu_m2)
 	if(sst.act)
 	begin
-		if(sst.we_reg & sst.addr[7:0] == 32){irq_pend, irq_cfg[2:0]} 	<= sst.dato[3:0];
-		if(sst.we_reg & sst.addr[7:0] == 33)irq_latch[7:0] 				<= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 34)irq_ctr[7:0] 					<= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 35)prescal[7:0] 					<= sst.dato[7:0];
-		if(sst.we_reg & sst.addr[7:0] == 36)prescal[8] 						<= sst.dato[1:0];
+		if(sst.we_reg & sst.addr[7:0] == 32){irq_pend, irq_cfg[2:0]} 	<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 33)irq_latch[7:0] 				<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 34)irq_ctr[7:0] 					<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 35)prescal[7:0] 					<= sst.dato;
+		if(sst.we_reg & sst.addr[7:0] == 36)prescal[8] 						<= sst.dato;
 	end
 		else
 	if(map_rst)

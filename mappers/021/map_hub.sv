@@ -9,8 +9,10 @@ module map_hub(
 
 	
 	assign mao = 
+	mai.cfg.map_idx == 23  & mai.cfg.map_sub == 3 ? map_out_022 :
+	mai.cfg.map_idx == 25  & mai.cfg.map_sub == 3 ? map_out_022 :
 	mai.cfg.map_idx == 21  ? map_out_021 :
-	mai.cfg.map_idx == 22  ? map_out_021 :
+	mai.cfg.map_idx == 22  ? map_out_022 :
 	mai.cfg.map_idx == 23  ? map_out_021 :
 	mai.cfg.map_idx == 24  ? map_out_024 :
 	mai.cfg.map_idx == 25  ? map_out_021 :
@@ -27,6 +29,9 @@ module map_hub(
 	
 	MapOut map_out_021;
 	map_021 m021(mai, map_out_021);
+	
+	MapOut map_out_022;
+	map_022 m022(mai, map_out_022);
 	
 	MapOut map_out_024;
 	map_024 m024(mai, map_out_024);

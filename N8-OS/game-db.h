@@ -91,6 +91,7 @@ const GameDB game_db[] = {
     {0xF312D1DE, SET_SUB, 4}, //MMC3A. 5.MMC3_rev_A.nes
     {0x8A96E00D, SET_SUB, 3}, //VRC2. Wai Wai World (Japan) 
     {0xB27B8CF4, SET_SUB, 3}, //Contra (Japan)
+    {0x95192148, SET_SUB, 3}, //Kaiketsu Yanchamaru 2 - Karakuri Land (J) [hM23] 
     //****************************************************************************** mappers reloc    
     {0xFB2B6B10, SET_MAP, 241}, //Fan Kong Jing Ying (Ch).nes
     {0xB5E83C9A, SET_MAP, 241}, //Xing Ji Zheng Ba (Ch).nes
@@ -113,7 +114,7 @@ const GameDB game_db[] = {
     {0xEE810D55, SET_MAP, 192}, //You Ling Xing Dong (Ch)
     {0x2D0877F3, SET_MAP, 195}, //Zu Qiu Xiao Jiang (Ch)
     {0x7F3DBF1B, SET_MAP, 176}, //Chaos World (Ch)
-
+    {0x95192148, SET_MAP, 23}, //Kaiketsu Yanchamaru 2 - Karakuri Land (J) [hM23] 
     {0, 0, 0}//db end
 };
 
