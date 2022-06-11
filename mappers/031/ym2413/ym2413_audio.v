@@ -12,7 +12,7 @@
 module ym2413_audio(
 	clk,res_n,
 	cpu_d,cpu_a,cpu_ce_n,cpu_rw,
-	audio_clk,audio_out,instrument_set
+	audio_out,instrument_set
 );
 
 /* ========================
@@ -28,7 +28,6 @@ module ym2413_audio(
 	input				cpu_ce_n;
 	input				cpu_rw;
 	
-	input				audio_clk;
 	output reg [10:0]	audio_out;
 	
 	input				instrument_set;
@@ -476,90 +475,13 @@ ym2413_param_gen param_gen(
 		.ch_rhy_vol		(ch_rhy_vol[3:0])		
 	);
 
-	always @(posedge audio_clk) begin
+	always @(negedge clk) 
+	begin
 		audio_dat[10:0] <= audio_mix[10:0];
 		audio_out[10:0] <= audio_dat[10:0];
 		audio_res <= res_n;
 	end
 	
-	/*
-	DAC_delta_sigma dac(
-		.clk_i(audio_clk),
-		.reset_n_i(audio_res),
-		.dac_input_i(audio_dat_2[10:0]),
-		.dac_output_o(audio_out)
-	);*/
 
 endmodule
 
-/* ===================================================================================================== */
-
-// Delta-sigma DAC
-
-module DAC_delta_sigma (
-	clk_i,reset_n_i,
-	dac_input_i,dac_output_o
-);
-
-parameter DEPTH = 11;
-
-/* ========================
-   **** I/O Assignments ***
-   ========================
-*/
-
-// Clock & reset
-	
-	input						clk_i;
-	input						reset_n_i;
-	
-// Digital in / output
-
-	input		[DEPTH-1:0]	dac_input_i;
-	output					dac_output_o;
-
-/* ==============
-   **** Wires ***
-   ==============
-*/
-
-	wire		[DEPTH+1:0]	delta_add;
-	wire		[DEPTH+1:0]	sigma_add;
-	
-/* ==================
-   **** Registers ***
-   ==================
-*/
-
-	reg		[DEPTH+1:0]	sigma_latch;	
-	reg		[DEPTH-1:0]	dac_input;
-	reg						dac_output_o;
-
-	
-/* ====================
-   **** Assignments ***
-   ====================
-*/	
-
-	assign	delta_add[DEPTH+1:0] = {2'b0,dac_input[DEPTH-1:0]} + {sigma_latch[DEPTH+1],sigma_latch[DEPTH+1],{(DEPTH){1'b0}}};
-	assign	sigma_add[DEPTH+1:0] = delta_add[DEPTH+1:0] + sigma_latch[DEPTH+1:0];
-
-/* ==========================
-   **** Begin of RTL Code ***
-   ==========================
-*/
-
-	always @(posedge clk_i) begin
-		if (~reset_n_i) begin
-			sigma_latch[DEPTH+1:0] 	<= {2'b01,{(DEPTH){1'b0}}};
-			dac_input[DEPTH-1:0] 	<= {(DEPTH){1'b0}};
-			dac_output_o 				<= 1'b0;
-		end
-		else begin
-			sigma_latch[DEPTH+1:0] 	<= sigma_add[DEPTH+1:0];
-			dac_input[DEPTH-1:0] 	<= dac_input_i[DEPTH-1:0];
-			dac_output_o 				<= sigma_latch[DEPTH+1];
-		end
-	end
-
-endmodule	

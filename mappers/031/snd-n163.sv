@@ -1,25 +1,25 @@
 
-`include "../base/defs.v"
+module snd_n163(
+	
+	input  CpuBus cpu,
+	input	 map_rst,
+	
+	output [7:0]dout,
+	output reg [7:0]vol
+);
 
-
-module snd_n163
-(bus, vol, dout);
-	
-	`include "../base/bus_in.v"
-	output reg [7:0]vol;
-	output [7:0]dout;
-	
-	
 	assign dout = dout_cpu;
 	
-	wire [7:0]reg_addr = {cpu_addr[15], cpu_addr[14:11], 3'b000};
+	wire [7:0]reg_addr = {cpu.addr[15:11], 3'b000};
 	
-	wire ram_we = reg_addr == 8'h48 & !cpu_rw & !map_rst;
-	wire ram_oe = reg_addr == 8'h48 & cpu_rw;
+	wire ram_we = reg_addr == 8'h48 & !cpu.rw & !map_rst;
+	wire ram_oe = reg_addr == 8'h48 & cpu.rw;
 
 	
-	
-	
+	wire [7:0]dout_cpu = snd_ram[ram_addr_cpu];
+	wire [7:0]dout_snd = snd_ram[ram_addr_snd];	
+	reg[7:0]snd_ram[128];
+	//ram_dp ram_dp_inst(cpu_dat, snd_dat, ram_addr_cpu, ram_addr_snd, dout_cpu, dout_snd, ram_we, snd_we, m2);
 	
 	reg [3:0]sample;
 	reg [7:0]sample_addr;
@@ -40,51 +40,35 @@ module snd_n163
 	reg auto_inc;
 	
 	
-	wire [7:0]dout_cpu;// = snd_ram[ram_addr_cpu];
-	wire [7:0]dout_snd;// = snd_ram[ram_addr_snd];	
-	reg[7:0]snd_ram[128];
 	
-	ram_dp fifo_ram(
-	
-		.din_a(cpu_dat), 
-		.addr_a(ram_addr_cpu), 
-		.we_a(ram_we), 
-		.dout_a(dout_cpu),
-		.clk_a(m2),
-		
-		.din_b(snd_dat),
-		.addr_b(ram_addr_snd), 
-		.we_b(snd_we),
-		.dout_b(dout_snd), 
-		.clk_b(!m2)
-	);
-	
-	
-	always @(negedge m2)
+	always @(negedge cpu.m2)
 	if(map_rst)
 	begin
-		active_chan <= 7;
-		ram_addr_snd <= {1'b1, active_chan[2:0],3'b000};
-		vol <= 0;
-		snd_we <= 0;
-		state <= 15;
+		active_chan 	<= 7;
+		ram_addr_snd 	<= {1'b1, active_chan[2:0],3'b000};
+		vol 				<= 0;
+		snd_we 			<= 0;
+		state 			<= 15;
 	end
 		else
 	begin
 	
-		if(!cpu_rw & reg_addr == 8'hF8)
+		if(!cpu.rw & reg_addr == 8'hF8)
 		begin
-			ram_addr_cpu[6:0] <= cpu_dat[6:0];
-			auto_inc <= cpu_dat[7];
+			ram_addr_cpu[6:0] <= cpu.data[6:0];
+			auto_inc 			<= cpu.data[7];
 		end
 		
-		if(reg_addr == 8'h48 & auto_inc)ram_addr_cpu <= ram_addr_cpu + 1;
+		if(reg_addr == 8'h48 & auto_inc)
+		begin
+			ram_addr_cpu 		<= ram_addr_cpu + 1;
+		end
 	
 		
 		state <= state == 14 ? 0 : state + 1;
 		
 		
-		if(ram_we)snd_ram[ram_addr_cpu] <= cpu_dat;
+		if(ram_we)snd_ram[ram_addr_cpu] <= cpu.data;
 			else
 		if(snd_we)snd_ram[ram_addr_snd] <= snd_dat;
 		
@@ -159,6 +143,7 @@ module snd_n163
 	end
 	
 	
+
 	
 endmodule
 

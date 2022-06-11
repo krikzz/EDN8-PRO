@@ -21,7 +21,7 @@
     <conf name="Debug" type="0">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>m68k-6.3.0|MinGW</compilerSet>
+        <compilerSet>m68k-3.4.6|MinGW</compilerSet>
       </toolsSet>
       <makefileType>
         <makeTool>

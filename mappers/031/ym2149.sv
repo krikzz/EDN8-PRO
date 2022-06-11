@@ -6,7 +6,7 @@
 
 module ym2149(
 cpu_d,cpu_a, cpu_ce_n, cpu_rw, phi_2,
-audio_clk, audio_out, map_enable);
+audio_out, map_enable);
 
 /* ========================
    **** I/O Assignments ***
@@ -15,12 +15,11 @@ audio_clk, audio_out, map_enable);
 
 	input				phi_2;
 	
-	inout [7:0]		cpu_d;
+	input [7:0]		cpu_d;
 	input [14:10]	cpu_a;
 	input				cpu_ce_n;
 	input				cpu_rw;
 	
-	input				audio_clk;
 	output reg		[11:0]audio_out;
 
 	input				map_enable;
@@ -122,7 +121,7 @@ audio_clk, audio_out, map_enable);
 
 	// Pulse wave generators
 	
-	pulse_gen_ym pulse_0_ym(
+	pulse_gen1 pulse_0(
 		.clk	(phi_2),
 		.reset(~map_enable),
 		.d		(cpu_d[7:0]),
@@ -131,7 +130,7 @@ audio_clk, audio_out, map_enable);
 		.wave	(pulse_out[0])
 	);
 	
-	pulse_gen_ym pulse_1_ym(
+	pulse_gen1 pulse_1(
 		.clk	(phi_2),
 		.reset(~map_enable),
 		.d		(cpu_d[7:0]),
@@ -140,7 +139,7 @@ audio_clk, audio_out, map_enable);
 		.wave	(pulse_out[1])
 	);
 
-	pulse_gen_ym pulse_2_ym(
+	pulse_gen1 pulse_2(
 		.clk	(phi_2),
 		.reset(~map_enable),
 		.d		(cpu_d[7:0]),
@@ -151,7 +150,7 @@ audio_clk, audio_out, map_enable);
 	
 	// Noise generator
 	
-	noise_gen_ym noise_ym(
+	noise_gen noise(
 		.clk	(phi_2),
 		.reset(~map_enable),
 		.d		(cpu_d[4:0]),
@@ -161,7 +160,7 @@ audio_clk, audio_out, map_enable);
 	
 	// Envelope generator
 	
-	evelope_gen_ym envelope_ym(
+	evelope_gen envelope(
 		.clk			(phi_2),
 		.reset		(~map_enable),
 		.d				(cpu_d[7:0]),
@@ -203,7 +202,9 @@ audio_clk, audio_out, map_enable);
 	
 	// Mix stage 4: final mix & volume
 	
-	always @(posedge audio_clk) begin
+	always @(negedge phi_2) 
+	begin
+	
 		level0_l[7:0] <= level0[7:0];
 		level1_l[7:0] <= level1[7:0];		
 		level2_l[7:0] <= level2[7:0];
@@ -216,6 +217,7 @@ audio_clk, audio_out, map_enable);
 								+ {4'b0000,level2_l[7:0]};
 	end
 	
+
 	
 endmodule
 
@@ -223,7 +225,7 @@ endmodule
 
 // Pulse waveform generator
 
-module pulse_gen_ym(clk,reset,
+module pulse_gen1(clk,reset,
 	d,sel,write,
 	wave);
 
@@ -266,7 +268,7 @@ endmodule
 
 // Noise waveform generator
 
-module noise_gen_ym(clk,reset,
+module noise_gen(clk,reset,
 	d,write,
 	wave);
 
@@ -310,7 +312,7 @@ endmodule
 
 // Envelope generator
 
-module evelope_gen_ym(clk,reset,
+module evelope_gen(clk,reset,
 	d,sel,write,
 	env_trigger,env_mode,env_out);
 
@@ -416,4 +418,3 @@ module log_table(in,out);
 		endcase
 	end
 endmodule
-

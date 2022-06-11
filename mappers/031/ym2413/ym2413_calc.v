@@ -1,6 +1,6 @@
 //****************************************
 // * Yamaha YM2413 Audio Implementation  *
-// * === (c)2015-17 by Oliver Achten === *
+// * === (c)2015-20 by Oliver Achten === *
 // ***************************************
 
 module ym2413_calc (
@@ -216,7 +216,7 @@ module ym2413_calc (
 	
 	assign op_reset =	(calc_cnt_d[1] | rhy_select) ? op_phase_reset : op0_reset_d[0];
 	
-	assign fb_pre[12:0] =  ({modulator_0[11],modulator_0[11:0]} + {modulator_1[11],modulator_1[11:0]});
+	assign fb_pre[12:0] =  ({modulator_0[11],modulator_0[11:0]} + {modulator_1[11],modulator_1[11:0]}) + 13'b1_1111_1111_1111; // Change (17.07.20): More accurate feedback
 								
 	assign fb[11:0] = (ch_op0_fb[2:0] == 3'b0) ? 12'b0 : fb_pre[12:1] 						& {12{ch_op0_fb[2:0]==3'b111}}
 																		| {fb_pre[12],fb_pre[12:2]}		& {12{ch_op0_fb[2:0]==3'b110}}

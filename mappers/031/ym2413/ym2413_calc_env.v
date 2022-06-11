@@ -1,6 +1,6 @@
 //****************************************
 // * Yamaha YM2413 Audio Implementation  *
-// * === (c)2015-17 by Oliver Achten === *
+// * === (c)2015-20 by Oliver Achten === *
 // ***************************************
 
 module ym2413_calc_env(op_egtyp,op_ksr,op_ar,op_dr,op_sl,op_rr,op_type,
@@ -62,7 +62,7 @@ module ym2413_calc_env(op_egtyp,op_ksr,op_ar,op_dr,op_sl,op_rr,op_type,
 
 	wire	[3:0]		bf = 			{ch_block[2:0],ch_fnum[8]};
 	wire	[3:0]		rks = 		op_ksr ? bf[3:0] : {2'b0,bf[3:2]};
-	wire	[6:0]		rate_pre = 	{1'b0,basic_rate[3:0],2'b00} + {3'b0,rks[3:0]};
+	wire	[6:0]		rate_pre = 	basic_rate[3:0] != 4'b0 ? {1'b0,basic_rate[3:0],2'b00} + {3'b0,rks[3:0]} : 4'b0; // Change (17.07.20): Rate=0 remains always 0!
 	wire	[5:0]		rate = 		rate_pre[6] ? 6'b11_1111 : rate_pre[5:0];
 	
 	wire	[3:0]		shift = 4'd13 - rate[5:2];
@@ -127,7 +127,7 @@ module ym2413_calc_env(op_egtyp,op_ksr,op_ar,op_dr,op_sl,op_rr,op_type,
 			eg_state_next[1:0] = EG_DAMP;
 			op_phase_reset = 1'b0;
 		end
-		else if ((eg_state_prev[1:0]==EG_DAMP)&(env_prev[6:2]==5'b1_1111)) begin
+		else if ((eg_state_prev[1:0]==EG_DAMP)&(env_prev[6:2]==5'b1_1111)&ch_key_on) begin
 			eg_state_next[1:0] = EG_ATTACK;
 			op_phase_reset = 1'b1;
 		end

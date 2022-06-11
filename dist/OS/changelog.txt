@@ -5,10 +5,15 @@ Copy new files over old EDN8 folder. Update via USB may not work properly
 if folders structure was changed.
 ****************************************************************************
 
+
 EDN8-V2.14  ???
 1) Save state fixes
 2) VRC4 max CHR size fix
 3) Implemented unused in official games VRC6 features
+4) Swapped A/B functions in NSF player
+5) FDS audio included to the NSF player
+
+****************************************************************************
 
 EDN8-V2.13  23.05.2022
 1) Changes in folders sturcture*
