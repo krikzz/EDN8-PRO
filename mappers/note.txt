@@ -1,23 +1,9 @@
 000 official. most important
 001 official. weird jp games mostly
-002 pirate mappers
-003 sachen stuff and massive pirate mapper
 004 mmc-x mappers
 005 mmc5
-006 mmc3 like mappers
-007 new maper pack
-008 NES2.0 mappers
-
-019 namco 163 (snd)
 021 konami vrc-x (vrc6 snd inclided)
-027 mapper pack by Max2304
-031 NSF player 
-037 mapper pack by Kaskat 
-056 mapper pack by Max2304
-069 Sunsoft 5 (snd)
-085 VRC7 (snd)
+
+255 system mapper for OS
 
 
-254 FDS mapper
-255 system mapper
-.
