@@ -141,6 +141,24 @@ namespace edlink_n8
                     map_path = args[i];
                     continue;
                 }
+
+                if (s.StartsWith("-memwr"))
+                {
+                    cmd_memWrite(args[i + 1], args[i + 2]);
+                    i += 2;
+                }
+
+                if (s.StartsWith("-memrd"))
+                {
+                    cmd_memRead(args[i + 1], args[i + 2], args[i + 3]);
+                    i += 3;
+                }
+
+                if (s.StartsWith("-fpginit"))
+                {
+                    edio.fpgInit(File.ReadAllBytes(args[i + 1]), null);
+                    i += 1;
+                }
             }
 
 
@@ -154,6 +172,8 @@ namespace edlink_n8
 
         }
 
+       
+     
 
         static void loadROM(string rom_path, string map_path)
         {
@@ -190,18 +210,37 @@ namespace edlink_n8
                 if (i == 128) Console.WriteLine("");
                 if (i % 256 == 0) Console.WriteLine("");
 
+                Console.ForegroundColor = ConsoleColor.White;
+
+                if (i >= 128 + 0 && i < 128 + 32)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                }
+
                 if (i >= 128 + 32 && i < 128 + 64)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-
                 }
-                else
+
+                if (i >= 128 + 64 && i < 256)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                 }
 
                 Console.WriteLine("" + BitConverter.ToString(ss, i, 8) + "  " + BitConverter.ToString(ss, i + 8, 8));
             }
+
+            /*
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Mapper regs, ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("APU regs, ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("PPU pal, ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("PPU regs + sst request src");*/
+
+            Console.ForegroundColor = ConsoleColor.White;
 
         }
 
@@ -253,6 +292,49 @@ namespace edlink_n8
             edio.flaWR(addr, data, 0, data.Length);
 
             Console.WriteLine("ok");
+        }
+
+
+        static void cmd_memWrite(string path, string addr_str)
+        {
+            int addr = 0;
+            Console.Write("Memory write...");
+
+            addr = getNum(addr_str);
+
+            byte[] data = File.ReadAllBytes(path);
+            edio.memWR(addr, data, 0, data.Length);
+
+            Console.WriteLine("ok");
+        }
+
+        static void cmd_memRead(string path, string addr_str, string len_str)
+        {
+            int addr;
+            int len;
+            Console.Write("Memory read...");
+
+            addr = getNum(addr_str);
+            len = getNum(len_str);
+
+            byte[] data = new byte[len];
+            edio.memRD(addr, data, 0, data.Length);
+            File.WriteAllBytes(path, data);
+
+            Console.WriteLine("ok");
+        }
+        static int getNum(string num)
+        {
+
+            if (num.ToLower().Contains("0x"))
+            {
+                return Convert.ToInt32(num, 16);
+            }
+            else
+            {
+                return Convert.ToInt32(num);
+            }
+
         }
 
     }

@@ -24,7 +24,7 @@ namespace edlink_n8
 
         public const byte ctrl_unlock = 0x80;
 
-        byte[] config = new byte[cfg_base + 8];
+        byte[] config = new byte[cfg_base + 16];
 
         public MapConfig(byte[] bin)
         {
@@ -36,6 +36,7 @@ namespace edlink_n8
             map_idx = 255;
             SSKey_load = 0xff;
             SSKey_save = 0xff;
+            SSKey_menu = 0xff;
         }
 
         public MapConfig(NesRom rom)
@@ -53,20 +54,21 @@ namespace edlink_n8
             SrmSize = rom.SrmSize;
 
             MasterVol = 8;
-            SSKey_save = 0x14;//start + down
-            SSKey_load = 0x18;//start + up
+            SSKey_menu = 0x14;//start + down
+            SSKey_save = 0xff;// 0x14;
+            SSKey_load = 0xff;// 0x18;//start + up
 
         }
 
 
         public void printFull()
         {
-            
-            Console.WriteLine("mappper....." + map_idx + " sub."+Submap);
+
+            Console.WriteLine("mappper....." + map_idx + " sub." + Submap);
 
             Console.WriteLine("prg size...." + PrgSize / 1024 + "K");
             string chr_type = (MapCfg & cfg_chr_ram) == 0 ? "" : "ram";
-            Console.WriteLine("chr size...." + ChrSize / 1024 + "K "+ chr_type);
+            Console.WriteLine("chr size...." + ChrSize / 1024 + "K " + chr_type);
             string stm_state = (MapCfg & cfg_srm_off) != 0 ? "srm off" : SrmSize < 1024 ? (SrmSize + "B ") : (SrmSize / 1024 + "K ");
             Console.WriteLine("srm size...." + stm_state);
 
@@ -78,8 +80,9 @@ namespace edlink_n8
             if ((MapCfg & 3) == cfg_mir_4) mir = "4";
             if ((MapCfg & 3) == cfg_mir_1) mir = "1";
             Console.WriteLine("mirroring..." + mir);
-            Console.WriteLine("cfg bits...."+ Convert.ToString(MapCfg, 2).PadLeft(8, '0'));
+            Console.WriteLine("cfg bits...." + Convert.ToString(MapCfg, 2).PadLeft(8, '0'));
 
+            Console.WriteLine("menu key....0x{0:X2}", SSKey_menu);
             Console.WriteLine("save key....0x{0:X2}", SSKey_save);
             Console.WriteLine("load key....0x{0:X2}", SSKey_load);
             Console.WriteLine("rst delay..." + ((Ctrl & ctrl_rst_delay) != 0 ? "yes" : "no"));
@@ -93,7 +96,8 @@ namespace edlink_n8
 
         public void print()
         {
-            Console.WriteLine("CFG: "+ BitConverter.ToString(config, cfg_base));
+            Console.WriteLine("CFG0: " + BitConverter.ToString(config, cfg_base, 8));
+            Console.WriteLine("CFG1: " + BitConverter.ToString(config, cfg_base + 8, 8));
         }
 
         public byte[] getBinary()
@@ -207,7 +211,11 @@ namespace edlink_n8
             set { config[cfg_base + 7] = value; }
         }
 
-        
+        public byte SSKey_menu
+        {
+            get { return config[cfg_base + 8]; }
+            set { config[cfg_base + 8] = value; }
+        }
 
 
 

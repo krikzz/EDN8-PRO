@@ -722,28 +722,30 @@ namespace edlink_n8
 
         public void fpgInit(byte[] data, MapConfig cfg)
         {
-            if (cfg != null) fpgInitCfg(cfg);
+            //if (cfg != null) fpgInitCfg(cfg);
             txCMD(CMD_FPG_USB);
             tx32(data.Length);
             txDataACK(data, 0, data.Length);
             checkStatus();
+            if (cfg != null) memWR(ADDR_CFG, cfg.getBinary(), 0, cfg.getBinary().Length);
         }
 
 
         public void fpgInit(int flash_addr, MapConfig cfg)
         {
-            if (cfg != null) fpgInitCfg(cfg);
+            //if (cfg != null) fpgInitCfg(cfg);
             txCMD(CMD_FPG_FLA);
             tx32(flash_addr);
             //txData(cfg.getBinary());
             tx8(0);//exec
             checkStatus();
+            if (cfg != null) memWR(ADDR_CFG, cfg.getBinary(), 0, cfg.getBinary().Length);
         }
 
         public void fpgInit(string sd_path, MapConfig cfg)
         {
 
-            if (cfg != null) fpgInitCfg(cfg);
+            //if (cfg != null) fpgInitCfg(cfg);
             FileInfo f = fileInfo(sd_path);
             fileOpen(sd_path, FAT_READ);
             txCMD(CMD_FPG_SDC);
@@ -751,13 +753,15 @@ namespace edlink_n8
             //txData(cfg.getBinary());
             tx8(0);
             checkStatus();
+            if (cfg != null) memWR(ADDR_CFG, cfg.getBinary(), 0, cfg.getBinary().Length);
         }
 
+        /*
         void fpgInitCfg(MapConfig cfg)
         {
             txCMD(CMD_FPG_CFG);
             txData(cfg.getBinary());
-        }
+        }*/
 
  
         public void setConfig(MapConfig cfg)
