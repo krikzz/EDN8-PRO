@@ -5,8 +5,7 @@ Copy new files over old EDN8 folder. Update via USB may not work properly
 if folders structure was changed.
 ****************************************************************************
 
-
-EDN8-V2.14  ???
+EDN8-V2.14  11.06.2022
 1) Save state fixes
 2) VRC4 max CHR size fix
 3) Implemented unused in official games VRC6 features

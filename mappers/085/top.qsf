@@ -230,6 +230,7 @@ set_location_assignment PIN_C1 -to exp_io[1]
 set_location_assignment PIN_C2 -to exp_io[0]
 set_global_assignment -name SYSTEMVERILOG_FILE map_hub.sv
 set_global_assignment -name SYSTEMVERILOG_FILE map_085.sv
+set_global_assignment -name SYSTEMVERILOG_FILE chip_vrc7.sv
 set_global_assignment -name SYSTEMVERILOG_FILE irq_vrc.sv
 set_global_assignment -name VERILOG_FILE ym2413/ym2413_tabl.v
 set_global_assignment -name VERILOG_FILE ym2413/ym2413_param_gen.v
