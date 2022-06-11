@@ -40,8 +40,8 @@ NSF_EXPS    =$F07B
 JOY_L       =$02
 JOY_R       =$01
 JOY_STR     =$10
-JOY_B       =$40
-JOY_A       =$80
+JOY_B       =$80
+JOY_A       =$40
 
 VAR_ADDR    =(MEM_EXEC +128)
 VAR_JOY     =(MEM_EXEC +129)
