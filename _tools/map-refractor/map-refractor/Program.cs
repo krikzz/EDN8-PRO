@@ -20,7 +20,8 @@ namespace map_refractor
                 //loadDir("E:/projects/EDN8-PRO/mappers");
                 //loadDir("E:/projects/everdrive-FC/mappers");
                 //loadDir("E:\\projects\\EDN8-PRO\\mappers");
-                loadDir("C:\\Users\\igor\\Desktop\\031");
+                //loadDir("C:\\Users\\igor\\Desktop\\nes");
+                loadDir("E:\\projects\\MEGA-ED-PRO\\edapp\\nes\\mapper\\nes_core\\mappers");
             }
             catch (Exception x)
             {
@@ -41,7 +42,7 @@ namespace map_refractor
                 loadDir(dirs[i]);
             }
 
-            string[] files = Directory.GetFiles(path, "*.v");
+            string[] files = Directory.GetFiles(path, "*.sv");
 
             for (int i = 0; i < files.Length; i++)
             {
@@ -55,7 +56,17 @@ namespace map_refractor
 
         static void loadFile(string path)
         {
-           
+
+            string[] targets =
+            {
+                "SSTBus ", "SSTBus_nes ",
+                "MapIn ", "MapIn_nes ",
+                "MapOut ", "MapOut_nes ",
+                "SysCfg ", "CartCfg ",
+                "CpuBus ", "CpuBus_nes ",
+                "MemCtrl ", "MemCtrl_nes ",
+            };
+            /*
             string[] targets =
             {
                               
@@ -73,7 +84,7 @@ namespace map_refractor
                 //"map_sub", "cfg.map_sub",
                 //"map_idx", "cfg.map_idx",
                 "!cpu_ce", "cpu.addr[15]",
-            };
+            };*/
 
 
             if (!path.EndsWith(".sv") && !path.EndsWith(".v")) return;

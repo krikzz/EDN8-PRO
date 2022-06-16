@@ -95,4 +95,4 @@ https://github.com/krikzz/EDN8-PRO/pull/2
 не работает карта eXceleram 32GB синенькая. попробовать ее на меге
 проверить мапер 176. тестить Chaos World (Ch)
 It does not work, Nintenco Campus Challenge 1991 requires support for its mapper (555) to run. 
-
+посмотреть на глюковатые сохранения в robocop2

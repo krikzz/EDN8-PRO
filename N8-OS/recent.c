@@ -193,8 +193,6 @@ u8 recentStart(u8 selector) {
     if (resp)return resp;
 
     return edStartGame(0);
-
-    return 0;
 }
 
 u8 recentMoveOnTop(u8 selector) {
