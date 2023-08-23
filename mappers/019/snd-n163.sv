@@ -106,7 +106,7 @@ module snd_n163(
 			end
 			7:begin
 				inst_vol[3:0] <= dout_snd[3:0];
-				if(64-inst_len == phase[23:18])phase[23:16] <= 0;
+				if(64-inst_len == phase[23:18])phase[23:18] <= 0;
 				if(ram_addr_snd == 7'h7f)chans_on[2:0] <= dout_snd[6:4];
 			end
 			8:begin
