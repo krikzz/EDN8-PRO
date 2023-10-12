@@ -23,8 +23,70 @@ namespace edlink_n8
             this.edio = edio;
         }
 
+        public void loadGame_new(string rom_path, string map_path)
+        {
+            string usb_dir = "usb_games";
 
-        public void loadGame(NesRom rom, string map_path)
+            edio.dirMake(usb_dir);
+
+            usb_dir += "/" + Path.GetFileName(rom_path);
+            //Console.WriteLine("path: " + usb_dir);
+
+
+            byte[] rom_data = File.ReadAllBytes(rom_path);
+            edio.dirMake(usb_dir);
+            string rom_dst = usb_dir + "/" + Path.GetFileName(rom_path);
+            edio.fileOpen(rom_dst, Edio.FAT_WRITE | Edio.FAT_CREATE_ALWAYS);
+            edio.fileWrite(rom_data, 0, rom_data.Length);
+            edio.fileClose();
+
+            int map_idx =  selectGame(rom_dst);
+
+            if (map_path == null)
+            {
+                map_path = getTestMapper(map_idx);
+            }
+            Console.WriteLine("mapper path: " + map_path);
+
+            string rbf_dst = Path.ChangeExtension(rom_dst, "rbf");
+
+            if (map_path != null)
+            {
+                byte[] rbf_data = File.ReadAllBytes(map_path);
+                edio.fileOpen(rbf_dst, Edio.FAT_WRITE | Edio.FAT_CREATE_ALWAYS);
+                edio.fileWrite(rbf_data, 0, rbf_data.Length);
+                edio.fileClose();
+            }
+            else
+            {
+                try
+                {
+                    //remove mapper file if exist in order to use regular system mapper
+                    edio.delRecord(rbf_dst);
+                }
+                catch (Exception) { }
+            }
+
+            //selectGame(rom_dst);//refresh mapper config
+            cmd(cmd_run_game);
+        }
+
+        int selectGame(string path)
+        {
+            int resp;
+            cmd(cmd_sel_game);
+            txString(path);
+            resp = edio.rx8();//game select status
+            if (resp != 0)
+            {
+                throw new Exception("Game select error 0x: " + resp.ToString("X2"));
+            }
+
+            int map_idx = edio.rx16();
+            return map_idx;
+        }
+
+        public void loadGame_old(NesRom rom, string map_path)
         {
 
             int resp;

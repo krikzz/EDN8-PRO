@@ -175,26 +175,7 @@ namespace edlink_n8
        
      
 
-        static void loadROM(string rom_path, string map_path)
-        {
-            Console.WriteLine("ROM loading...");
-
-            NesRom rom = new NesRom(rom_path);
-            rom.print();
-            
-            if (rom.Type == NesRom.ROM_TYPE_OS)
-            {
-                usb.loadOS(rom, map_path);
-            }
-            else
-            {
-                usb.loadGame(rom, map_path);
-            }
-
-            Console.WriteLine();
-            edio.getConfig().print();
-
-        }
+    
         
 
         static void printState()
@@ -335,6 +316,27 @@ namespace edlink_n8
                 return Convert.ToInt32(num);
             }
 
+        }
+
+        static void loadROM(string rom_path, string map_path)
+        {
+            Console.WriteLine("ROM loading...");
+
+            NesRom rom = new NesRom(rom_path);
+            rom.print();
+
+            if (rom.Type == NesRom.ROM_TYPE_OS)
+            {
+                usb.loadOS(rom, map_path);
+            }
+            else
+            {
+                //usb.loadGame_old(rom, map_path);
+                usb.loadGame_new(rom_path, map_path);
+            }
+
+            Console.WriteLine();
+            //edio.getConfig().print();
         }
 
     }
